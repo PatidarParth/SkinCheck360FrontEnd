@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import {
-  View, TouchableOpacity, Text
+  View, TouchableOpacity, KeyboardAvoidingView, Text
 } from 'react-native';
 import { Input, Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { IconButton } from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
@@ -104,7 +103,7 @@ class AddEventScreen extends Component {
 
   render() {
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAvoidingView style={styles.eventView} behavior="height" enabled>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -207,7 +206,7 @@ class AddEventScreen extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }

@@ -4,7 +4,6 @@ import {
 } from 'react-native';
 import { Input, Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { IconButton } from 'react-native-paper';
 import Moment from 'moment';
@@ -98,7 +97,7 @@ class EditEventScreen extends Component {
 
   render() {
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAvoidingView style={styles.eventView} behavior="height" enabled>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -193,7 +192,7 @@ class EditEventScreen extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAwareScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
