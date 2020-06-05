@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "Duke Dermatology",
+    "slug": "DukeDerm",
+    "privacy": "unlisted",
+    "sdkVersion": "35.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.8",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/duke.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.onecowstanding.dukedermatology",
+      "supportsTablet": true
+    },
+    "description": ""
+  }
+}
