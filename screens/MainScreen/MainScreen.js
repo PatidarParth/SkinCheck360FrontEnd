@@ -68,7 +68,7 @@ class MainScreen extends Component {
         'Delete Visit...',
         `Are you sure you want to delete the visit '${
           visitInfo.visitName
-        }' on ${Moment(visitInfo.visitDate).format('MMMM D, YYYY')}`,
+        }' on ${Moment(visitInfo.visitDate,).format('MM/DD/YYYY')}`,
         [
           {
             text: 'No',

@@ -73,7 +73,7 @@ export function deleteVisit(visitData, visitId) {
   };
 }
 
-export function addVisit(visitData, visitId, visitName, visitDate, visitNotes) {
+export function addVisit(visitData, visitId, visitName, visitDate, visitNotes, visitPictures) {
   return function action(dispatch) {
     if (!visitData) {
       visitData = {};
@@ -87,7 +87,12 @@ export function addVisit(visitData, visitId, visitName, visitDate, visitNotes) {
     visitData[visitId].visitDate = visitDate;
     visitData[visitId].visitId = visitId;
     visitData[visitId].visitNotes = visitNotes;
-    visitData[visitId].visitPictures = [];
+    if (visitPictures.length > 0) {
+      visitData[visitId].visitPictures = visitPictures;
+    }
+    else {
+      visitData[visitId].visitPictures = [];
+    }
     dispatch(actionAddVisit(visitData));
   };
 }

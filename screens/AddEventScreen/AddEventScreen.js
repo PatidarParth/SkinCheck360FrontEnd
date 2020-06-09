@@ -1,19 +1,24 @@
 import React, { Component } from 'react';
 import {
-  View, TouchableOpacity, KeyboardAvoidingView, Text
+  View, TouchableOpacity, Text, ScrollView, Image
 } from 'react-native';
 import { Input, Header } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { IconButton } from 'react-native-paper';
+import { IconButton, Provider, Menu, Divider } from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { connect } from 'react-redux';
 import { Appearance } from 'react-native-appearance';
 import { addVisit } from '../../redux/actions';
+import memoize from "memoize-one"
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
 import styles from './styles';
 
 const colorScheme = Appearance.getColorScheme();
+
 class AddEventScreen extends Component {
   subscription;
 
@@ -26,29 +31,29 @@ class AddEventScreen extends Component {
       visitDate: Date.now(),
       visitNotes: '',
       edit: false,
-      isDarkModeEnabled: colorScheme === 'light'
+      isDarkModeEnabled: colorScheme === 'light',
+      visitTitleError: '',
+      visitPictures: [],
+      pictureNote: '',
+      pictureLocation: '',
+      pictureBodyPart: '',
+      visible: false,
+      x: 0,
+      y: 0,
+      selectedPicture: {},
+      addNewMenuVisible: false
     };
+
   }
 
   componentDidMount() {
-    const visitId = this.props.navigation.getParam('visitId');
-    if (visitId) {
-      this.setState({
-        visitId,
-        visitName: this.props.visitData[visitId].visitName,
-        visitDate: this.props.visitData[visitId].visitDate,
-        visitNotes: this.props.visitData[visitId].visitNotes,
-        edit: true
-      });
-    } else {
-      this.setState({
-        visitId: '',
-        visitName: '',
-        visitDate: Date.now(),
-        visitNotes: '',
-        edit: false
-      });
-    }
+    this.setState({
+      visitId: '',
+      visitName: '',
+      visitDate: Date.now(),
+      visitNotes: '',
+      edit: false,
+    });
 
     // eslint-disable-next-line no-undef
     subscription = Appearance.addChangeListener(
@@ -75,23 +80,58 @@ class AddEventScreen extends Component {
     return Moment().format('MMMM D, YYYY');
   };
 
-  saveVisit = async (addPhotos) => {
+  navigateToCamera = () => {
+    this.setState({ addNewMenuVisible: false });
+      this.props.navigation.navigate('AddPhotos', {
+      visitId: '',
+    });
+  };
+
+  importImage = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    this.setState({ addNewMenuVisible: false });
+    if (status === 'granted') {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        base64: true,
+        exif: true
+      });
+      emptyString = ''
+      location = -100
+      diameter = 20
+      if (result && result.uri) {
+        this.state.visitPictures.push({
+          emptyString,
+          uri: result.uri,
+          emptyString,
+          emptyString,
+          emptyString,
+          location,
+          location,
+          diameter,
+          dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
+        });
+        this.setState({ visitPictures: this.state.visitPictures});
+      }
+    }
+  };
+
+  saveVisit = async () => {
     if (this.state.visitName) {
       const id = this.state.edit ? this.state.visitId : uuidv4();
-      if (addPhotos) {
-        this.props.navigation.navigate('Photos', {
-          visitData: this.props.visitData, visitId: id, visitName: this.state.visitName, visitDate: new Date(this.state.visitDate).toString(), visitNotes: this.state.visitNotes
-        });
-      } else {
-        this.props.addVisit(
-          this.props.visitData,
-          id,
-          this.state.visitName,
-          new Date(this.state.visitDate).toString(),
-          this.state.visitNotes,
-        );
-        this.props.navigation.navigate('Home');
+      this.props.addVisit(
+        this.props.visitData,
+        id,
+        this.state.visitName,
+        new Date(this.state.visitDate).toString(),
+        this.state.visitNotes,
+        this.state.visitPictures
+      )
+
+      this.props.navigation.navigate('Home');
       }
+    else {
+      this.setState(() => ({ visitTitleError: "Visit Title is required."}));
     }
   };
 
@@ -101,9 +141,51 @@ class AddEventScreen extends Component {
     header: null
   };
 
-  render() {
+  view = () => {
+    this.setState({ visible: false });
+    this.props.navigation.navigate('Photo', {
+      visitId: "",
+      pictureId: this.state.selectedPicture.pictureId,
+      pictureUri: this.state.selectedPicture.uri,
+      pictureNote: this.state.selectedPicture.pictureNote,
+      pictureLocation: this.state.selectedPicture.pictureLocation,
+      pictureBodyPart: this.state.selectedPicture.pictureBodyPart,
+      visitPictures: this.state.visitPictures,
+    });
+  };
+
+  overlayPicture = () => {
+    this.setState({ visible: false });
+    this.props.navigation.navigate('AddPhotos', {
+      visitId: "",
+      overlayPictureId: this.state.selectedPicture.pictureId,
+      visitPictures: this.state.visitPictures
+    });
+  };
+
+  deletePicture = () => {
+    this.setState({ visible: false });
+    this.setState({visitPictures: this.state.visitPictures.filter(item=>item.uri != this.state.pictureUri)});
+  };
+  
+
+  componentDidUpdate = (oldProps) => {
+    const newProps = this.props
+    index = 0 
+    if(oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
+      if (newProps.navigation.getParam('pictureArray') != undefined) {
+        while (index < newProps.navigation.getParam('pictureArray').length) {
+          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[index])
+          index++
+        }
+      }      
+      this.setState({ visitPictures: this.state.visitPictures});
+    }
+  }
+
+  render() {  
     return (
-      <KeyboardAvoidingView style={styles.eventView} behavior="height" enabled>
+      <KeyboardAwareScrollView>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -136,6 +218,9 @@ class AddEventScreen extends Component {
             }}
             value={this.state.visitName}
           />
+           <Text style={styles.errorFont}>
+            {this.state.visitTitleError}
+          </Text>
         </View>
         <View style={styles.inputSpacer}>
           <TouchableOpacity
@@ -188,25 +273,99 @@ class AddEventScreen extends Component {
             value={this.state.visitNotes}
           />
         </View>
-        <View style={styles.inputSpacer}>
-          <View style={styles.buttonSave}>
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={() => this.saveVisit(true)}
-            >
-              <Text style={styles.primaryText}>Add Pictures</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonSave}>
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={() => this.saveVisit(false)}
-            >
-              <Text style={styles.primaryText}>Save Visit</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
+        <Provider>
+          <ScrollView>
+            <View style={styles.scrollView}>
+              {(!this.state.visitPictures
+                || (this.state.visitPictures && this.state.visitPictures.length === 0)) && (
+                  <View style={styles.innerSpacer}>
+                    <View style={styles.notificationView}>
+                      <Text style={styles.notificationText}>
+                          No Pictures Currently
+                      </Text>
+                    </View>
+                  </View>
+              )}
+              {this.state.visitPictures
+                && this.state.visitPictures.length > 0
+                && this.state.visitPictures.map((picture, i) => (
+                  <TouchableOpacity
+                    key={`picture-${i}`}
+                    style={styles.pictureButton}
+                    onPress={() => this.props.navigation.navigate('Photo', {
+                      visitId: "",
+                      pictureId: picture.pictureId,
+                      pictureUri: picture.uri,
+                      pictureNote: picture.pictureNote,
+                      pictureLocation: picture.pictureLocation,
+                      pictureBodyPart: picture.pictureBodyPart,
+                      visitPictures: this.state.visitPictures
+                    })}
+                    onLongPress={(name) => {
+                      this.setState({
+                        x: name.nativeEvent.pageX,
+                        y: name.nativeEvent.pageY,
+                        selectedPicture: picture,
+                        visitId: this.props.navigation.getParam('visitId'),
+                        pictureUri: picture.uri,
+                        pictureNote: picture.pictureNote,
+                        pictureLocation: picture.pictureLocation,
+                        pictureBodyPart: picture.pictureBodyPart,
+                        visible: true
+                      });
+                    }}
+                  >
+                    <View
+                      key={`picture-${picture.uri}`}
+                      style={{ padding: 20, height: 200 }}
+                    >
+                      <Image
+                        source={{ uri: picture.uri }}
+                        style={{ height: '100%', width: '100%' }}
+                      />
+                      <Text style={styles.pictureFont}>{picture.dateCreated}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              <View style={styles.inputSpacer}>
+                <View style={styles.photoButtonRow}>
+                  <TouchableOpacity
+                    style={styles.photoButton}
+                    onPress={this.navigateToCamera}
+                  >
+                    <Text style={styles.primaryText}>Take Photo</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.photoButton}
+                    onPress={this.importImage}
+                  >
+                    <Text style={styles.primaryText}>Import Image </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+                <View style={styles.buttonSave}>
+                  <TouchableOpacity
+                    style={styles.primaryButton}
+                    onPress={() => this.saveVisit()}
+                  >
+                    <Text style={styles.primaryText}>Save Visit</Text>
+                  </TouchableOpacity>
+                </View>
+            </View>
+          </ScrollView>
+          <Menu
+            visible={this.state.visible}
+            onDismiss={() => this.setState({ visible: false })}
+            anchor={{ x: this.state.x, y: this.state.y }}
+          >
+            <Menu.Item onPress={() => this.view()} title="View" />
+            <Divider />
+            <Menu.Item onPress={this.overlayPicture} title="Overlay" />
+            <Divider />
+            <Menu.Item onPress={this.deletePicture} title="Delete" />
+          </Menu>
+        </Provider>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -217,8 +376,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addVisit: (visitData, id, name, created, information) => {
-    dispatch(addVisit(visitData, id, name, created, information));
+  addVisit: (visitData, id, name, created, information, pictures) => {
+    dispatch(addVisit(visitData, id, name, created, information, pictures));
   }
 });
 

@@ -94,7 +94,7 @@ class PhotosScreen extends Component {
       if (result && result.uri) {
         this.props.addPicture(
           this.props.visitData,
-          this.props.navigation.getParam('visitId'),
+          this.props.visitId,
           result.uri,
           '',
           '',
@@ -112,7 +112,7 @@ class PhotosScreen extends Component {
     let visitPictures = [];
     if (this.props.visitData[
       this.props.navigation.getParam('visitId')
-    ] !== 'undefined') {
+    ] !== undefined) {
       visitPictures = this.props.visitData[
         this.props.navigation.getParam('visitId').visitPictures
       ];

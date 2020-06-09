@@ -53,4 +53,14 @@ export default StyleSheet.create({
     paddingTop: 40,
     borderBottomWidth: 0
   },
+  pictureFont: {
+    color: 'black',
+    fontSize: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center', 
+  },
+  wholeView: {
+    flex: 1
+  }
 });

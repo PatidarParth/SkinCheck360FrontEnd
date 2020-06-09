@@ -4,7 +4,6 @@ import {
   View,
   TouchableOpacity,
   Animated,
-  KeyboardAvoidingView,
   Dimensions,
   StyleSheet,
   Platform,
@@ -12,6 +11,7 @@ import {
   Image as RNImage
 } from 'react-native';
 import { PinchGestureHandler } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Dropdown } from 'react-native-material-dropdown';
 import { Header } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
@@ -118,19 +118,36 @@ class CameraScreen extends React.Component {
       locationY,
       diameter
     } = this.state;
-    this.props.addPicture(
-      this.props.visitData,
-      this.props.navigation.getParam('visitId'),
-      photo,
-      pictureNote,
-      pictureLocation,
-      pictureBodyPart,
-      pictureId,
-      locationX,
-      locationY,
-      diameter
-    );
-    this.props.navigation.goBack();
+    if (this.props.navigation.getParam('visitId') !== '') {
+      this.props.addPicture(
+        this.props.visitData,
+        this.props.navigation.getParam('visitId'),
+        photo,
+        pictureNote,
+        pictureLocation,
+        pictureBodyPart,
+        pictureId,
+        locationX,
+        locationY,
+        diameter
+      );
+      this.props.navigation.goBack();
+    }   
+    else {
+      pictureArray = [];
+      pictureArray.push({
+        pictureId: uuidv4(),
+        uri: photo,
+        pictureNote,
+        pictureLocation,
+        pictureBodyPart,
+        locationX,
+        locationY,
+        diameter,
+        dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
+      });
+      this.props.navigation.navigate('AddEvent', {pictureArray: pictureArray })
+    }
   };
 
   handleCapture = async () => {
@@ -240,10 +257,16 @@ class CameraScreen extends React.Component {
   renderOverlaySvg(pictureId) {
     const visitId = this.props.navigation.getParam('visitId');
     // const pictureId = this.props.navigation.getParam('pictureId');
-    const currentPicture = this.props.visitData[visitId].visitPictures.find(
-      (data) => data.pictureId === pictureId
-    );
-
+    let currentPicture = [];
+    if (visitId == '') {
+      currentPicture = this.props.navigation.getParam('visitPictures').find(
+        (data) => data.pictureId === pictureId);
+    }
+    else {
+      currentPicture = this.props.visitData[visitId].visitPictures.find(
+        (data) => data.pictureId === pictureId
+      );
+    }
     if (!currentPicture) {
       return <Svg />;
     }
@@ -303,11 +326,14 @@ class CameraScreen extends React.Component {
     let visitPictures = [];
     if (this.props.visitData[
       this.props.navigation.getParam('visitId')
-    ] !== 'undefined') {
+    ] !== undefined) {
       visitPictures = this.props.visitData[
-        this.props.navigation.getParam('visitId').visitPictures
-      ];
+        this.props.navigation.getParam('visitId')].visitPictures
     }
+    else {
+      visitPictures = this.props.navigation.getParam('visitPictures')
+    }
+
     let visitPhoto = null;
     if (visitPictures && this.state.overlayPictureId) {
       visitPhoto = visitPictures.find(
@@ -324,7 +350,7 @@ class CameraScreen extends React.Component {
               style={{ top: -100 }}
             >
               <Dialog.ScrollArea>
-                <KeyboardAvoidingView behavior="padding">
+                <KeyboardAwareScrollView>
                   <Dialog.Content>
                     <Dropdown
                       label="Location"
@@ -353,7 +379,7 @@ class CameraScreen extends React.Component {
                   <Dialog.Actions>
                     <Button onPress={this._hideDialog}>Done</Button>
                   </Dialog.Actions>
-                </KeyboardAvoidingView>
+                </KeyboardAwareScrollView>
               </Dialog.ScrollArea>
             </Dialog>
           </Portal>

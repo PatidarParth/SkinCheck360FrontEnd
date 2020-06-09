@@ -22,5 +22,11 @@ export default StyleSheet.create({
   labelFont: {
     color: '#000000',
     fontSize: 16
+  },
+  errorFont: {
+    color: 'red',
+    fontSize: 16,
+    paddingLeft: 30,
+    paddingTop: 5
   }
 });

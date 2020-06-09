@@ -37,10 +37,16 @@ class PhotoScreen extends Component {
   renderSvg() {
     const visitId = this.props.navigation.getParam('visitId');
     const pictureId = this.props.navigation.getParam('pictureId');
-    const currentPicture = this.props.visitData[visitId].visitPictures.find(
-      (data) => data.pictureId === pictureId
-    );
-
+    let currentPicture = [];
+    if (visitId == '') {
+      currentPicture = this.props.navigation.getParam('visitPictures').find(
+        (data) => data.pictureId === pictureId);
+    }
+    else {
+      currentPicture = this.props.visitData[visitId].visitPictures.find(
+        (data) => data.pictureId === pictureId
+      );
+    }
     if (!currentPicture) {
       return <Svg />;
     }
@@ -74,9 +80,16 @@ class PhotoScreen extends Component {
     let pictureBodyPart = '';
     const pictureId = this.props.navigation.getParam('pictureId');
     const visitId = this.props.navigation.getParam('visitId');
-    const currentPicture = this.props.visitData[visitId].visitPictures.find(
-      (data) => data.pictureId === pictureId
-    );
+    let currentPicture = [];
+    if (visitId == '') {
+      currentPicture = this.props.navigation.getParam('visitPictures').find(
+        (data) => data.pictureId === pictureId);
+    }
+    else {
+      currentPicture = this.props.visitData[visitId].visitPictures.find(
+        (data) => data.pictureId === pictureId
+      );
+    }
     let textNoteStyle = { fontStyle: 'normal', color: Colors.blue800 };
     if (!pictureNote) {
       textNoteStyle = { fontStyle: 'italic', color: Colors.grey500 };

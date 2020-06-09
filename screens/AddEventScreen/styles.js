@@ -22,5 +22,25 @@ export default StyleSheet.create({
   labelFont: {
     color: '#000000',
     fontSize: 16
-  }
+  },
+  errorFont: {
+    color: 'red',
+    fontSize: 16,
+    paddingLeft: 30,
+    paddingTop: 5
+  },
+  pictureFont: {
+    color: 'black',
+    fontSize: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center', 
+  },
+  notificationView: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
+  },
 });

@@ -39,8 +39,8 @@ const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#3b5998',
-    accent: '#3b5998'
+    primary: '#0A2B66',
+    accent: '#0A2B66'
   }
 };
 

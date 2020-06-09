@@ -116,7 +116,7 @@ class VisitScreen extends Component {
     const { visitData } = this.props;
 
     return (
-      <View style={styles.providerView}>
+      <View style={styles.wholeView}>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -231,7 +231,7 @@ class VisitScreen extends Component {
                         source={{ uri: picture.uri }}
                         style={{ height: '100%', width: '100%' }}
                       />
-                      <Text color="#FFF">{picture.dateCreated}</Text>
+                      <Text style={styles.pictureFont}>{picture.dateCreated}</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -251,16 +251,6 @@ class VisitScreen extends Component {
                   </TouchableOpacity>
                 </View>
               </View>
-              {(visitPictures && this.props.navigation.getParam('length') < visitPictures.length) && (
-                <View style={styles.buttonSave}>
-                  <TouchableOpacity
-                    style={styles.primaryButton}
-                    onPress={() => this.savePictures()}
-                  >
-                    <Text style={styles.primaryText}>Save</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
             </View>
           </ScrollView>
           <Menu
@@ -275,7 +265,7 @@ class VisitScreen extends Component {
             <Menu.Item onPress={this.deletePicture} title="Delete" />
           </Menu>
         </Provider>
-      </View>
+       </View>
     );
   }
 }

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import {
-  View, TouchableOpacity, KeyboardAvoidingView, Text
+  View, TouchableOpacity, Text
 } from 'react-native';
 import { Input, Header } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { IconButton } from 'react-native-paper';
@@ -24,31 +25,24 @@ class EditEventScreen extends Component {
       visitName: '',
       isDateTimePickerVisible: false,
       visitDate: Date.now(),
+      visitPictures: [],
       visitNotes: '',
       edit: false,
-      isDarkModeEnabled: colorScheme === 'light'
+      isDarkModeEnabled: colorScheme === 'light',
+      visitTitleError: ''
     };
   }
 
   componentDidMount() {
     const visitId = this.props.navigation.getParam('visitId');
-    if (visitId) {
-      this.setState({
-        visitId,
-        visitName: this.props.visitData[visitId].visitName,
-        visitDate: this.props.visitData[visitId].visitDate,
-        visitNotes: this.props.visitData[visitId].visitNotes,
-        edit: true
-      });
-    } else {
-      this.setState({
-        visitId: '',
-        visitName: '',
-        visitDate: Date.now(),
-        visitNotes: '',
-        edit: false
-      });
-    }
+    this.setState({
+      visitId,
+      visitName: this.props.visitData[visitId].visitName,
+      visitDate: this.props.visitData[visitId].visitDate,
+      visitNotes: this.props.visitData[visitId].visitNotes,
+      visitPictures: this.props.visitData[visitId].visitPictures,
+      edit: true
+    });
 
     // eslint-disable-next-line no-undef
     subscription = Appearance.addChangeListener(
@@ -84,8 +78,12 @@ class EditEventScreen extends Component {
         this.state.visitName,
         new Date(this.state.visitDate).toString(),
         this.state.visitNotes,
+        this.state.visitPictures
       );
       this.props.navigation.navigate('Home');
+    }
+    else {
+      this.setState(() => ({ visitTitleError: "Visit Title is required."}));
     }
   };
 
@@ -97,7 +95,7 @@ class EditEventScreen extends Component {
 
   render() {
     return (
-      <KeyboardAvoidingView style={styles.eventView} behavior="height" enabled>
+      <KeyboardAwareScrollView>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -130,6 +128,9 @@ class EditEventScreen extends Component {
             }}
             value={this.state.visitName}
           />
+          <Text style={styles.errorFont}>
+            {this.state.visitTitleError}
+          </Text>
         </View>
         <View style={styles.inputSpacer}>
           <TouchableOpacity
@@ -192,7 +193,7 @@ class EditEventScreen extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -203,8 +204,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  addVisit: (visitData, id, name, created, information) => {
-    dispatch(addVisit(visitData, id, name, created, information));
+  addVisit: (visitData, id, name, created, information, pictures) => {
+    dispatch(addVisit(visitData, id, name, created, information, pictures));
   }
 });
 
