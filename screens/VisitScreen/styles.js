@@ -60,7 +60,7 @@ export default StyleSheet.create({
     fontSize: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center', 
+    textAlign: 'center',
   },
   wholeView: {
     flex: 1

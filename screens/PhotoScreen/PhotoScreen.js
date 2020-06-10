@@ -38,11 +38,11 @@ class PhotoScreen extends Component {
     const visitId = this.props.navigation.getParam('visitId');
     const pictureId = this.props.navigation.getParam('pictureId');
     let currentPicture = [];
-    if (visitId == '') {
+    if (visitId === '') {
       currentPicture = this.props.navigation.getParam('visitPictures').find(
-        (data) => data.pictureId === pictureId);
-    }
-    else {
+        (data) => data.pictureId === pictureId
+      );
+    } else {
       currentPicture = this.props.visitData[visitId].visitPictures.find(
         (data) => data.pictureId === pictureId
       );
@@ -81,11 +81,11 @@ class PhotoScreen extends Component {
     const pictureId = this.props.navigation.getParam('pictureId');
     const visitId = this.props.navigation.getParam('visitId');
     let currentPicture = [];
-    if (visitId == '') {
+    if (visitId === '') {
       currentPicture = this.props.navigation.getParam('visitPictures').find(
-        (data) => data.pictureId === pictureId);
-    }
-    else {
+        (data) => data.pictureId === pictureId
+      );
+    } else {
       currentPicture = this.props.visitData[visitId].visitPictures.find(
         (data) => data.pictureId === pictureId
       );

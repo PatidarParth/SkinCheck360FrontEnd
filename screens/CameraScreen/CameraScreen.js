@@ -132,9 +132,8 @@ class CameraScreen extends React.Component {
         diameter
       );
       this.props.navigation.goBack();
-    }   
-    else {
-      pictureArray = [];
+    } else {
+      const pictureArray = [];
       pictureArray.push({
         pictureId: uuidv4(),
         uri: photo,
@@ -146,7 +145,7 @@ class CameraScreen extends React.Component {
         diameter,
         dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
       });
-      this.props.navigation.navigate('AddEvent', {pictureArray: pictureArray })
+      this.props.navigation.navigate('AddEvent', { pictureArray });
     }
   };
 
@@ -223,12 +222,12 @@ class CameraScreen extends React.Component {
     this.props.navigation.goBack();
   };
 
-  static navigationOptions = {
-    header: null
-  };
-
   onOpacityChange = (v) => {
     this.setState({ opacity: v });
+  };
+
+  static navigationOptions = {
+    header: null
   };
 
   renderSvg() {
@@ -258,11 +257,11 @@ class CameraScreen extends React.Component {
     const visitId = this.props.navigation.getParam('visitId');
     // const pictureId = this.props.navigation.getParam('pictureId');
     let currentPicture = [];
-    if (visitId == '') {
+    if (visitId === '') {
       currentPicture = this.props.navigation.getParam('visitPictures').find(
-        (data) => data.pictureId === pictureId);
-    }
-    else {
+        (data) => data.pictureId === pictureId
+      );
+    } else {
       currentPicture = this.props.visitData[visitId].visitPictures.find(
         (data) => data.pictureId === pictureId
       );
@@ -328,10 +327,9 @@ class CameraScreen extends React.Component {
       this.props.navigation.getParam('visitId')
     ] !== undefined) {
       visitPictures = this.props.visitData[
-        this.props.navigation.getParam('visitId')].visitPictures
-    }
-    else {
-      visitPictures = this.props.navigation.getParam('visitPictures')
+        this.props.navigation.getParam('visitId')].visitPictures;
+    } else {
+      visitPictures = this.props.navigation.getParam('visitPictures');
     }
 
     let visitPhoto = null;

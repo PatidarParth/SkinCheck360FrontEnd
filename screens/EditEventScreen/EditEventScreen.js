@@ -81,9 +81,8 @@ class EditEventScreen extends Component {
         this.state.visitPictures
       );
       this.props.navigation.navigate('Home');
-    }
-    else {
-      this.setState(() => ({ visitTitleError: "Visit Title is required."}));
+    } else {
+      this.setState(() => ({ visitTitleError: 'Visit Title is required.' }));
     }
   };
 

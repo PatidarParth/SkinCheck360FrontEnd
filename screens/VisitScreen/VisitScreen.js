@@ -141,48 +141,48 @@ class VisitScreen extends Component {
             />
           )}
         />
-              <View style={styles.innerSpacer}>
-                <Input
-                  label="Visit Date"
-                  labelStyle={styles.labelFont}
-                  color="#0A2B66"
-                  editable={false}
-                  value={Moment(this.props.navigation.getParam('visitDate')).format(
-                    'MMMM D, YYYY'
-                  )}
-                  style={styles.inputTimePicker}
-                  leftIcon={(
-                    <MaterialCommunityIcons
-                      name="calendar"
-                      size={24}
-                      style={styles.inputIcon}
-                      color="#0A2B66"
-                    />
+        <View style={styles.innerSpacer}>
+          <Input
+            label="Visit Date"
+            labelStyle={styles.labelFont}
+            color="#0A2B66"
+            editable={false}
+            value={Moment(this.props.navigation.getParam('visitDate')).format(
+              'MMMM D, YYYY'
+            )}
+            style={styles.inputTimePicker}
+            leftIcon={(
+              <MaterialCommunityIcons
+                name="calendar"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
                     )}
-                />
-              </View>
-              <View style={styles.innerSpacer}>
-                <Input
-                  label="Visit Information"
-                  labelStyle={styles.labelFont}
-                  color="#0A2B66"
-                  editable={false}
-                  multiline
-                  value={this.props.navigation.getParam('visitNotes')}
-                  style={styles.inputTimePicker}
-                  leftIcon={(
-                    <MaterialCommunityIcons
-                      name="pen"
-                      size={24}
-                      style={styles.inputIcon}
-                      color="#0A2B66"
-                    />
+          />
+        </View>
+        <View style={styles.innerSpacer}>
+          <Input
+            label="Visit Information"
+            labelStyle={styles.labelFont}
+            color="#0A2B66"
+            editable={false}
+            multiline
+            value={this.props.navigation.getParam('visitNotes')}
+            style={styles.inputTimePicker}
+            leftIcon={(
+              <MaterialCommunityIcons
+                name="pen"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
                       )}
-                />
-              </View>
-              <Provider>
-              <ScrollView>
-              {(!visitPictures
+          />
+        </View>
+        <Provider>
+          <ScrollView>
+            {(!visitPictures
                 || (visitPictures && visitPictures.length === 0)) && (
                   <View style={styles.innerSpacer}>
                     <View style={styles.notificationView}>
@@ -191,8 +191,8 @@ class VisitScreen extends Component {
                       </Text>
                     </View>
                   </View>
-              )}
-              <View style={styles.scrollView}>
+            )}
+            <View style={styles.scrollView}>
 
               {visitPictures
                 && visitPictures.length > 0
@@ -235,23 +235,23 @@ class VisitScreen extends Component {
                     </View>
                   </TouchableOpacity>
                 ))}
+            </View>
+            <View style={styles.inputSpacer}>
+              <View style={styles.photoButtonRow}>
+                <TouchableOpacity
+                  style={styles.photoButton}
+                  onPress={this.navigateToCamera}
+                >
+                  <Text style={styles.primaryText}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.photoButton}
+                  onPress={this.importImage}
+                >
+                  <Text style={styles.primaryText}>Import Image </Text>
+                </TouchableOpacity>
               </View>
-              <View style={styles.inputSpacer}>
-                <View style={styles.photoButtonRow}>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={this.navigateToCamera}
-                  >
-                    <Text style={styles.primaryText}>Take Photo</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={this.importImage}
-                  >
-                    <Text style={styles.primaryText}>Import Image </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+            </View>
           </ScrollView>
           <Menu
             visible={this.state.visible}
@@ -265,7 +265,7 @@ class VisitScreen extends Component {
             <Menu.Item onPress={this.deletePicture} title="Delete" />
           </Menu>
         </Provider>
-       </View>
+      </View>
     );
   }
 }

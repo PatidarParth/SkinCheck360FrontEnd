@@ -89,8 +89,7 @@ export function addVisit(visitData, visitId, visitName, visitDate, visitNotes, v
     visitData[visitId].visitNotes = visitNotes;
     if (visitPictures.length > 0) {
       visitData[visitId].visitPictures = visitPictures;
-    }
-    else {
+    } else {
       visitData[visitId].visitPictures = [];
     }
     dispatch(actionAddVisit(visitData));

@@ -3,14 +3,13 @@ import React, { Component } from 'react';
 import {
   View, Text, Image, ScrollView, TouchableOpacity
 } from 'react-native';
-import { Header, Input } from 'react-native-elements';
+import { Header } from 'react-native-elements';
 import {
   Menu, Divider, Provider, IconButton
 } from 'react-native-paper';
 import { connect } from 'react-redux';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { deletePicture, addPicture } from '../../redux/actions';
 import styles from './styles';
 

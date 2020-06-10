@@ -6,15 +6,16 @@ import { Input, Header } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { IconButton, Provider, Menu, Divider } from 'react-native-paper';
+import {
+  IconButton, Provider, Menu, Divider
+} from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { connect } from 'react-redux';
 import { Appearance } from 'react-native-appearance';
-import { addVisit } from '../../redux/actions';
-import memoize from "memoize-one"
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import { addVisit } from '../../redux/actions';
 import styles from './styles';
 
 const colorScheme = Appearance.getColorScheme();
@@ -43,7 +44,6 @@ class AddEventScreen extends Component {
       selectedPicture: {},
       addNewMenuVisible: false
     };
-
   }
 
   componentDidMount() {
@@ -61,6 +61,24 @@ class AddEventScreen extends Component {
         this.setState({ isDarkModeEnabled: _colorScheme === 'light' });
       }
     );
+  }
+
+  componentDidUpdate = (oldProps) => {
+    const newProps = this.props;
+    let index = 0;
+    if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
+      if (newProps.navigation.getParam('pictureArray') !== undefined) {
+        while (index < newProps.navigation.getParam('pictureArray').length) {
+          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[index]);
+          index += 1;
+        }
+      }
+      this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
+      // this.setState((previousState) => ({
+      //   ...previousState, visitPictures: previousState.state.visitPictures
+      // }));
+      // this.setState({ visitPictures: this.state.visitPictures });
+    }
   }
 
   componentWillUnmount() {
@@ -82,7 +100,7 @@ class AddEventScreen extends Component {
 
   navigateToCamera = () => {
     this.setState({ addNewMenuVisible: false });
-      this.props.navigation.navigate('AddPhotos', {
+    this.props.navigation.navigate('AddPhotos', {
       visitId: '',
     });
   };
@@ -96,9 +114,9 @@ class AddEventScreen extends Component {
         base64: true,
         exif: true
       });
-      emptyString = ''
-      location = -100
-      diameter = 20
+      const emptyString = '';
+      const location = -100;
+      const diameter = 20;
       if (result && result.uri) {
         this.state.visitPictures.push({
           emptyString,
@@ -111,7 +129,7 @@ class AddEventScreen extends Component {
           diameter,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
         });
-        this.setState({ visitPictures: this.state.visitPictures});
+        this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
       }
     }
   };
@@ -126,25 +144,20 @@ class AddEventScreen extends Component {
         new Date(this.state.visitDate).toString(),
         this.state.visitNotes,
         this.state.visitPictures
-      )
+      );
 
       this.props.navigation.navigate('Home');
-      }
-    else {
-      this.setState(() => ({ visitTitleError: "Visit Title is required."}));
+    } else {
+      this.setState(() => ({ visitTitleError: 'Visit Title is required.' }));
     }
   };
 
   displayDateTimePicker = (display) => this.setState({ isDateTimePickerVisible: display });
 
-  static navigationOptions = {
-    header: null
-  };
-
   view = () => {
     this.setState({ visible: false });
     this.props.navigation.navigate('Photo', {
-      visitId: "",
+      visitId: '',
       pictureId: this.state.selectedPicture.pictureId,
       pictureUri: this.state.selectedPicture.uri,
       pictureNote: this.state.selectedPicture.pictureNote,
@@ -157,7 +170,7 @@ class AddEventScreen extends Component {
   overlayPicture = () => {
     this.setState({ visible: false });
     this.props.navigation.navigate('AddPhotos', {
-      visitId: "",
+      visitId: '',
       overlayPictureId: this.state.selectedPicture.pictureId,
       visitPictures: this.state.visitPictures
     });
@@ -165,25 +178,14 @@ class AddEventScreen extends Component {
 
   deletePicture = () => {
     this.setState({ visible: false });
-    this.setState({visitPictures: this.state.visitPictures.filter(item=>item.uri != this.state.pictureUri)});
+    this.setState((prevState) => ({ visitPictures: prevState.visitPictures.filter((item) => item.uri !== prevState.pictureUri) }));
   };
-  
 
-  componentDidUpdate = (oldProps) => {
-    const newProps = this.props
-    index = 0 
-    if(oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
-      if (newProps.navigation.getParam('pictureArray') != undefined) {
-        while (index < newProps.navigation.getParam('pictureArray').length) {
-          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[index])
-          index++
-        }
-      }      
-      this.setState({ visitPictures: this.state.visitPictures});
-    }
-  }
+  static navigationOptions = {
+    header: null
+  };
 
-  render() {  
+  render() {
     return (
       <KeyboardAwareScrollView>
         <Header
@@ -218,7 +220,7 @@ class AddEventScreen extends Component {
             }}
             value={this.state.visitName}
           />
-           <Text style={styles.errorFont}>
+          <Text style={styles.errorFont}>
             {this.state.visitTitleError}
           </Text>
         </View>
@@ -275,7 +277,7 @@ class AddEventScreen extends Component {
         </View>
         <Provider>
           <ScrollView>
-              {(!this.state.visitPictures
+            {(!this.state.visitPictures
                 || (this.state.visitPictures && this.state.visitPictures.length === 0)) && (
                   <View style={styles.innerSpacer}>
                     <View style={styles.notificationView}>
@@ -284,8 +286,8 @@ class AddEventScreen extends Component {
                       </Text>
                     </View>
                   </View>
-              )}
-              <View style={styles.scrollView}>
+            )}
+            <View style={styles.scrollView}>
               {this.state.visitPictures
                 && this.state.visitPictures.length > 0
                 && this.state.visitPictures.map((picture, i) => (
@@ -293,7 +295,7 @@ class AddEventScreen extends Component {
                     key={`picture-${i}`}
                     style={styles.pictureButton}
                     onPress={() => this.props.navigation.navigate('Photo', {
-                      visitId: "",
+                      visitId: '',
                       pictureId: picture.pictureId,
                       pictureUri: picture.uri,
                       pictureNote: picture.pictureNote,
@@ -327,31 +329,31 @@ class AddEventScreen extends Component {
                     </View>
                   </TouchableOpacity>
                 ))}
+            </View>
+            <View style={styles.inputSpacer}>
+              <View style={styles.photoButtonRow}>
+                <TouchableOpacity
+                  style={styles.photoButton}
+                  onPress={this.navigateToCamera}
+                >
+                  <Text style={styles.primaryText}>Take Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.photoButton}
+                  onPress={this.importImage}
+                >
+                  <Text style={styles.primaryText}>Import Image </Text>
+                </TouchableOpacity>
               </View>
-              <View style={styles.inputSpacer}>
-                <View style={styles.photoButtonRow}>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={this.navigateToCamera}
-                  >
-                    <Text style={styles.primaryText}>Take Photo</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={this.importImage}
-                  >
-                    <Text style={styles.primaryText}>Import Image </Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-                <View style={styles.buttonSave}>
-                  <TouchableOpacity
-                    style={styles.primaryButton}
-                    onPress={() => this.saveVisit()}
-                  >
-                    <Text style={styles.primaryText}>Save Visit</Text>
-                  </TouchableOpacity>
-                </View>
+            </View>
+            <View style={styles.buttonSave}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => this.saveVisit()}
+              >
+                <Text style={styles.primaryText}>Save Visit</Text>
+              </TouchableOpacity>
+            </View>
           </ScrollView>
           <Menu
             visible={this.state.visible}
