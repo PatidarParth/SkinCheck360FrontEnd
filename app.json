@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Duke Dermatology",
-    "slug": "DukeDerm",
+    "name": "Skin Check 360",
+    "slug": "SkinCheck306",
     "privacy": "unlisted",
     "sdkVersion": "35.0.0",
     "platforms": [
@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.8",
+    "version": "1.0.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,7 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "com.onecowstanding.dukedermatology",
+      "bundleIdentifier": "com.domainname.skincheck360",
       "supportsTablet": true
     },
     "description": ""
