@@ -11,6 +11,7 @@ import {
 } from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
+import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import { Appearance } from 'react-native-appearance';
 import * as Permissions from 'expo-permissions';
@@ -65,19 +66,18 @@ class AddEventScreen extends Component {
 
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
-    let index = 0;
+    let picId = newProps.navigation.getParam('picId')
     if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
       if (newProps.navigation.getParam('pictureArray') !== undefined) {
-        while (index < newProps.navigation.getParam('pictureArray').length) {
-          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[index]);
-          index += 1;
-        }
+          if (this.state.visitPictures.find(e => e.pictureId === picId)) {
+            let updatedArray = update(this.state.visitPictures, {$splice: [[this.state.visitPictures.findIndex(e => e.pictureId === picId), 1, newProps.navigation.getParam('pictureArray')[0]]]});  // array.splice(start, deleteCount, item1)
+            this.setState((prevState) => ({ visitPictures: updatedArray }));
+          }
+          else {
+            this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[0]);
+            this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
+          }          
       }
-      this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
-      // this.setState((previousState) => ({
-      //   ...previousState, visitPictures: previousState.state.visitPictures
-      // }));
-      // this.setState({ visitPictures: this.state.visitPictures });
     }
   }
 

@@ -134,8 +134,9 @@ class CameraScreen extends React.Component {
       this.props.navigation.goBack();
     } else {
       const pictureArray = [];
+      const picId = this.props.navigation.getParam('pictureId') || uuidv4()
       pictureArray.push({
-        pictureId: uuidv4(),
+        pictureId: picId,
         uri: photo,
         pictureNote,
         pictureLocation,
@@ -145,7 +146,7 @@ class CameraScreen extends React.Component {
         diameter,
         dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
       });
-      this.props.navigation.navigate('AddEvent', { pictureArray });
+      this.props.navigation.navigate('AddEvent', { pictureArray, picId });
     }
   };
 
