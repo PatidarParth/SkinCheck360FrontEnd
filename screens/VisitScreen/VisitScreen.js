@@ -116,7 +116,7 @@ class VisitScreen extends Component {
     const { visitData } = this.props;
 
     return (
-      <View style={styles.wholeView}>
+      <View style={styles.providerView}>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -141,9 +141,6 @@ class VisitScreen extends Component {
             />
           )}
         />
-        <Provider>
-          <ScrollView>
-            <View style={styles.scrollView}>
               <View style={styles.innerSpacer}>
                 <Input
                   label="Visit Date"
@@ -183,7 +180,8 @@ class VisitScreen extends Component {
                       )}
                 />
               </View>
-
+              <Provider>
+              <ScrollView>
               {(!visitPictures
                 || (visitPictures && visitPictures.length === 0)) && (
                   <View style={styles.innerSpacer}>
@@ -194,6 +192,8 @@ class VisitScreen extends Component {
                     </View>
                   </View>
               )}
+              <View style={styles.scrollView}>
+
               {visitPictures
                 && visitPictures.length > 0
                 && visitPictures.map((picture, i) => (
@@ -235,6 +235,7 @@ class VisitScreen extends Component {
                     </View>
                   </TouchableOpacity>
                 ))}
+              </View>
               <View style={styles.inputSpacer}>
                 <View style={styles.photoButtonRow}>
                   <TouchableOpacity
@@ -251,7 +252,6 @@ class VisitScreen extends Component {
                   </TouchableOpacity>
                 </View>
               </View>
-            </View>
           </ScrollView>
           <Menu
             visible={this.state.visible}

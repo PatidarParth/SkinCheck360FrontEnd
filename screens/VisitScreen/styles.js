@@ -11,8 +11,10 @@ export default StyleSheet.create({
   },
   scrollView: {
     display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    flexWrap: 'wrap'
   },
   notificationView: {
     display: 'flex',

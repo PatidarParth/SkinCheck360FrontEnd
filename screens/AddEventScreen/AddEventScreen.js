@@ -275,7 +275,6 @@ class AddEventScreen extends Component {
         </View>
         <Provider>
           <ScrollView>
-            <View style={styles.scrollView}>
               {(!this.state.visitPictures
                 || (this.state.visitPictures && this.state.visitPictures.length === 0)) && (
                   <View style={styles.innerSpacer}>
@@ -286,6 +285,7 @@ class AddEventScreen extends Component {
                     </View>
                   </View>
               )}
+              <View style={styles.scrollView}>
               {this.state.visitPictures
                 && this.state.visitPictures.length > 0
                 && this.state.visitPictures.map((picture, i) => (
@@ -327,6 +327,7 @@ class AddEventScreen extends Component {
                     </View>
                   </TouchableOpacity>
                 ))}
+              </View>
               <View style={styles.inputSpacer}>
                 <View style={styles.photoButtonRow}>
                   <TouchableOpacity
@@ -351,7 +352,6 @@ class AddEventScreen extends Component {
                     <Text style={styles.primaryText}>Save Visit</Text>
                   </TouchableOpacity>
                 </View>
-            </View>
           </ScrollView>
           <Menu
             visible={this.state.visible}

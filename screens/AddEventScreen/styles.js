@@ -3,11 +3,25 @@ import baseStyles from '../../styles';
 
 export default StyleSheet.create({
   ...baseStyles,
-  eventView: {
+  providerView: {
     flex: 1,
     display: 'flex',
-    justifyContent: 'flex-start',
-    alignContent: 'space-around'
+    justifyContent: 'center',
+    alignContent: 'center'
+  },
+  scrollView: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1,
+    alignItems: 'center',
+    flexWrap: 'wrap'
+  },
+  notificationView: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100%',
   },
   buttonTimePicker: {
     height: 50
