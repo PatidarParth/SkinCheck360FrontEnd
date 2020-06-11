@@ -324,9 +324,7 @@ class CameraScreen extends React.Component {
       return <Text>No access to camera</Text>;
     }
     let visitPictures = [];
-    if (this.props.visitData[
-      this.props.navigation.getParam('visitId')
-    ] !== undefined) {
+    if (this.props.navigation.getParam('visitId') !== '') {
       visitPictures = this.props.visitData[
         this.props.navigation.getParam('visitId')].visitPictures;
     } else {

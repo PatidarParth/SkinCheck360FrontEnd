@@ -187,6 +187,7 @@ class AddEventScreen extends Component {
 
   render() {
     return (
+      <View style={styles.providerView}>
       <KeyboardAwareScrollView>
         <Header
           containerStyle={styles.header}
@@ -355,6 +356,8 @@ class AddEventScreen extends Component {
               </TouchableOpacity>
             </View>
           </ScrollView>
+          </Provider>
+          </KeyboardAwareScrollView>
           <Menu
             visible={this.state.visible}
             onDismiss={() => this.setState({ visible: false })}
@@ -366,8 +369,7 @@ class AddEventScreen extends Component {
             <Divider />
             <Menu.Item onPress={this.deletePicture} title="Delete" />
           </Menu>
-        </Provider>
-      </KeyboardAwareScrollView>
+      </View>
     );
   }
 }
