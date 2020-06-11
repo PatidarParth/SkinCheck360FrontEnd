@@ -94,7 +94,7 @@ class EditEventScreen extends Component {
 
   render() {
     return (
-      <KeyboardAwareScrollView>
+      <View>
         <Header
           containerStyle={styles.header}
           leftComponent={(
@@ -108,6 +108,7 @@ class EditEventScreen extends Component {
           )}
           centerComponent={{ text: 'Edit Visit Information', style: styles.headerCenter }}
         />
+        <KeyboardAwareScrollView>
         <View style={styles.innerSpacer}>
           <Input
             placeholder="The name of your doctor or hospital"
@@ -193,6 +194,7 @@ class EditEventScreen extends Component {
           </View>
         </View>
       </KeyboardAwareScrollView>
+      </View>
     );
   }
 }
