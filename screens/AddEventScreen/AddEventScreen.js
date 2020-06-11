@@ -192,7 +192,6 @@ class AddEventScreen extends Component {
   render() {
     return (
       <View style={styles.providerView}>
-        <KeyboardAwareScrollView>
           <Header
             containerStyle={styles.header}
             leftComponent={(
@@ -206,6 +205,7 @@ class AddEventScreen extends Component {
           )}
             centerComponent={{ text: 'Enter Visit Information', style: styles.headerCenter }}
           />
+          <KeyboardAwareScrollView>
           <View style={styles.innerSpacer}>
             <Input
               placeholder="The name of your doctor or hospital"
