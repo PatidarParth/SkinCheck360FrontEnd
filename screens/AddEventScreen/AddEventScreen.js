@@ -22,6 +22,10 @@ import styles from './styles';
 const colorScheme = Appearance.getColorScheme();
 
 class AddEventScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   subscription;
 
   constructor(props) {
@@ -66,17 +70,21 @@ class AddEventScreen extends Component {
 
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
-    let picId = newProps.navigation.getParam('picId')
+    const picId = newProps.navigation.getParam('picId');
     if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
       if (newProps.navigation.getParam('pictureArray') !== undefined) {
-          if (this.state.visitPictures.find(e => e.pictureId === picId)) {
-            let updatedArray = update(this.state.visitPictures, {$splice: [[this.state.visitPictures.findIndex(e => e.pictureId === picId), 1, newProps.navigation.getParam('pictureArray')[0]]]});  // array.splice(start, deleteCount, item1)
-            this.setState((prevState) => ({ visitPictures: updatedArray }));
-          }
-          else {
-            this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[0]);
-            this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
-          }          
+        if (this.state.visitPictures.find((e) => e.pictureId === picId)) {
+          const updatedArray = update(
+            this.state.visitPictures, {
+              $splice: [[this.state.visitPictures.findIndex((e) => e.pictureId === picId), 1,
+                newProps.navigation.getParam('pictureArray')[0]]]
+            }
+          ); // array.splice(start, deleteCount, item1)
+          this.setState(() => ({ visitPictures: updatedArray }));
+        } else {
+          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[0]);
+          this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
+        }
       }
     }
   }
@@ -181,115 +189,111 @@ class AddEventScreen extends Component {
     this.setState((prevState) => ({ visitPictures: prevState.visitPictures.filter((item) => item.uri !== prevState.pictureUri) }));
   };
 
-  static navigationOptions = {
-    header: null
-  };
-
   render() {
     return (
       <View style={styles.providerView}>
-      <KeyboardAwareScrollView>
-        <Header
-          containerStyle={styles.header}
-          leftComponent={(
-            <IconButton
-              icon="chevron-left"
-              style={styles.leftHeaderComponent}
-              color="white"
-              size={40}
-              onPress={() => this.props.navigation.goBack()}
-            />
-          )}
-          centerComponent={{ text: 'Enter Visit Information', style: styles.headerCenter }}
-        />
-        <View style={styles.innerSpacer}>
-          <Input
-            placeholder="The name of your doctor or hospital"
-            style={styles.flexGrow}
-            label="Visit Title"
-            labelStyle={styles.labelFont}
-            leftIcon={(
-              <MaterialCommunityIcons
-                name="medical-bag"
-                size={24}
-                style={styles.inputIcon}
-                color="#0A2B66"
+        <KeyboardAwareScrollView>
+          <Header
+            containerStyle={styles.header}
+            leftComponent={(
+              <IconButton
+                icon="chevron-left"
+                style={styles.leftHeaderComponent}
+                color="white"
+                size={40}
+                onPress={() => this.props.navigation.goBack()}
               />
-            )}
-            onChangeText={(text) => {
-              this.setState({ visitName: text });
-            }}
-            value={this.state.visitName}
+          )}
+            centerComponent={{ text: 'Enter Visit Information', style: styles.headerCenter }}
           />
-          <Text style={styles.errorFont}>
-            {this.state.visitTitleError}
-          </Text>
-        </View>
-        <View style={styles.inputSpacer}>
-          <TouchableOpacity
-            onPress={() => this.displayDateTimePicker(true)}
-          >
+          <View style={styles.innerSpacer}>
             <Input
-              placeholder="The date of the visit"
-              label="Visit Date"
+              placeholder="The name of your doctor or hospital"
+              style={styles.flexGrow}
+              label="Visit Title"
               labelStyle={styles.labelFont}
-              color="#0A2B66"
-              editable={false}
-              value={this.getDate()}
-              style={styles.inputTimePicker}
               leftIcon={(
                 <MaterialCommunityIcons
-                  name="calendar"
+                  name="medical-bag"
                   size={24}
                   style={styles.inputIcon}
                   color="#0A2B66"
                 />
-              )}
-            />
-          </TouchableOpacity>
-          <DateTimePicker
-            value={this.state.visitDate}
-            isVisible={this.state.isDateTimePickerVisible}
-            onConfirm={this.handleDatePicked}
-            onCancel={() => this.displayDateTimePicker(false)}
-            isDarkModeEnabled={this.state.isDarkModeEnabled}
-          />
-        </View>
-        <View style={styles.innerSpacer}>
-          <Input
-            placeholder="Any notes about your visit"
-            style={styles.flexGrow}
-            label="Visit Information"
-            labelStyle={styles.labelFont}
-            multiline
-            leftIcon={(
-              <MaterialCommunityIcons
-                name="pen"
-                size={24}
-                style={styles.inputIcon}
-                color="#0A2B66"
-              />
             )}
-            onChangeText={(text) => {
-              this.setState({ visitNotes: text });
-            }}
-            value={this.state.visitNotes}
-          />
-        </View>
-        <Provider>
-          <ScrollView>
-            {(!this.state.visitPictures
+              onChangeText={(text) => {
+                this.setState({ visitName: text });
+              }}
+              value={this.state.visitName}
+            />
+            <Text style={styles.errorFont}>
+              {this.state.visitTitleError}
+            </Text>
+          </View>
+          <View style={styles.inputSpacer}>
+            <TouchableOpacity
+              onPress={() => this.displayDateTimePicker(true)}
+            >
+              <Input
+                placeholder="The date of the visit"
+                label="Visit Date"
+                labelStyle={styles.labelFont}
+                color="#0A2B66"
+                editable={false}
+                value={this.getDate()}
+                style={styles.inputTimePicker}
+                leftIcon={(
+                  <MaterialCommunityIcons
+                    name="calendar"
+                    size={24}
+                    style={styles.inputIcon}
+                    color="#0A2B66"
+                  />
+              )}
+              />
+            </TouchableOpacity>
+            <DateTimePicker
+              value={this.state.visitDate}
+              isVisible={this.state.isDateTimePickerVisible}
+              onConfirm={this.handleDatePicked}
+              onCancel={() => this.displayDateTimePicker(false)}
+              isDarkModeEnabled={this.state.isDarkModeEnabled}
+            />
+          </View>
+          <View style={styles.innerSpacer}>
+            <Input
+              placeholder="Any notes about your visit"
+              style={styles.flexGrow}
+              label="Visit Information"
+              labelStyle={styles.labelFont}
+              multiline
+              leftIcon={(
+                <MaterialCommunityIcons
+                  name="pen"
+                  size={24}
+                  style={styles.inputIcon}
+                  color="#0A2B66"
+                />
+            )}
+              onChangeText={(text) => {
+                this.setState({ visitNotes: text });
+              }}
+              value={this.state.visitNotes}
+            />
+          </View>
+          <Provider>
+            <ScrollView>
+              {(!this.state.visitPictures
                 || (this.state.visitPictures && this.state.visitPictures.length === 0)) && (
                   <View style={styles.innerSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
-                          No Pictures Currently
+                        No Pictures Currently
                       </Text>
                     </View>
                   </View>
-            )}
-            <View style={styles.scrollView}>
-              {this.state.visitPictures
+              )}
+              <View style={styles.scrollView}>
+                {this.state.visitPictures
                 && this.state.visitPictures.length > 0
                 && this.state.visitPictures.map((picture, i) => (
                   <TouchableOpacity
@@ -330,45 +334,45 @@ class AddEventScreen extends Component {
                     </View>
                   </TouchableOpacity>
                 ))}
-            </View>
-            <View style={styles.inputSpacer}>
-              <View style={styles.photoButtonRow}>
+              </View>
+              <View style={styles.inputSpacer}>
+                <View style={styles.photoButtonRow}>
+                  <TouchableOpacity
+                    style={styles.photoButton}
+                    onPress={this.navigateToCamera}
+                  >
+                    <Text style={styles.primaryText}>Take Photo</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.photoButton}
+                    onPress={this.importImage}
+                  >
+                    <Text style={styles.primaryText}>Import Image </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.buttonSave}>
                 <TouchableOpacity
-                  style={styles.photoButton}
-                  onPress={this.navigateToCamera}
+                  style={styles.primaryButton}
+                  onPress={() => this.saveVisit()}
                 >
-                  <Text style={styles.primaryText}>Take Photo</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.photoButton}
-                  onPress={this.importImage}
-                >
-                  <Text style={styles.primaryText}>Import Image </Text>
+                  <Text style={styles.primaryText}>Save Visit</Text>
                 </TouchableOpacity>
               </View>
-            </View>
-            <View style={styles.buttonSave}>
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => this.saveVisit()}
-              >
-                <Text style={styles.primaryText}>Save Visit</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+            </ScrollView>
           </Provider>
-          </KeyboardAwareScrollView>
-          <Menu
-            visible={this.state.visible}
-            onDismiss={() => this.setState({ visible: false })}
-            anchor={{ x: this.state.x, y: this.state.y }}
-          >
-            <Menu.Item onPress={() => this.view()} title="View" />
-            <Divider />
-            <Menu.Item onPress={this.overlayPicture} title="Overlay" />
-            <Divider />
-            <Menu.Item onPress={this.deletePicture} title="Delete" />
-          </Menu>
+        </KeyboardAwareScrollView>
+        <Menu
+          visible={this.state.visible}
+          onDismiss={() => this.setState({ visible: false })}
+          anchor={{ x: this.state.x, y: this.state.y }}
+        >
+          <Menu.Item onPress={() => this.view()} title="View" />
+          <Divider />
+          <Menu.Item onPress={this.overlayPicture} title="Overlay" />
+          <Divider />
+          <Menu.Item onPress={this.deletePicture} title="Delete" />
+        </Menu>
       </View>
     );
   }

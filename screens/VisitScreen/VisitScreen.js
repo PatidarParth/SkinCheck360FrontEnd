@@ -187,7 +187,7 @@ class VisitScreen extends Component {
                   <View style={styles.innerSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
-                          Add Pictures to your Visit
+                        Add Pictures to your Visit
                       </Text>
                     </View>
                   </View>

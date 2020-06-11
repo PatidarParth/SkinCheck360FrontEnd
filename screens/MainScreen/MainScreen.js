@@ -25,6 +25,10 @@ import privacyPolicy from '../../assets/privacypolicy.json';
 const swipePixelSize = 75;
 
 class MainScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -92,10 +96,6 @@ class MainScreen extends Component {
       cameraPermission: status,
       showBanner: status === 'denied'
     });
-  };
-
-  static navigationOptions = {
-    header: null
   };
 
   render() {

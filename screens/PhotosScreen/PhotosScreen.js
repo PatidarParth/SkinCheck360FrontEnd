@@ -139,7 +139,7 @@ class PhotosScreen extends Component {
                   <View style={styles.innerSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
-                          No Pictures Currently
+                        No Pictures Currently
                       </Text>
                     </View>
                   </View>

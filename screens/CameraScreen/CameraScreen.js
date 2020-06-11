@@ -40,6 +40,10 @@ THREE.suppressExpoWarnings(true);
 
 const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 170 : 220;
 class CameraScreen extends React.Component {
+  static navigationOptions = {
+    header: null
+  };
+
   camera = null;
 
   _baseScale = new Animated.Value(1);
@@ -134,7 +138,7 @@ class CameraScreen extends React.Component {
       this.props.navigation.goBack();
     } else {
       const pictureArray = [];
-      const picId = this.props.navigation.getParam('pictureId') || uuidv4()
+      const picId = this.props.navigation.getParam('pictureId') || uuidv4();
       pictureArray.push({
         pictureId: picId,
         uri: photo,
@@ -225,10 +229,6 @@ class CameraScreen extends React.Component {
 
   onOpacityChange = (v) => {
     this.setState({ opacity: v });
-  };
-
-  static navigationOptions = {
-    header: null
   };
 
   renderSvg() {

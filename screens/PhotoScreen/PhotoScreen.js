@@ -17,6 +17,10 @@ import { deletePicture } from '../../redux/actions';
 import styles from './styles';
 
 class PhotoScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -29,10 +33,6 @@ class PhotoScreen extends Component {
   };
 
   _showDialog = () => this.setState({ showNoteDialog: true });
-
-  static navigationOptions = {
-    header: null
-  };
 
   renderSvg() {
     const visitId = this.props.navigation.getParam('visitId');

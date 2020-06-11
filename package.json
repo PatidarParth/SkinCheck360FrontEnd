@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^10.0.0",
+    "@react-native-community/datetimepicker": "2.1.0",
     "expo": "^36.0.0",
     "expo-asset-utils": "^1.2.0",
     "expo-camera": "~8.0.0",
@@ -35,7 +36,7 @@
     "react-native-material-dropdown": "^0.11.1",
     "react-native-material-textfield": "^0.16.1",
     "react-native-material-ui": "^1.30.1",
-    "react-native-modal-datetime-picker": "^7.6.0",
+    "react-native-modal-datetime-picker": "^8.7.1",
     "react-native-modals": "^0.19.8",
     "react-native-paper": "^3.2.1",
     "react-native-screens": "^2.8.0",

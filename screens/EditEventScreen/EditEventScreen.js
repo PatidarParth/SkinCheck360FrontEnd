@@ -16,6 +16,10 @@ import styles from './styles';
 
 const colorScheme = Appearance.getColorScheme();
 class EditEventScreen extends Component {
+  static navigationOptions = {
+    header: null
+  };
+
   subscription;
 
   constructor(props) {
@@ -87,10 +91,6 @@ class EditEventScreen extends Component {
   };
 
   displayDateTimePicker = (display) => this.setState({ isDateTimePickerVisible: display });
-
-  static navigationOptions = {
-    header: null
-  };
 
   render() {
     return (
