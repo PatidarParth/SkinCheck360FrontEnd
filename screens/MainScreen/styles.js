@@ -39,7 +39,7 @@ export default StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   rowBack: {
     alignItems: 'center',

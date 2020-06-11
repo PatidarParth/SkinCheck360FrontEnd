@@ -56,9 +56,6 @@ class CameraScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    const visit = this.props.visitData[
-      this.props.navigation.getParam('visitId')
-    ];
     const pictureId = this.props.navigation.getParam('pictureId');
     const overlayPictureId = this.props.navigation.getParam('overlayPictureId');
 
@@ -69,7 +66,13 @@ class CameraScreen extends React.Component {
     let locationX = -100;
     let locationY = -100;
     let diameter = 20;
-    if (pictureId && visit) {
+    let visit = [];
+    if (this.props.navigation.getParam('visitId') !== '') {
+      visit = this.props.visitData[
+        this.props.navigation.getParam('visitId')
+      ];
+    }
+    if (pictureId && visit.length > 0) {
       const existingPicture = visit.visitPictures.find(
         (data) => data.pictureId === pictureId
       );
@@ -324,6 +327,7 @@ class CameraScreen extends React.Component {
       return <Text>No access to camera</Text>;
     }
     let visitPictures = [];
+
     if (this.props.navigation.getParam('visitId') !== '') {
       visitPictures = this.props.visitData[
         this.props.navigation.getParam('visitId')].visitPictures;

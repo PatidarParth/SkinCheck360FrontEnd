@@ -32,7 +32,7 @@ class EditEventScreen extends Component {
       visitPictures: [],
       visitNotes: '',
       edit: false,
-      isDarkModeEnabled: colorScheme === 'light',
+      isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: ''
     };
   }
@@ -51,7 +51,7 @@ class EditEventScreen extends Component {
     // eslint-disable-next-line no-undef
     subscription = Appearance.addChangeListener(
       ({ colorScheme: _colorScheme }) => {
-        this.setState({ isDarkModeEnabled: _colorScheme === 'light' });
+        this.setState({ isDarkModeEnabled: _colorScheme === 'dark' });
       }
     );
   }

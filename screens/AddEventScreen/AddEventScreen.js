@@ -37,7 +37,7 @@ class AddEventScreen extends Component {
       visitDate: Date.now(),
       visitNotes: '',
       edit: false,
-      isDarkModeEnabled: colorScheme === 'light',
+      isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: '',
       visitPictures: [],
       pictureNote: '',
@@ -63,7 +63,7 @@ class AddEventScreen extends Component {
     // eslint-disable-next-line no-undef
     subscription = Appearance.addChangeListener(
       ({ colorScheme: _colorScheme }) => {
-        this.setState({ isDarkModeEnabled: _colorScheme === 'light' });
+        this.setState({ isDarkModeEnabled: _colorScheme === 'dark' });
       }
     );
   }
@@ -127,7 +127,7 @@ class AddEventScreen extends Component {
       const diameter = 20;
       if (result && result.uri) {
         this.state.visitPictures.push({
-          emptyString,
+          pictureId: uuidv4(),
           uri: result.uri,
           emptyString,
           emptyString,
