@@ -45,7 +45,7 @@ export default StyleSheet.create({
   },
   pictureFont: {
     color: 'black',
-    fontSize: 16,
+    fontSize: 14,
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',

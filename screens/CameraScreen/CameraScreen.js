@@ -138,7 +138,7 @@ class CameraScreen extends React.Component {
         locationY,
         diameter
       );
-      this.props.navigation.goBack();
+      this.props.navigation.navigate('VisitDescription')
     } else {
       const pictureArray = [];
       const picId = this.props.navigation.getParam('pictureId') || uuidv4();
@@ -567,9 +567,10 @@ class CameraScreen extends React.Component {
                     onPress={this.retryPicture}
                   >
                     <MaterialCommunityIcons
-                      size={50}
+                      size={35}
                       name="autorenew"
                       color="white"
+                      style={{padding: 10}}
                     />
                     <Text
                       color="#FFF"
@@ -587,8 +588,9 @@ class CameraScreen extends React.Component {
                     onPress={() => this.enableDrawing()}
                   >
                     <MaterialCommunityIcons
-                      size={50}
+                      size={35}
                       name="gesture"
+                      style={{padding: 10}}
                       color={drawIconColor}
                     />
                     <Text
@@ -610,8 +612,9 @@ class CameraScreen extends React.Component {
                     onPress={this._showDialog}
                   >
                     <MaterialCommunityIcons
-                      size={50}
+                      size={35}
                       name="note-plus"
+                      style={{padding: 10}}
                       color="white"
                     />
                     <Text

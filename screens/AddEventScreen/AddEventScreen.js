@@ -71,8 +71,15 @@ class AddEventScreen extends Component {
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
     const picId = newProps.navigation.getParam('picId');
-    if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
+    if (oldProps.navigation.getParam('pictureUri') !== newProps.navigation.getParam('pictureUri')) {
       if (newProps.navigation.getParam('pictureArray') !== undefined) {
+      this.deletePicture(newProps.navigation.getParam('pictureUri'))
+      }
+    }
+    else {
+    if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
+      if (newProps.navigation.getParam('pictureArray') !== undefined && newProps.navigation.getParam('pictureArray').length > 0) {
+        //edit the pic with new pic 
         if (this.state.visitPictures.find((e) => e.pictureId === picId)) {
           const updatedArray = update(
             this.state.visitPictures, {
@@ -81,11 +88,14 @@ class AddEventScreen extends Component {
             }
           ); // array.splice(start, deleteCount, item1)
           this.setState(() => ({ visitPictures: updatedArray }));
-        } else {
+        //new pic first time
+        }
+        else {
           this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[0]);
           this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
         }
       }
+     }
     }
   }
 
@@ -184,9 +194,10 @@ class AddEventScreen extends Component {
     });
   };
 
-  deletePicture = () => {
+  deletePicture = (pictureUri) => {
+    console.log("delete")
     this.setState({ visible: false });
-    this.setState((prevState) => ({ visitPictures: prevState.visitPictures.filter((item) => item.uri !== prevState.pictureUri) }));
+    this.setState((prevState) => ({ visitPictures: prevState.visitPictures.filter((item) => item.uri !== pictureUri) }));
   };
 
   render() {
@@ -371,7 +382,7 @@ class AddEventScreen extends Component {
           <Divider />
           <Menu.Item onPress={this.overlayPicture} title="Overlay" />
           <Divider />
-          <Menu.Item onPress={this.deletePicture} title="Delete" />
+          <Menu.Item onPress={() => this.deletePicture(this.state.pictureUri)} title="Delete" />
         </Menu>
       </View>
     );

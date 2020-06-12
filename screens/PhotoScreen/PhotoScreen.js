@@ -34,6 +34,32 @@ class PhotoScreen extends Component {
 
   _showDialog = () => this.setState({ showNoteDialog: true });
 
+  overlayPicture = () => {
+      this.props.navigation.navigate('AddPhotos', {
+        visitId: this.props.navigation.getParam('visitId'),
+        overlayPictureId: this.props.navigation.getParam('pictureId'),
+        visitPictures: this.props.navigation.getParam('visitPictures')
+      });
+  };
+
+  deletePicture = () => {
+    //visit does not actually exist
+    pictureURI = this.props.navigation.getParam('pictureUri')
+    if (this.props.navigation.getParam('visitId') == '') {
+      this.props.navigation.navigate('AddEvent', {
+        pictureUri: pictureURI
+      });
+    }
+    //visit already exist 
+    else {
+      this.props.deletePicture(
+        this.props.visitData,
+        this.props.navigation.getParam('visitId'),
+        this.props.navigation.getParam('pictureUri')
+      );
+    }
+  };
+
   renderSvg() {
     const visitId = this.props.navigation.getParam('visitId');
     const pictureId = this.props.navigation.getParam('pictureId');
@@ -121,7 +147,7 @@ class PhotoScreen extends Component {
                 || 'No body part specified'}`}
               </Text>
               <Text style={textNoteStyle}>
-                {pictureNote || 'No notes have been entered'}
+                {`Notes: ${pictureNote || 'No notes have been entered'}`}
               </Text>
             </Dialog.Content>
             <Dialog.Actions>
@@ -147,7 +173,7 @@ class PhotoScreen extends Component {
               style: { fontSize: 20, color: '#fff', top: 0 }
             }}
             rightComponent={{
-              text: 'Edit',
+              text: 'Retake',
               style: { color: '#fff', fontSize: 16 },
               onPress: () => this.props.navigation.navigate('AddPhotos', {
                 visitId,
@@ -174,11 +200,33 @@ class PhotoScreen extends Component {
                 alignSelf: 'flex-end',
                 alignItems: 'center'
               }}
+              onPress={this.deletePicture}
+            >
+              <MaterialCommunityIcons
+                size={35}
+                style={{padding: 10}}
+                name="delete"
+                color="white"
+              />
+              <Text
+                color="#FFF"
+                style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+              >
+                Delete
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignSelf: 'flex-end',
+                alignItems: 'center'
+              }}
               onPress={this._showDialog}
             >
               <MaterialCommunityIcons
-                size={50}
+                size={35}
                 name="autorenew"
+                style={{padding: 10}}
                 color="white"
               />
               <Text
@@ -186,6 +234,27 @@ class PhotoScreen extends Component {
                 style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
               >
                 View Note
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignSelf: 'flex-end',
+                alignItems: 'center'
+              }}
+              onPress={this.overlayPicture}
+            >
+              <MaterialCommunityIcons
+                size={35}
+                name="picture-in-picture-bottom-right"
+                style={{padding: 10}}
+                color="white"
+              />
+              <Text
+                color="#FFF"
+                style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+              >
+                Overlay
               </Text>
             </TouchableOpacity>
           </View>
@@ -203,7 +272,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   deletePicture: (visitData, visitId, pictureUri) => {
     dispatch(deletePicture(visitData, visitId, pictureUri));
-  }
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PhotoScreen);
