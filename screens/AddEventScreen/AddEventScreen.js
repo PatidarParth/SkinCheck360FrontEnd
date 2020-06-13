@@ -22,10 +22,6 @@ import styles from './styles';
 const colorScheme = Appearance.getColorScheme();
 
 class AddEventScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
-
   subscription;
 
   constructor(props) {
@@ -70,28 +66,27 @@ class AddEventScreen extends Component {
 
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
-    const picId = newProps.navigation.getParam('picId');
-    if (oldProps.navigation.getParam('pictureUri') !== newProps.navigation.getParam('pictureUri')) {
-      if (newProps.navigation.getParam('pictureArray') !== undefined) {
-      this.deletePicture(newProps.navigation.getParam('pictureUri'))
+    if (oldProps.route.params?.pictureUri !== newProps.route.params?.pictureUri) {
+      if (newProps.route.params?.pictureArray !== undefined) {
+      this.deletePicture(newProps.route.params?.pictureUri)
       }
     }
     else {
-    if (oldProps.navigation.getParam('pictureArray') !== newProps.navigation.getParam('pictureArray')) {
-      if (newProps.navigation.getParam('pictureArray') !== undefined && newProps.navigation.getParam('pictureArray').length > 0) {
+    if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
+      if (newProps.route.params?.pictureArray !== undefined && newProps.route.params?.pictureArray.length > 0) {
         //edit the pic with new pic 
-        if (this.state.visitPictures.find((e) => e.pictureId === picId)) {
+        if (this.state.visitPictures.find((e) => e.pictureId === newProps.route.params?.picId)) {
           const updatedArray = update(
             this.state.visitPictures, {
-              $splice: [[this.state.visitPictures.findIndex((e) => e.pictureId === picId), 1,
-                newProps.navigation.getParam('pictureArray')[0]]]
+              $splice: [[this.state.visitPictures.findIndex((e) => e.pictureId === newProps.route.params?.picId), 1,
+                newProps.route.params?.pictureArray[0]]]
             }
           ); // array.splice(start, deleteCount, item1)
           this.setState(() => ({ visitPictures: updatedArray }));
         //new pic first time
         }
         else {
-          this.state.visitPictures.push(newProps.navigation.getParam('pictureArray')[0]);
+          this.state.visitPictures.push(newProps.route.params?.pictureArray[0]);
           this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
         }
       }
@@ -118,7 +113,7 @@ class AddEventScreen extends Component {
 
   navigateToCamera = () => {
     this.setState({ addNewMenuVisible: false });
-    this.props.navigation.navigate('AddPhotos', {
+    this.props.navigation.navigate('Camera', {
       visitId: '',
     });
   };
@@ -174,7 +169,7 @@ class AddEventScreen extends Component {
 
   view = () => {
     this.setState({ visible: false });
-    this.props.navigation.navigate('Photo', {
+    this.props.navigation.navigate('ViewPhoto', {
       visitId: '',
       pictureId: this.state.selectedPicture.pictureId,
       pictureUri: this.state.selectedPicture.uri,
@@ -187,7 +182,7 @@ class AddEventScreen extends Component {
 
   overlayPicture = () => {
     this.setState({ visible: false });
-    this.props.navigation.navigate('AddPhotos', {
+    this.props.navigation.navigate('Camera', {
       visitId: '',
       overlayPictureId: this.state.selectedPicture.pictureId,
       visitPictures: this.state.visitPictures
@@ -195,7 +190,6 @@ class AddEventScreen extends Component {
   };
 
   deletePicture = (pictureUri) => {
-    console.log("delete")
     this.setState({ visible: false });
     this.setState((prevState) => ({ visitPictures: prevState.visitPictures.filter((item) => item.uri !== pictureUri) }));
   };
@@ -310,7 +304,7 @@ class AddEventScreen extends Component {
                   <TouchableOpacity
                     key={`picture-${i}`}
                     style={styles.pictureButton}
-                    onPress={() => this.props.navigation.navigate('Photo', {
+                    onPress={() => this.props.navigation.navigate('ViewPhoto', {
                       visitId: '',
                       pictureId: picture.pictureId,
                       pictureUri: picture.uri,
@@ -324,7 +318,7 @@ class AddEventScreen extends Component {
                         x: name.nativeEvent.pageX,
                         y: name.nativeEvent.pageY,
                         selectedPicture: picture,
-                        visitId: this.props.navigation.getParam('visitId'),
+                        visitId: this.props.route.params?.visitId,
                         pictureUri: picture.uri,
                         pictureNote: picture.pictureNote,
                         pictureLocation: picture.pictureLocation,

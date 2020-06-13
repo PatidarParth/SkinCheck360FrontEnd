@@ -16,9 +16,6 @@ import styles from './styles';
 
 const colorScheme = Appearance.getColorScheme();
 class EditEventScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
 
   subscription;
 
@@ -38,7 +35,7 @@ class EditEventScreen extends Component {
   }
 
   componentDidMount() {
-    const visitId = this.props.navigation.getParam('visitId');
+    const visitId = this.props.route.params?.visitId;
     this.setState({
       visitId,
       visitName: this.props.visitData[visitId].visitName,

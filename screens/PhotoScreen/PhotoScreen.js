@@ -17,10 +17,6 @@ import { deletePicture } from '../../redux/actions';
 import styles from './styles';
 
 class PhotoScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -35,17 +31,17 @@ class PhotoScreen extends Component {
   _showDialog = () => this.setState({ showNoteDialog: true });
 
   overlayPicture = () => {
-      this.props.navigation.navigate('AddPhotos', {
-        visitId: this.props.navigation.getParam('visitId'),
-        overlayPictureId: this.props.navigation.getParam('pictureId'),
-        visitPictures: this.props.navigation.getParam('visitPictures')
+      this.props.navigation.navigate('Camera', {
+        visitId: this.props.route.params?.visitId,
+        overlayPictureId: this.props.route.params?.pictureId,
+        visitPictures: this.props.route.params?.visitPictures
       });
   };
 
   deletePicture = () => {
     //visit does not actually exist
-    pictureURI = this.props.navigation.getParam('pictureUri')
-    if (this.props.navigation.getParam('visitId') == '') {
+    pictureURI = this.props.route.params?.pictureUri
+    if (this.props.route.params?.visitId == '') {
       this.props.navigation.navigate('AddEvent', {
         pictureUri: pictureURI
       });
@@ -54,18 +50,18 @@ class PhotoScreen extends Component {
     else {
       this.props.deletePicture(
         this.props.visitData,
-        this.props.navigation.getParam('visitId'),
-        this.props.navigation.getParam('pictureUri')
+        this.props.route.params?.visitId,
+        this.props.route.params?.pictureUri
       );
     }
   };
 
   renderSvg() {
-    const visitId = this.props.navigation.getParam('visitId');
-    const pictureId = this.props.navigation.getParam('pictureId');
+    const visitId = this.props.route.params?.visitId;
+    const pictureId = this.props.route.params?.pictureId;
     let currentPicture = [];
     if (visitId === '') {
-      currentPicture = this.props.navigation.getParam('visitPictures').find(
+      currentPicture = this.props.route.params?.visitPictures.find(
         (data) => data.pictureId === pictureId
       );
     } else {
@@ -100,15 +96,15 @@ class PhotoScreen extends Component {
   }
 
   render() {
-    let pictureUri = this.props.navigation.getParam('pictureUri');
+    let pictureUri = this.props.route.params?.pictureUri;
     let pictureNote = '';
     let pictureLocation = '';
     let pictureBodyPart = '';
-    const pictureId = this.props.navigation.getParam('pictureId');
-    const visitId = this.props.navigation.getParam('visitId');
+    const pictureId = this.props.route.params?.pictureId;
+    const visitId = this.props.route.params?.visitId;
     let currentPicture = [];
     if (visitId === '') {
-      currentPicture = this.props.navigation.getParam('visitPictures').find(
+      currentPicture = this.props.route.params?.visitPictures.find(
         (data) => data.pictureId === pictureId
       );
     } else {
@@ -175,7 +171,7 @@ class PhotoScreen extends Component {
             rightComponent={{
               text: 'Retake',
               style: { color: '#fff', fontSize: 16 },
-              onPress: () => this.props.navigation.navigate('AddPhotos', {
+              onPress: () => this.props.navigation.navigate('Camera', {
                 visitId,
                 pictureUri,
                 pictureId

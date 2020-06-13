@@ -41,7 +41,7 @@ export default StyleSheet.create({
     color: 'red',
     fontSize: 16,
     paddingLeft: 30,
-    paddingTop: 5
+    paddingTop: 1
   },
   pictureFont: {
     color: 'black',

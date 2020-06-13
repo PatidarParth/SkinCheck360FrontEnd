@@ -20,14 +20,12 @@ import Moment from 'moment';
 import { IconButton, Banner } from 'react-native-paper';
 import { fetchVisits, deleteVisit } from '../../redux/actions';
 import styles from './styles';
+import { createBottomTabNavigator, createAppContainer } from 'react-navigation';
 import privacyPolicy from '../../assets/privacypolicy.json';
 
 const swipePixelSize = 75;
 
 class MainScreen extends Component {
-  static navigationOptions = {
-    header: null
-  };
 
   constructor(props) {
     super(props);

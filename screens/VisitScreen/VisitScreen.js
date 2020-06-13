@@ -33,13 +33,13 @@ class VisitScreen extends Component {
   }
 
   componentDidMount() {
-    this.setState({ visitId: this.props.navigation.getParam('visitId') });
+    this.setState({ visitId: this.props.route.params?.visitId });
   }
 
   view = () => {
     this.setState({ visible: false });
 
-    this.props.navigation.navigate('Photo', {
+    this.props.navigation.navigate('ViewPhoto', {
       visitId: this.state.visitId,
       pictureId: this.state.selectedPicture.pictureId,
       pictureUri: this.state.selectedPicture.uri,
@@ -52,7 +52,7 @@ class VisitScreen extends Component {
 
   overlayPicture = () => {
     this.setState({ visible: false });
-    this.props.navigation.navigate('AddPhotos', {
+    this.props.navigation.navigate('Camera', {
       visitId: this.state.visitId,
       overlayPictureId: this.state.selectedPicture.pictureId
     });
@@ -67,14 +67,9 @@ class VisitScreen extends Component {
     this.setState({ visible: false });
   };
 
-  // eslint-disable-next-line react/sort-comp
-  static navigationOptions = {
-    header: null
-  };
-
   navigateToCamera = () => {
     this.setState({ addNewMenuVisible: false });
-    this.props.navigation.navigate('AddPhotos', {
+    this.props.navigation.navigate('Camera', {
       visitId: this.state.visitId
     });
   };
@@ -95,7 +90,7 @@ class VisitScreen extends Component {
       if (result && result.uri) {
         this.props.addPicture(
           this.props.visitData,
-          this.props.navigation.getParam('visitId'),
+          this.props.route.params?.visitId,
           result.uri,
           '',
           '',
@@ -111,7 +106,7 @@ class VisitScreen extends Component {
 
   render() {
     const { visitPictures } = this.props.visitData[
-      this.props.navigation.getParam('visitId')
+      this.props.route.params?.visitId
     ];
     const { visitData } = this.props;
 
@@ -128,7 +123,7 @@ class VisitScreen extends Component {
               onPress={() => this.props.navigation.goBack()}
             />
           )}
-          centerComponent={{ text: this.props.navigation.getParam('visitName'), style: styles.headerCenter }}
+          centerComponent={{ text: this.props.route.params?.visitName, style: styles.headerCenter }}
           rightComponent={(
             <IconButton
               icon="square-edit-outline"
@@ -136,7 +131,7 @@ class VisitScreen extends Component {
               color="white"
               size={30}
               onPress={() => this.props.navigation.navigate('EditEvent', {
-                ...visitData[this.props.navigation.getParam('visitId')]
+                ...visitData[this.props.route.params?.visitId]
               })}
             />
           )}
@@ -147,7 +142,7 @@ class VisitScreen extends Component {
             labelStyle={styles.labelFont}
             color="#0A2B66"
             editable={false}
-            value={Moment(this.props.navigation.getParam('visitDate')).format(
+            value={Moment(this.props.route.params?.visitDate).format(
               'MMMM D, YYYY'
             )}
             style={styles.inputTimePicker}
@@ -168,7 +163,7 @@ class VisitScreen extends Component {
             color="#0A2B66"
             editable={false}
             multiline
-            value={this.props.navigation.getParam('visitNotes')}
+            value={this.props.route.params?.visitNotes}
             style={styles.inputTimePicker}
             leftIcon={(
               <MaterialCommunityIcons
@@ -200,7 +195,7 @@ class VisitScreen extends Component {
                   <TouchableOpacity
                     key={`picture-${i}`}
                     style={styles.pictureButton}
-                    onPress={() => this.props.navigation.navigate('Photo', {
+                    onPress={() => this.props.navigation.navigate('ViewPhoto', {
                       visitId: this.state.visitId,
                       pictureId: picture.pictureId,
                       pictureUri: picture.uri,
@@ -214,7 +209,7 @@ class VisitScreen extends Component {
                         x: name.nativeEvent.pageX,
                         y: name.nativeEvent.pageY,
                         selectedPicture: picture,
-                        visitId: this.props.navigation.getParam('visitId'),
+                        visitId: this.props.route.params?.visitId,
                         pictureUri: picture.uri,
                         pictureNote: picture.pictureNote,
                         pictureLocation: picture.pictureLocation,

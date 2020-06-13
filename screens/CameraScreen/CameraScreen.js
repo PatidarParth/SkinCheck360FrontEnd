@@ -40,10 +40,6 @@ THREE.suppressExpoWarnings(true);
 
 const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 170 : 220;
 class CameraScreen extends React.Component {
-  static navigationOptions = {
-    header: null
-  };
-
   camera = null;
 
   _baseScale = new Animated.Value(1);
@@ -56,8 +52,8 @@ class CameraScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    const pictureId = this.props.navigation.getParam('pictureId');
-    const overlayPictureId = this.props.navigation.getParam('overlayPictureId');
+    const pictureId = this.props.route.params?.pictureId;
+    const overlayPictureId = this.props.route.params?.overlayPictureId;
 
     let photo;
     let pictureLocation;
@@ -67,9 +63,9 @@ class CameraScreen extends React.Component {
     let locationY = -100;
     let diameter = 20;
     let visit = [];
-    if (this.props.navigation.getParam('visitId') !== '') {
+    if (this.props.route.params?.visitId !== '') {
       visit = this.props.visitData[
-        this.props.navigation.getParam('visitId')
+        this.props.route.params?.visitId
       ];
     }
     if (pictureId && visit.length > 0) {
@@ -125,10 +121,10 @@ class CameraScreen extends React.Component {
       locationY,
       diameter
     } = this.state;
-    if (this.props.navigation.getParam('visitId') !== '') {
+    if (this.props.route.params?.visitId !== '') {
       this.props.addPicture(
         this.props.visitData,
-        this.props.navigation.getParam('visitId'),
+        this.props.route.params?.visitId,
         photo,
         pictureNote,
         pictureLocation,
@@ -141,7 +137,7 @@ class CameraScreen extends React.Component {
       this.props.navigation.navigate('VisitDescription')
     } else {
       const pictureArray = [];
-      const picId = this.props.navigation.getParam('pictureId') || uuidv4();
+      const picId = this.props.route.params?.pictureId || uuidv4();
       pictureArray.push({
         pictureId: picId,
         uri: photo,
@@ -223,7 +219,7 @@ class CameraScreen extends React.Component {
     if (this.state.photoRetry) {
       await this.props.deletePicture(
         this.props.visitData,
-        this.props.navigation.getParam('visitId'),
+        this.props.route.params?.visitId,
         this.state.photoRetry
       );
     }
@@ -258,11 +254,11 @@ class CameraScreen extends React.Component {
   }
 
   renderOverlaySvg(pictureId) {
-    const visitId = this.props.navigation.getParam('visitId');
-    // const pictureId = this.props.navigation.getParam('pictureId');
+    const visitId = this.props.route.params?.visitId;
+    // const pictureId = this.props.route.params?.pictureId;
     let currentPicture = [];
     if (visitId === '') {
-      currentPicture = this.props.navigation.getParam('visitPictures').find(
+      currentPicture = this.props.route.params?.visitPictures.find(
         (data) => data.pictureId === pictureId
       );
     } else {
@@ -328,11 +324,11 @@ class CameraScreen extends React.Component {
     }
     let visitPictures = [];
 
-    if (this.props.navigation.getParam('visitId') !== '') {
+    if (this.props.route.params?.visitId !== '') {
       visitPictures = this.props.visitData[
-        this.props.navigation.getParam('visitId')].visitPictures;
+        this.props.route.params?.visitId].visitPictures;
     } else {
-      visitPictures = this.props.navigation.getParam('visitPictures');
+      visitPictures = this.props.route.params?.visitPictures;
     }
 
     let visitPhoto = null;
