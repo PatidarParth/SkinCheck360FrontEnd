@@ -31,22 +31,20 @@ class PhotoScreen extends Component {
   _showDialog = () => this.setState({ showNoteDialog: true });
 
   overlayPicture = () => {
-      this.props.navigation.navigate('Camera', {
-        visitId: this.props.route.params?.visitId,
-        overlayPictureId: this.props.route.params?.pictureId,
-        visitPictures: this.props.route.params?.visitPictures
-      });
+    this.props.navigation.navigate('Camera', {
+      visitId: this.props.route.params?.visitId,
+      overlayPictureId: this.props.route.params?.pictureId,
+      visitPictures: this.props.route.params?.visitPictures
+    });
   };
 
   deletePicture = () => {
-    //visit does not actually exist
-    pictureURI = this.props.route.params?.pictureUri
-    if (this.props.route.params?.visitId == '') {
-      this.props.navigation.navigate('AddEvent', {
-        pictureUri: pictureURI
-      });
+    // visit does not actually exist
+    pictureURI = this.props.route.params?.pictureUri;
+    if (this.props.route.params?.visitId === '') {
+      this.props.navigation.navigate('AddEvent', { pictureUri: pictureURI });
     }
-    //visit already exist 
+    // visit already exist
     else {
       this.props.deletePicture(
         this.props.visitData,
@@ -200,7 +198,7 @@ class PhotoScreen extends Component {
             >
               <MaterialCommunityIcons
                 size={35}
-                style={{padding: 10}}
+                style={{ padding: 10 }}
                 name="delete"
                 color="white"
               />
@@ -222,7 +220,7 @@ class PhotoScreen extends Component {
               <MaterialCommunityIcons
                 size={35}
                 name="autorenew"
-                style={{padding: 10}}
+                style={{ padding: 10 }}
                 color="white"
               />
               <Text
@@ -243,7 +241,7 @@ class PhotoScreen extends Component {
               <MaterialCommunityIcons
                 size={35}
                 name="picture-in-picture-bottom-right"
-                style={{padding: 10}}
+                style={{ padding: 10 }}
                 color="white"
               />
               <Text

@@ -67,14 +67,10 @@ class AddEventScreen extends Component {
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
     if (oldProps.route.params?.pictureUri !== newProps.route.params?.pictureUri) {
-      if (newProps.route.params?.pictureArray !== undefined) {
-      this.deletePicture(newProps.route.params?.pictureUri)
-      }
-    }
-    else {
-    if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
+        this.deletePicture(newProps.route.params?.pictureUri);
+    } else if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
       if (newProps.route.params?.pictureArray !== undefined && newProps.route.params?.pictureArray.length > 0) {
-        //edit the pic with new pic 
+        // edit the pic with new pic
         if (this.state.visitPictures.find((e) => e.pictureId === newProps.route.params?.picId)) {
           const updatedArray = update(
             this.state.visitPictures, {
@@ -83,14 +79,12 @@ class AddEventScreen extends Component {
             }
           ); // array.splice(start, deleteCount, item1)
           this.setState(() => ({ visitPictures: updatedArray }));
-        //new pic first time
-        }
-        else {
+        // new pic first time
+        } else {
           this.state.visitPictures.push(newProps.route.params?.pictureArray[0]);
           this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
         }
       }
-     }
     }
   }
 
@@ -197,20 +191,20 @@ class AddEventScreen extends Component {
   render() {
     return (
       <View style={styles.providerView}>
-          <Header
-            containerStyle={styles.header}
-            leftComponent={(
-              <IconButton
-                icon="chevron-left"
-                style={styles.leftHeaderComponent}
-                color="white"
-                size={40}
-                onPress={() => this.props.navigation.goBack()}
-              />
+        <Header
+          containerStyle={styles.header}
+          leftComponent={(
+            <IconButton
+              icon="chevron-left"
+              style={styles.leftHeaderComponent}
+              color="white"
+              size={40}
+              onPress={() => this.props.navigation.goBack()}
+            />
           )}
-            centerComponent={{ text: 'Enter Visit Information', style: styles.headerCenter }}
-          />
-          <KeyboardAwareScrollView>
+          centerComponent={{ text: 'Enter Visit Information', style: styles.headerCenter }}
+        />
+        <KeyboardAwareScrollView>
           <View style={styles.innerSpacer}>
             <Input
               placeholder="The name of your doctor or hospital"

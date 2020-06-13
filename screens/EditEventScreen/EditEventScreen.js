@@ -16,7 +16,6 @@ import styles from './styles';
 
 const colorScheme = Appearance.getColorScheme();
 class EditEventScreen extends Component {
-
   subscription;
 
   constructor(props) {
@@ -106,91 +105,91 @@ class EditEventScreen extends Component {
           centerComponent={{ text: 'Edit Visit Information', style: styles.headerCenter }}
         />
         <KeyboardAwareScrollView>
-        <View style={styles.innerSpacer}>
-          <Input
-            placeholder="The name of your doctor or hospital"
-            style={styles.flexGrow}
-            label="Visit Title"
-            labelStyle={styles.labelFont}
-            leftIcon={(
-              <MaterialCommunityIcons
-                name="medical-bag"
-                size={24}
-                style={styles.inputIcon}
-                color="#0A2B66"
-              />
-            )}
-            onChangeText={(text) => {
-              this.setState({ visitName: text });
-            }}
-            value={this.state.visitName}
-          />
-          <Text style={styles.errorFont}>
-            {this.state.visitTitleError}
-          </Text>
-        </View>
-        <View style={styles.inputSpacer}>
-          <TouchableOpacity
-            onPress={() => this.displayDateTimePicker(true)}
-          >
+          <View style={styles.innerSpacer}>
             <Input
-              placeholder="The date of the visit"
-              label="Visit Date"
+              placeholder="The name of your doctor or hospital"
+              style={styles.flexGrow}
+              label="Visit Title"
               labelStyle={styles.labelFont}
-              color="#0A2B66"
-              editable={false}
-              value={this.getDate()}
-              style={styles.inputTimePicker}
               leftIcon={(
                 <MaterialCommunityIcons
-                  name="calendar"
+                  name="medical-bag"
                   size={24}
                   style={styles.inputIcon}
                   color="#0A2B66"
                 />
-              )}
-            />
-          </TouchableOpacity>
-          <DateTimePicker
-            value={this.state.visitDate}
-            isVisible={this.state.isDateTimePickerVisible}
-            onConfirm={this.handleDatePicked}
-            onCancel={() => this.displayDateTimePicker(false)}
-            isDarkModeEnabled={this.state.isDarkModeEnabled}
-          />
-        </View>
-        <View style={styles.innerSpacer}>
-          <Input
-            placeholder="Any notes about your visit"
-            style={styles.flexGrow}
-            label="Visit Information"
-            multiline
-            labelStyle={styles.labelFont}
-            leftIcon={(
-              <MaterialCommunityIcons
-                name="pen"
-                size={24}
-                style={styles.inputIcon}
-                color="#0A2B66"
-              />
             )}
-            onChangeText={(text) => {
-              this.setState({ visitNotes: text });
-            }}
-            value={this.state.visitNotes}
-          />
-        </View>
-        <View style={styles.inputSpacer}>
-          <View style={styles.buttonSave}>
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={() => this.saveVisit()}
-            >
-              <Text style={styles.primaryText}>Save Visit</Text>
-            </TouchableOpacity>
+              onChangeText={(text) => {
+                this.setState({ visitName: text });
+              }}
+              value={this.state.visitName}
+            />
+            <Text style={styles.errorFont}>
+              {this.state.visitTitleError}
+            </Text>
           </View>
-        </View>
-      </KeyboardAwareScrollView>
+          <View style={styles.inputSpacer}>
+            <TouchableOpacity
+              onPress={() => this.displayDateTimePicker(true)}
+            >
+              <Input
+                placeholder="The date of the visit"
+                label="Visit Date"
+                labelStyle={styles.labelFont}
+                color="#0A2B66"
+                editable={false}
+                value={this.getDate()}
+                style={styles.inputTimePicker}
+                leftIcon={(
+                  <MaterialCommunityIcons
+                    name="calendar"
+                    size={24}
+                    style={styles.inputIcon}
+                    color="#0A2B66"
+                  />
+              )}
+              />
+            </TouchableOpacity>
+            <DateTimePicker
+              value={this.state.visitDate}
+              isVisible={this.state.isDateTimePickerVisible}
+              onConfirm={this.handleDatePicked}
+              onCancel={() => this.displayDateTimePicker(false)}
+              isDarkModeEnabled={this.state.isDarkModeEnabled}
+            />
+          </View>
+          <View style={styles.innerSpacer}>
+            <Input
+              placeholder="Any notes about your visit"
+              style={styles.flexGrow}
+              label="Visit Information"
+              multiline
+              labelStyle={styles.labelFont}
+              leftIcon={(
+                <MaterialCommunityIcons
+                  name="pen"
+                  size={24}
+                  style={styles.inputIcon}
+                  color="#0A2B66"
+                />
+            )}
+              onChangeText={(text) => {
+                this.setState({ visitNotes: text });
+              }}
+              value={this.state.visitNotes}
+            />
+          </View>
+          <View style={styles.inputSpacer}>
+            <View style={styles.buttonSave}>
+              <TouchableOpacity
+                style={styles.primaryButton}
+                onPress={() => this.saveVisit()}
+              >
+                <Text style={styles.primaryText}>Save Visit</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </KeyboardAwareScrollView>
       </View>
     );
   }

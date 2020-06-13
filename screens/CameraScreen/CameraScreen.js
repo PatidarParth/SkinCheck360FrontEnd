@@ -134,7 +134,7 @@ class CameraScreen extends React.Component {
         locationY,
         diameter
       );
-      this.props.navigation.navigate('VisitDescription')
+      this.props.navigation.navigate('VisitDescription');
     } else {
       const pictureArray = [];
       const picId = this.props.route.params?.pictureId || uuidv4();
@@ -566,7 +566,7 @@ class CameraScreen extends React.Component {
                       size={35}
                       name="autorenew"
                       color="white"
-                      style={{padding: 10}}
+                      style={{ padding: 10 }}
                     />
                     <Text
                       color="#FFF"
@@ -586,7 +586,7 @@ class CameraScreen extends React.Component {
                     <MaterialCommunityIcons
                       size={35}
                       name="gesture"
-                      style={{padding: 10}}
+                      style={{ padding: 10 }}
                       color={drawIconColor}
                     />
                     <Text
@@ -610,7 +610,7 @@ class CameraScreen extends React.Component {
                     <MaterialCommunityIcons
                       size={35}
                       name="note-plus"
-                      style={{padding: 10}}
+                      style={{ padding: 10 }}
                       color="white"
                     />
                     <Text

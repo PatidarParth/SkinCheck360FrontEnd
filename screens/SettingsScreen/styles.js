@@ -14,7 +14,15 @@ export default StyleSheet.create({
   },
   labelFont: {
     color: '#7F7D7D',
-    fontSize: 14,
+    fontSize: 13,
     padding: 2
-  }
+  },
+  legalNoticeView: {
+    padding: 20
+  },
+  scrollView: {
+    height: '95%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });

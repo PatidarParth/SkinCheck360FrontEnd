@@ -57,8 +57,8 @@ export default class App extends React.Component {
       <Provider store={store}>
         <PaperProvider theme={theme}>
           <AppearanceProvider>
-              <NavigationContainer>
-                <MyTabs />
+            <NavigationContainer>
+              <MyTabs />
             </NavigationContainer>
           </AppearanceProvider>
         </PaperProvider>
@@ -74,44 +74,13 @@ const HomeStack = createStackNavigator();
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={MainScreen} options={{headerMode: 'none', headerShown : false}}/>
-      <HomeStack.Screen name="AddEvent" component={AddEventScreen} options={{headerMode: 'none', headerShown : false}}/>
-      <HomeStack.Screen name="Camera" component={CameraScreen} options={{headerMode: 'none', headerShown : false}}/>
-      <HomeStack.Screen name="ViewPhoto" component={PhotoScreen} options={{headerMode: 'none', headerShown : false}}/>
-      <HomeStack.Screen name="VisitDescription" component={VisitScreen} options={{headerMode: 'none', headerShown : false}} />
-      <HomeStack.Screen name="EditEvent" component={EditEventScreen} options={{headerMode: 'none', headerShown : false}}/>
+      <HomeStack.Screen name="Home" component={MainScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="AddEvent" component={AddEventScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="Camera" component={CameraScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="ViewPhoto" component={PhotoScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="VisitDescription" component={VisitScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="EditEvent" component={EditEventScreen} options={{ headerMode: 'none', headerShown: false }} />
     </HomeStack.Navigator>
-  );
-}
-
-function MyTabs() {
-  return (
-    <Tab.Navigator
-    initialRouteName="Home"
-    tabBarOptions={{
-      activeTintColor: '#0A2B66',
-    }}>
-    <Tab.Screen
-      name="Visits"
-      component={HomeStackScreen}
-      options={({ route }) => ({
-        tabBarLabel: 'Visits',
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="home" color={color} size={size} />
-        ),
-        tabBarVisible: this.getTabBarVisibility(route)
-      })}
-    />
-    <Tab.Screen
-      name="SettingsStack"
-      component={SettingsScreen}
-      options={{
-        tabBarLabel: 'Settings',
-        tabBarIcon: ({ color, size }) => (
-          <MaterialCommunityIcons name="settings" color={color} size={size} />
-        ),
-      }} />
-    </Tab.Navigator>
   );
 }
 
@@ -125,7 +94,41 @@ getTabBarVisibility = (route) => {
   }
 
   return true;
+};
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      tabBarOptions={{
+        activeTintColor: '#0A2B66',
+      }}
+    >
+      <Tab.Screen
+        name="Visits"
+        component={HomeStackScreen}
+        options={({ route }) => ({
+          tabBarLabel: 'Visits',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={size} />
+          ),
+          tabBarVisible: this.getTabBarVisibility(route)
+        })}
+      />
+      <Tab.Screen
+        name="SettingsStack"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="settings" color={color} size={size} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
 }
+
 
 const styles = StyleSheet.create({
   container: {
