@@ -7,6 +7,8 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { applyMiddleware, createStore } from 'redux';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 
 import { StyleSheet } from 'react-native';
 import { SplashScreen } from 'expo';
@@ -44,6 +46,8 @@ const theme = {
   }
 };
 
+const Tab = createBottomTabNavigator();
+
 export default class App extends React.Component {
   useEffect = () => {
     SplashScreen.true();
@@ -54,7 +58,10 @@ export default class App extends React.Component {
       <Provider store={store}>
         <PaperProvider theme={theme}>
           <AppearanceProvider>
-            <AppContainer />
+            <AppContainer/>
+            <NavigationContainer>
+              <MyTabs />
+            </NavigationContainer>
           </AppearanceProvider>
         </PaperProvider>
       </Provider>
@@ -92,6 +99,15 @@ const AppNavigator = createStackNavigator(
 );
 
 const AppContainer = createAppContainer(AppNavigator);
+
+function MyTabs() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name="Home" component={MainScreen} />
+      <Tab.Screen name="Settings" component={MainScreen} />
+    </Tab.Navigator>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
