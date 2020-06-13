@@ -46,12 +46,61 @@ class SettingsScreen extends Component {
   }
 
   render() {
+
+    const legalList = [
+      {
+        name: 'Privacy',
+        avatar_url: "magnify"
+      },
+      {
+        name: 'Terms',
+        avatar_url: "card-bulleted"
+      }
+    ]
+
     return (
-    <View style={styles.container}>
+      <View >
       <Header
         containerStyle={styles.header}
         centerComponent={{ text: 'Settings', style: styles.headerCenter }}
       />
+      <View style={styles.notificationView}>
+      <Text style={styles.labelFont}>LEGAL</Text>
+        {
+          legalList.map((l, i) => (
+            <ListItem
+              key={i}
+              leftAvatar = {(
+                <MaterialCommunityIcons
+                  name={l.avatar_url}
+                  size={24}
+                  style={styles.inputIcon}
+                  color="#0A2B66"
+                />
+              )}
+              title={l.name}
+              bottomDivider
+            />
+          ))
+        }
+      </View>
+      <View style={styles.notificationView}>
+      <Text style={styles.labelFont}>SUPPORT</Text>
+        <ListItem
+          key='contact-us'
+          leftAvatar = {(
+            <MaterialCommunityIcons
+              name="contact-phone"
+              size={24}
+              style={styles.inputIcon}
+              color="#0A2B66"
+            />
+          )}
+          title="Contact Us"
+          bottomDivider
+            />
+        
+      </View>
       </View>
     );
   }

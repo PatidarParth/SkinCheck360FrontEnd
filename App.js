@@ -67,37 +67,6 @@ export default class App extends React.Component {
   }
 }
 
-// const AppNavigator = createStackNavigator(
-//   {
-//     Home: {
-//       screen: MainScreen
-//     },
-//     AddEvent: {
-//       screen: AddEventScreen
-//     },
-//     Camera: {
-//       screen: CameraScreen
-//     },
-//     Settings: {
-//       screen: SettingsScreen
-//     },
-//     ViewPhoto: {
-//       screen: PhotoScreen
-//     },
-//     VisitDescription: {
-//       screen: VisitScreen
-//     },
-//     EditEvent: {
-//       screen: EditEventScreen
-//     }
-//   },
-//   {
-//     initialRouteName: 'Home'
-//   }
-// );
-
-// const AppContainer = createAppContainer(AppNavigator);
-
 const Tab = createBottomTabNavigator();
 
 const HomeStack = createStackNavigator();
