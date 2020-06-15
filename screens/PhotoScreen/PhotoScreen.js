@@ -1,6 +1,8 @@
 // Aboutscreen.js
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import {
+  View, Text, TouchableOpacity, Dimensions, Platform
+} from 'react-native';
 import {
   Button,
   Colors,
@@ -13,8 +15,11 @@ import Svg, { Circle, Image } from 'react-native-svg';
 import { Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
+import ImageZoom from 'react-native-image-pan-zoom';
 import { deletePicture } from '../../redux/actions';
 import styles from './styles';
+
+const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 168 : 220;
 
 class PhotoScreen extends Component {
   constructor(props) {
@@ -122,7 +127,6 @@ class PhotoScreen extends Component {
     } else {
       this.props.navigation.goBack();
     }
-
     return (
       <Provider>
         <Portal>
@@ -177,12 +181,27 @@ class PhotoScreen extends Component {
             }}
           />
 
-          <View style={{ flex: 1 }}>{this.renderSvg()}</View>
+          <View style={{ flex: 1 }}>
+            <ImageZoom
+              cropWidth={Dimensions.get('window').width}
+              cropHeight={
+                        Dimensions.get('window').height - IMAGE_CROP_HEIGHT
+                      }
+              imageWidth={Dimensions.get('window').width}
+              imageHeight={
+                        Dimensions.get('window').height - IMAGE_CROP_HEIGHT
+                      }
+            >
+              {this.renderSvg()}
+            </ImageZoom>
+          </View>
           <View
             style={{
               flex: 0,
               backgroundColor: '#000',
               flexDirection: 'row',
+              width: '100%',
+              height: '15%', 
               justifyContent: 'space-around',
               display: 'flex',
               alignItems: 'center'

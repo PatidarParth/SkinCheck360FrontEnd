@@ -20,6 +20,7 @@ import { THREE } from 'expo-three';
 import * as Permissions from 'expo-permissions';
 import { Camera } from 'expo-camera';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import * as FaceDetector from 'expo-face-detector';
 import * as ImageManipulator from 'expo-image-manipulator';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
@@ -38,7 +39,8 @@ import noteDropdownInfo from '../../assets/notes.json';
 
 THREE.suppressExpoWarnings(true);
 
-const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 170 : 220;
+const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 168 : 220;
+
 class CameraScreen extends React.Component {
   camera = null;
 
@@ -49,6 +51,8 @@ class CameraScreen extends React.Component {
   _scale = Animated.multiply(this._baseScale, this._pinchScale);
 
   _lastScale = 1;
+
+  _lastCameraValue = 0;
 
   constructor(props) {
     super(props);
@@ -98,6 +102,7 @@ class CameraScreen extends React.Component {
       locationY,
       diameter,
       opacity: 4,
+      cameraZoomValue: 0,
       overlayPictureId
     };
     this._onPinchGestureEvent = () => Animated.event([{ nativeEvent: { scale: this._pinchScale } }], {
@@ -153,6 +158,18 @@ class CameraScreen extends React.Component {
     }
   };
 
+  // implement face detection callback function
+  onFacesDetected({ faces }) {
+    // print the found face data to console
+    console.log(faces);
+    // store faces to component state
+  }
+
+  // implement face detection error function
+  onFaceDetectionError(error) {
+    console.log(error);
+  }
+
   handleCapture = async () => {
     if (this.state.photoRetry) {
       await this.props.deletePicture(
@@ -190,7 +207,11 @@ class CameraScreen extends React.Component {
   };
 
   enableDrawing = async () => {
-    this.setState({ drawEnabled: true });
+    if (this.state.drawEnabled === true) {
+      this.setState({ drawEnabled: false });
+    } else {
+      this.setState({ drawEnabled: true });
+    }
   };
 
   _hideDialog = () => {
@@ -210,6 +231,24 @@ class CameraScreen extends React.Component {
     if (this.state.drawEnabled) {
       this._lastScale *= event.nativeEvent.scale;
       this.setState({ diameter: 20 * this._lastScale });
+    } else {
+      let oldValue = this._lastCameraValue;
+      this._lastCameraValue = event.nativeEvent.scale;
+      if (oldValue < this._lastCameraValue) {
+        const newValue = this.state.cameraZoomValue + 0.01;
+        if (newValue > 1) {
+          this.setState({ cameraZoomValue: 1 });
+        } else {
+          this.setState({ cameraZoomValue: newValue });
+        }
+      } else {
+        const newValue = this.state.cameraZoomValue - 0.01;
+        if (newValue < 0) {
+          this.setState({ cameraZoomValue: 0 });
+        } else {
+          this.setState({ cameraZoomValue: newValue });
+        }
+      }
     }
   };
 
@@ -230,6 +269,10 @@ class CameraScreen extends React.Component {
     this.setState({ opacity: v });
   };
 
+  onZoomChange = (zoomValue) => {
+    this.setState({ cameraZoomValue: zoomValue });
+  };
+
   renderSvg() {
     return (
       <Svg height="100%" width="100%" style={{ backgroundColor: '#33AAFF' }}>
@@ -245,7 +288,7 @@ class CameraScreen extends React.Component {
           cx={this.state.locationX}
           cy={this.state.locationY}
           r={this.state.diameter}
-          strokeWidth="4"
+          strokeWidth="2"
           stroke="red"
           fill="none"
         />
@@ -339,7 +382,7 @@ class CameraScreen extends React.Component {
     }
     return (
       <Provider>
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
           <Portal>
             <Dialog
               visible={this.state.showNoteDialog}
@@ -417,43 +460,57 @@ class CameraScreen extends React.Component {
             />
           )}
           {!photo && (
+          <PinchGestureHandler
+            onGestureEvent={this._onPinchGestureEvent}
+            onHandlerStateChange={this._onPinchHandlerStateChange}
+          >
             <View style={{ flex: 1 }}>
               <Camera
                 style={{ flex: 1 }}
                 type={this.state.type}
                 flashMode={this.state.flashMode}
                 ref={(camera) => (this.camera = camera)}
+                zoom={this.state.cameraZoomValue}
+                faceDetectorSettings={{
+                  mode: FaceDetector.Constants.Mode.fast,
+                  detectLandmarks: FaceDetector.Constants.Landmarks.all,
+                  runClassifications: FaceDetector.Constants.Classifications.all,
+                  minDetectionInterval: 100,
+                  tracking: true,
+                }}
+                onFacesDetected={this.onFacesDetected}
+                onFacesDetectionError={this.onFacesDetectionError}
               >
                 {visitPhoto && (
-                  <View
-                    style={style.overlayPhoto}
-                    key={`picture-${visitPhoto.uri}`}
-                  >
-                    <View style={style.sliderContainer}>
-                      <Slider
-                        style={style.slider}
-                        minimumValue={0}
-                        maximumValue={10}
-                        step={0.5}
-                        value={this.state.opacity}
-                        onValueChange={this.onOpacityChange}
-                        minimumTrackTintColor="#FFFFFF"
-                        maximumTrackTintColor="#000000"
-                      />
-                    </View>
-                    <ImageZoom
-                      cropWidth={Dimensions.get('window').width}
-                      cropHeight={
-                        Dimensions.get('screen').height - IMAGE_CROP_HEIGHT
-                      }
-                      imageWidth={Dimensions.get('window').width}
-                      imageHeight={
-                        Dimensions.get('screen').height - IMAGE_CROP_HEIGHT
-                      }
-                    >
-                      {this.renderOverlaySvg(visitPhoto.pictureId)}
-                    </ImageZoom>
+                <View
+                  style={style.overlayPhoto}
+                  key={`picture-${visitPhoto.uri}`}
+                >
+                  <View style={style.sliderContainer}>
+                    <Slider
+                      style={style.slider}
+                      minimumValue={0}
+                      maximumValue={10}
+                      step={0.5}
+                      value={this.state.opacity}
+                      onValueChange={this.onOpacityChange}
+                      minimumTrackTintColor="#FFFFFF"
+                      maximumTrackTintColor="#000000"
+                    />
                   </View>
+                  <ImageZoom
+                    cropWidth={Dimensions.get('window').width}
+                    cropHeight={
+                        Dimensions.get('screen').height - IMAGE_CROP_HEIGHT
+                      }
+                    imageWidth={Dimensions.get('window').width}
+                    imageHeight={
+                        Dimensions.get('screen').height - IMAGE_CROP_HEIGHT
+                      }
+                  >
+                    {this.renderOverlaySvg(visitPhoto.pictureId)}
+                  </ImageZoom>
+                </View>
                 )}
               </Camera>
               <View
@@ -530,6 +587,7 @@ class CameraScreen extends React.Component {
                 </TouchableOpacity>
               </View>
             </View>
+          </PinchGestureHandler>
           )}
           {photo && (
             <PinchGestureHandler
@@ -642,6 +700,13 @@ const style = StyleSheet.create({
     zIndex: 100,
     right: -135,
     top: 200
+  },
+  zoomSliderContainer: {
+    transform: [{ rotate: '360deg' }],
+    position: 'absolute',
+    zIndex: 100,
+    right: 25,
+    bottom: 100
   },
   slider: {
     width: 300,

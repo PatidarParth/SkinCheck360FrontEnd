@@ -67,7 +67,7 @@ class AddEventScreen extends Component {
   componentDidUpdate = (oldProps) => {
     const newProps = this.props;
     if (oldProps.route.params?.pictureUri !== newProps.route.params?.pictureUri) {
-        this.deletePicture(newProps.route.params?.pictureUri);
+      this.deletePicture(newProps.route.params?.pictureUri);
     } else if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
       if (newProps.route.params?.pictureArray !== undefined && newProps.route.params?.pictureArray.length > 0) {
         // edit the pic with new pic
