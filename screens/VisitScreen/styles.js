@@ -22,47 +22,5 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-  },
-  pictureButton: {
-    width: '50%'
-  },
-  textHeader: {
-    fontSize: 18,
-    fontFamily: 'Arial',
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    padding: 2,
-    fontWeight: 'bold',
-  },
-  text: {
-    fontSize: 14,
-    fontFamily: 'Arial',
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    padding: 2
-  },
-  innerSpacer: {
-    paddingTop: 50
-  },
-  labelFont: {
-    color: '#000000',
-    fontSize: 16
-  },
-  inputTimePicker: {
-    flex: 1,
-    paddingTop: 40,
-    borderBottomWidth: 0
-  },
-  pictureFont: {
-    color: 'black',
-    fontSize: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  },
-  wholeView: {
-    flex: 1
   }
 });

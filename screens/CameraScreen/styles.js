@@ -1,6 +1,8 @@
 import { StyleSheet } from 'react-native';
+import baseStyles from '../../styles';
 
 export default StyleSheet.create({
+  ...baseStyles,
   containerNoPhoto: {
     backgroundColor: '#0A2B66',
     justifyContent: 'space-around'
@@ -26,6 +28,7 @@ export default StyleSheet.create({
     width: '100%',
     padding: 5,
     alignItems: 'center',
+    fontFamily: 'Avenir-Light'
   },
   button: {
     // position: 'absolute',

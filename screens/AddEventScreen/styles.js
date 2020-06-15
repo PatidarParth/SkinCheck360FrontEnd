@@ -26,28 +26,4 @@ export default StyleSheet.create({
   buttonTimePicker: {
     height: 50
   },
-  inputTimePicker: {
-    flex: 1,
-    paddingTop: 40
-  },
-  innerSpacer: {
-    paddingTop: 50
-  },
-  labelFont: {
-    color: '#000000',
-    fontSize: 16
-  },
-  errorFont: {
-    color: 'red',
-    fontSize: 16,
-    paddingLeft: 30,
-    paddingTop: 1
-  },
-  pictureFont: {
-    color: 'black',
-    fontSize: 14,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-  }
 });

@@ -185,14 +185,26 @@ class CameraScreen extends React.Component {
         exif: true
       })
       .then(async (data) => {
-        const photo = await ImageManipulator.manipulateAsync(data.uri, [
-          {
-            rotate: 0
-          }
-        ]);
-        this.setState({
-          photo: photo.uri
-        });
+        if (this.state.type === Camera.Constants.Type.back) {
+          const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            {
+              rotate: 0
+            }
+          ]);
+          this.setState({
+            photo: photo.uri
+          });
+        } else if (this.state.type === Camera.Constants.Type.front) {
+          const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            {
+              rotate: 0
+            },
+            { flip: ImageManipulator.FlipType.Horizontal }
+          ]);
+          this.setState({
+            photo: photo.uri
+          });
+        }
       });
   };
 
@@ -232,7 +244,7 @@ class CameraScreen extends React.Component {
       this._lastScale *= event.nativeEvent.scale;
       this.setState({ diameter: 20 * this._lastScale });
     } else {
-      let oldValue = this._lastCameraValue;
+      const oldValue = this._lastCameraValue;
       this._lastCameraValue = event.nativeEvent.scale;
       if (oldValue < this._lastCameraValue) {
         const newValue = this.state.cameraZoomValue + 0.01;
@@ -435,10 +447,7 @@ class CameraScreen extends React.Component {
                   onPress={() => this.props.navigation.goBack()}
                 />
               )}
-              centerComponent={{
-                text: 'Visits',
-                style: { fontSize: 20, color: '#fff' }
-              }}
+              centerComponent={{ text: 'Visits', style: styles.headerCenter }}
             />
           )}
           {photo && (
@@ -471,6 +480,8 @@ class CameraScreen extends React.Component {
                 flashMode={this.state.flashMode}
                 ref={(camera) => (this.camera = camera)}
                 zoom={this.state.cameraZoomValue}
+                autoFocus={Camera.Constants.AutoFocus.on}
+                whiteBalance={Camera.Constants.WhiteBalance.auto}
                 faceDetectorSettings={{
                   mode: FaceDetector.Constants.Mode.fast,
                   detectLandmarks: FaceDetector.Constants.Landmarks.all,

@@ -81,6 +81,7 @@ export default StyleSheet.create({
     flex: 0
   },
   privacyNoticeView: {
-    padding: 20
+    padding: 20,
+    fontFamily: 'Avenir-Light'
   }
 });

@@ -102,6 +102,10 @@ function MyTabs() {
       initialRouteName="Home"
       tabBarOptions={{
         activeTintColor: '#0A2B66',
+        labelStyle: {
+          fontFamily: 'Avenir-Light',
+          fontSize: 14
+        }
       }}
     >
       <Tab.Screen

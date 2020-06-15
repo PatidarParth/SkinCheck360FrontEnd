@@ -16,17 +16,9 @@ export default StyleSheet.create({
     flex: 1,
     paddingTop: 40
   },
-  innerSpacer: {
-    paddingTop: 50
-  },
-  labelFont: {
-    color: '#000000',
-    fontSize: 16
-  },
-  errorFont: {
-    color: 'red',
-    fontSize: 16,
+  editButtonSave: {
+    paddingRight: 30,
     paddingLeft: 30,
-    paddingTop: 5
+    paddingTop: 30,
   }
 });

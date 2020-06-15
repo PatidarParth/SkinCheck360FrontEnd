@@ -179,7 +179,7 @@ class VisitScreen extends Component {
           <ScrollView>
             {(!visitPictures
                 || (visitPictures && visitPictures.length === 0)) && (
-                  <View style={styles.innerSpacer}>
+                  <View style={styles.inputSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
                         Add Pictures to your Visit
@@ -188,7 +188,6 @@ class VisitScreen extends Component {
                   </View>
             )}
             <View style={styles.scrollView}>
-
               {visitPictures
                 && visitPictures.length > 0
                 && visitPictures.map((picture, i) => (

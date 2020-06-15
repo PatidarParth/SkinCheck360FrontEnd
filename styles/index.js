@@ -11,7 +11,8 @@ const headerContainerStyle = {
 
 const headerCenterComponentStyle = {
   fontSize: 20,
-  color: '#fff'
+  color: '#fff',
+  fontFamily: 'Avenir-Light'
 };
 
 export default StyleSheet.create({
@@ -25,12 +26,13 @@ export default StyleSheet.create({
     ...headerCenterComponentStyle
   },
   notificationText: {
-    fontSize: 20,
+    fontSize: 18,
+    fontFamily: 'Avenir-Light',
     paddingTop: 20
   },
   textHeader: {
     fontSize: 20,
-    fontFamily: 'Arial',
+    fontFamily: 'Avenir-Light',
     display: 'flex',
     flexDirection: 'column',
     alignSelf: 'center',
@@ -44,23 +46,17 @@ export default StyleSheet.create({
   },
   primaryText: {
     color: '#FFFFFF',
-    fontSize: 16
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    padding: 10
-  },
-  secondaryTest: {
-    color: '#000000',
-    fontSize: 16
+    fontSize: 16,
+    fontFamily: 'Avenir-Light'
   },
   text: {
     fontSize: 12,
     display: 'flex',
-    fontFamily: 'Arial',
+    fontFamily: 'Avenir-Light',
   },
   flexGrow: {
     flex: 1,
+    fontFamily: 'Avenir-Light'
   },
   inputIcon: {
     paddingRight: 10
@@ -74,24 +70,45 @@ export default StyleSheet.create({
   buttonSave: {
     paddingRight: 10,
     paddingLeft: 10,
-    paddingTop: 5,
+    paddingBottom: 20,
   },
   inputSpacer: {
-    paddingTop: 50,
-    paddingBottom: 10
+    padding: 10
+  },
+  innerSpacer: {
+    paddingTop: 50
   },
   photoButtonRow: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingRight: 10,
-    paddingLeft: 10,
     paddingTop: 5,
   },
   photoButton: {
     alignItems: 'center',
     backgroundColor: '#0A2B66',
-    padding: 10,
-    width: '40%'
+    padding: 8,
+    width: '45%'
+  },
+  labelFont: {
+    color: '#000000',
+    fontSize: 18,
+    fontFamily: 'Avenir-Light',
+    fontWeight: '700'
+  },
+  inputTimePicker: {
+    flex: 1,
+    paddingTop: 40
+  },
+  pictureFont: {
+    color: 'black',
+    fontSize: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light'
+  },
+  pictureButton: {
+    width: '50%'
   }
 });

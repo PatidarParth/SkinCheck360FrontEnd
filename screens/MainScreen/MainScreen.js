@@ -189,6 +189,8 @@ class MainScreen extends Component {
                     subtitle={Moment(visitData[key.item].visitDate).format(
                       'MMMM D, YYYY'
                     )}
+                    titleStyle={{ fontFamily: 'Avenir-Light', fontSize: 18, fontWeight: '600' }}
+                    subtitleStyle={{ fontFamily: 'Avenir-Light', fontSize: 14 }}
                     bottomDivider
                     chevron={{ color: '#00539B' }}
                     onPress={() => this.props.navigation.navigate('VisitDescription', {

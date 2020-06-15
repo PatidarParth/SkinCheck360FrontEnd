@@ -168,11 +168,11 @@ class PhotoScreen extends Component {
             )}
             centerComponent={{
               text: 'Photo',
-              style: { fontSize: 20, color: '#fff', top: 0 }
+              style: styles.headerCenter
             }}
             rightComponent={{
               text: 'Retake',
-              style: { color: '#fff', fontSize: 16 },
+              style: { color: '#fff', fontSize: 16, fontFamily: 'Avenir-Light' },
               onPress: () => this.props.navigation.navigate('Camera', {
                 visitId,
                 pictureUri,
@@ -201,7 +201,7 @@ class PhotoScreen extends Component {
               backgroundColor: '#000',
               flexDirection: 'row',
               width: '100%',
-              height: '15%', 
+              height: '15%',
               justifyContent: 'space-around',
               display: 'flex',
               alignItems: 'center'

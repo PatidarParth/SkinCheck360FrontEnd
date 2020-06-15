@@ -208,6 +208,8 @@ class AddEventScreen extends Component {
           <View style={styles.innerSpacer}>
             <Input
               placeholder="The name of your doctor or hospital"
+              errorStyle={{ color: 'red' }}
+              errorMessage={this.state.visitTitleError}
               style={styles.flexGrow}
               label="Visit Title"
               labelStyle={styles.labelFont}
@@ -224,11 +226,8 @@ class AddEventScreen extends Component {
               }}
               value={this.state.visitName}
             />
-            <Text style={styles.errorFont}>
-              {this.state.visitTitleError}
-            </Text>
           </View>
-          <View style={styles.inputSpacer}>
+          <View style={styles.innerSpacer}>
             <TouchableOpacity
               onPress={() => this.displayDateTimePicker(true)}
             >
@@ -236,7 +235,6 @@ class AddEventScreen extends Component {
                 placeholder="The date of the visit"
                 label="Visit Date"
                 labelStyle={styles.labelFont}
-                color="#0A2B66"
                 editable={false}
                 value={this.getDate()}
                 style={styles.inputTimePicker}
@@ -283,7 +281,7 @@ class AddEventScreen extends Component {
             <ScrollView>
               {(!this.state.visitPictures
                 || (this.state.visitPictures && this.state.visitPictures.length === 0)) && (
-                  <View style={styles.innerSpacer}>
+                  <View style={styles.inputSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
                         No Pictures Currently
@@ -359,19 +357,19 @@ class AddEventScreen extends Component {
                 </TouchableOpacity>
               </View>
             </ScrollView>
+            <Menu
+              visible={this.state.visible}
+              onDismiss={() => this.setState({ visible: false })}
+              anchor={{ x: this.state.x, y: this.state.y }}
+            >
+              <Menu.Item onPress={() => this.view()} title="View" />
+              <Divider />
+              <Menu.Item onPress={this.overlayPicture} title="Overlay" />
+              <Divider />
+              <Menu.Item onPress={() => this.deletePicture(this.state.pictureUri)} title="Delete" />
+            </Menu>
           </Provider>
         </KeyboardAwareScrollView>
-        <Menu
-          visible={this.state.visible}
-          onDismiss={() => this.setState({ visible: false })}
-          anchor={{ x: this.state.x, y: this.state.y }}
-        >
-          <Menu.Item onPress={() => this.view()} title="View" />
-          <Divider />
-          <Menu.Item onPress={this.overlayPicture} title="Overlay" />
-          <Divider />
-          <Menu.Item onPress={() => this.deletePicture(this.state.pictureUri)} title="Delete" />
-        </Menu>
       </View>
     );
   }

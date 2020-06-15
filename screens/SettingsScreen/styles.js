@@ -15,7 +15,8 @@ export default StyleSheet.create({
   labelFont: {
     color: '#7F7D7D',
     fontSize: 13,
-    padding: 2
+    padding: 2,
+    fontFamily: 'Avenir-Light'
   },
   legalNoticeView: {
     padding: 20

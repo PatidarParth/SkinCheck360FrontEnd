@@ -111,6 +111,8 @@ class EditEventScreen extends Component {
               style={styles.flexGrow}
               label="Visit Title"
               labelStyle={styles.labelFont}
+              errorStyle={{ color: 'red' }}
+              errorMessage={this.state.visitTitleError}
               leftIcon={(
                 <MaterialCommunityIcons
                   name="medical-bag"
@@ -124,11 +126,8 @@ class EditEventScreen extends Component {
               }}
               value={this.state.visitName}
             />
-            <Text style={styles.errorFont}>
-              {this.state.visitTitleError}
-            </Text>
           </View>
-          <View style={styles.inputSpacer}>
+          <View style={styles.innerSpacer}>
             <TouchableOpacity
               onPress={() => this.displayDateTimePicker(true)}
             >
@@ -179,15 +178,13 @@ class EditEventScreen extends Component {
               value={this.state.visitNotes}
             />
           </View>
-          <View style={styles.inputSpacer}>
-            <View style={styles.buttonSave}>
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => this.saveVisit()}
-              >
-                <Text style={styles.primaryText}>Save Visit</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.editButtonSave}>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => this.saveVisit()}
+            >
+              <Text style={styles.primaryText}>Save Visit</Text>
+            </TouchableOpacity>
           </View>
         </KeyboardAwareScrollView>
       </View>

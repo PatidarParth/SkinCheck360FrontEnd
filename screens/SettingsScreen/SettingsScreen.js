@@ -102,6 +102,7 @@ class SettingsScreen extends Component {
               )}
               title={l.name}
               bottomDivider
+              titleStyle={{ fontFamily: 'Avenir-Light' }}
               onPress={() => this.getLegalPolicy(l.name)}
             />
           ))
@@ -120,6 +121,7 @@ class SettingsScreen extends Component {
               />
           )}
             title="Contact Us"
+            titleStyle={{ fontFamily: 'Avenir-Light' }}
             bottomDivider
             onPress={() => this.getSupport('Contact Us')}
           />
