@@ -98,7 +98,8 @@ class VisitScreen extends Component {
           undefined,
           -100,
           -100,
-          20
+          20,
+          null
         );
       }
     }
@@ -141,6 +142,7 @@ class VisitScreen extends Component {
             label="Visit Date"
             labelStyle={styles.labelFont}
             color="#0A2B66"
+            inputStyle={styles.inputFont}
             editable={false}
             value={Moment(this.props.route.params?.visitDate).format(
               'MMMM D, YYYY'
@@ -160,6 +162,7 @@ class VisitScreen extends Component {
           <Input
             label="Visit Information"
             labelStyle={styles.labelFont}
+            inputStyle={styles.inputFont}
             color="#0A2B66"
             editable={false}
             multiline
@@ -283,7 +286,8 @@ const mapDispatchToProps = (dispatch) => ({
     pictureId,
     locationX,
     locationY,
-    diameter
+    diameter,
+    faceDetectedValues
   ) => {
     dispatch(
       addPicture(
@@ -296,7 +300,8 @@ const mapDispatchToProps = (dispatch) => ({
         pictureId,
         locationX,
         locationY,
-        diameter
+        diameter,
+        faceDetectedValues
       )
     );
   }

@@ -39,7 +39,7 @@ import noteDropdownInfo from '../../assets/notes.json';
 
 THREE.suppressExpoWarnings(true);
 
-const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 168 : 220;
+const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 140 : 220;
 
 class CameraScreen extends React.Component {
   camera = null;
@@ -61,6 +61,8 @@ class CameraScreen extends React.Component {
 
     let photo;
     let pictureLocation;
+    let faceDetectedArray = [];
+    let overlayDetectedArray;
     let pictureNote;
     let pictureBodyPart;
     let locationX = -100;
@@ -102,8 +104,12 @@ class CameraScreen extends React.Component {
       locationY,
       diameter,
       opacity: 4,
+      faceDetectedArray,
+      overlayDetectedArray,
       cameraZoomValue: 0,
-      overlayPictureId
+      overlayPictureId,
+      matchingOverlay: "Overlay does not match",
+      overlayMatchColor: "white"
     };
     this._onPinchGestureEvent = () => Animated.event([{ nativeEvent: { scale: this._pinchScale } }], {
       useNativeDriver: true
@@ -124,7 +130,8 @@ class CameraScreen extends React.Component {
       pictureId,
       locationX,
       locationY,
-      diameter
+      diameter,
+      faceDetectedArray
     } = this.state;
     if (this.props.route.params?.visitId !== '') {
       this.props.addPicture(
@@ -137,12 +144,14 @@ class CameraScreen extends React.Component {
         pictureId,
         locationX,
         locationY,
-        diameter
+        diameter,
+        faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null
       );
       this.props.navigation.navigate('VisitDescription');
     } else {
       const pictureArray = [];
       const picId = this.props.route.params?.pictureId || uuidv4();
+      const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null
       pictureArray.push({
         pictureId: picId,
         uri: photo,
@@ -152,17 +161,16 @@ class CameraScreen extends React.Component {
         locationX,
         locationY,
         diameter,
-        dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
+        dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
+        faceDetectedValues
       });
       this.props.navigation.navigate('AddEvent', { pictureArray, picId });
     }
   };
 
   // implement face detection callback function
-  onFacesDetected({ faces }) {
-    // print the found face data to console
-    console.log(faces);
-    // store faces to component state
+  onFacesDetected = ({ faces }) => {
+    this.setState({faceDetectedArray: faces})  
   }
 
   // implement face detection error function
@@ -170,6 +178,63 @@ class CameraScreen extends React.Component {
     console.log(error);
   }
 
+
+  matchOverlayToCamera = (overlayFaceArray) => {
+    console.log(overlayFaceArray)
+    //overlay left ear
+    let overlayLeftEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) + 10;
+    let overlayLeftEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) - 10;
+    let overlayLeftEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) + 10;
+    let overlayLeftEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) - 10;
+    //overlay right ear
+    let overlayRightEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) + 10;
+    let overlayRightEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) - 10;
+    let overlayRightEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) + 10;
+    let overlayRightEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) - 10;
+    //overlay left eye
+    let overlayLeftEyeXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.x : null) + 10;
+    let overlayLeftEyeXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.x : null) - 10;
+    let overlayLeftEyeYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.y : null) + 10;
+    let overlayLeftEyeYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.y : null) - 10;
+    //overlay right eye
+    let overlayRightEyeXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.x : null) + 10;
+    let overlayRightEyeXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.x : null) - 10;
+    let overlayRightEyeYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.y : null) + 10;
+    let overlayRightEyeYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.y : null) - 10;
+    //camera left ear
+    let cameraLeftEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.x : null;
+    let cameraLeftEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.y : null;
+    //camera right ear
+    let cameraRightEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.x : null;
+    let cameraRightEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.y : null;
+    //camera left eye
+    let cameraLeftEyeXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEyePosition.x : null;
+    let cameraLeftEyeYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEyePosition.y : null;
+    //camera right eye
+    let cameraRightEyeXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEyePosition.x : null;
+    let cameraRightEyeYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEyePosition.y : null;  
+
+    if (overlayLeftEarXPositionCeiling !== null) {
+      if (((cameraLeftEarXPosition >= overlayLeftEarXPositionFloor && cameraLeftEarXPosition <= overlayLeftEarXPositionCeiling) 
+      && (cameraLeftEarYPosition >= overlayLeftEarYPositionFloor && cameraLeftEarYPosition <= overlayLeftEarYPositionCeiling))
+      && ((cameraRightEarXPosition >= overlayRightEarXPositionFloor && cameraRightEarXPosition <= overlayRightEarXPositionCeiling) 
+      && (cameraRightEarYPosition >= overlayRightEarYPositionFloor && cameraRightEarYPosition <= overlayRightEarYPositionCeiling))) {
+        if (cameraLeftEarXPosition !== null || cameraLeftEarYPosition !== null || cameraRightEarXPosition !== null || cameraRightEarYPosition !== null) {
+          if (this.state.matchingOverlay !== "Hold Still, Overlay Matches") {
+            this.setState({matchingOverlay: "Hold Still, Overlay Matches"})
+            this.setState({overlayMatchColor: "#008000"});
+          }
+        }
+      }
+    else {
+      if (this.state.matchingOverlay !== "Overlay does not match") {
+        this.setState({matchingOverlay: "Overlay does not match"})
+        this.setState({overlayMatchColor: "white"});
+      }
+    }
+
+    }
+  }
   handleCapture = async () => {
     if (this.state.photoRetry) {
       await this.props.deletePicture(
@@ -312,6 +377,7 @@ class CameraScreen extends React.Component {
     const visitId = this.props.route.params?.visitId;
     // const pictureId = this.props.route.params?.pictureId;
     let currentPicture = [];
+    let overlayFaceArray = [];
     if (visitId === '') {
       currentPicture = this.props.route.params?.visitPictures.find(
         (data) => data.pictureId === pictureId
@@ -329,6 +395,10 @@ class CameraScreen extends React.Component {
     if (currentPicture.locationY) {
       cy = currentPicture.locationY;
     }
+    
+    overlayFaceArray = currentPicture.faceDetectedValues
+    this.matchOverlayToCamera(overlayFaceArray);
+
     return (
       <Svg
         height="100%"
@@ -365,7 +435,8 @@ class CameraScreen extends React.Component {
       photo,
       type,
       flashMode,
-      drawEnabled
+      drawEnabled, 
+      matchingOverlay
     } = this.state;
 
     const drawIconColor = drawEnabled ? '#0680CD' : 'white';
@@ -436,7 +507,7 @@ class CameraScreen extends React.Component {
             </Dialog>
           </Portal>
           {!photo && (
-            <Header
+          <Header
               containerStyle={styles.containerNoPhoto}
               leftComponent={(
                 <IconButton
@@ -447,7 +518,7 @@ class CameraScreen extends React.Component {
                   onPress={() => this.props.navigation.goBack()}
                 />
               )}
-              centerComponent={{ text: 'Visits', style: styles.headerCenter }}
+              centerComponent={{ text: '', style: styles.headerCenter }}
             />
           )}
           {photo && (
@@ -483,10 +554,10 @@ class CameraScreen extends React.Component {
                 autoFocus={Camera.Constants.AutoFocus.on}
                 whiteBalance={Camera.Constants.WhiteBalance.auto}
                 faceDetectorSettings={{
-                  mode: FaceDetector.Constants.Mode.fast,
+                  mode: FaceDetector.Constants.Mode.accurate,
                   detectLandmarks: FaceDetector.Constants.Landmarks.all,
                   runClassifications: FaceDetector.Constants.Classifications.all,
-                  minDetectionInterval: 100,
+                  minDetectionInterval: 500,
                   tracking: true,
                 }}
                 onFacesDetected={this.onFacesDetected}
@@ -523,7 +594,22 @@ class CameraScreen extends React.Component {
                   </ImageZoom>
                 </View>
                 )}
-              </Camera>
+              {visitPhoto && ( <Text style={{ 
+                  backgroundColor: 'black', 
+                  alignItems: 'center',
+                  fontFamily: 'Avenir-Light', 
+                  fontWeight: "bold",
+                  fontSize: 22,
+                  color: this.state.overlayMatchColor,
+                  alignSelf: 'center',
+                  justifyContent: 'flex-end',
+                  position: 'absolute',
+                  top: 550
+                  }}> 
+                    {this.state.matchingOverlay} 
+                </Text> )}
+                </Camera>
+
               <View
                 style={{
                   flex: 0,
@@ -565,7 +651,7 @@ class CameraScreen extends React.Component {
                     flex: 1,
                     alignSelf: 'flex-end',
                     alignItems: 'center',
-                    paddingBottom: 20
+                    paddingTop: 10
                   }}
                   onPress={() => this.handleCapture()}
                 >
@@ -712,13 +798,6 @@ const style = StyleSheet.create({
     right: -135,
     top: 200
   },
-  zoomSliderContainer: {
-    transform: [{ rotate: '360deg' }],
-    position: 'absolute',
-    zIndex: 100,
-    right: 25,
-    bottom: 100
-  },
   slider: {
     width: 300,
     height: 40,
@@ -742,7 +821,8 @@ const mapDispatchToProps = (dispatch) => ({
     pictureId,
     locationX,
     locationY,
-    diameter
+    diameter,
+    faceDetectedValues
   ) => {
     dispatch(
       addPicture(
@@ -755,7 +835,8 @@ const mapDispatchToProps = (dispatch) => ({
         pictureId,
         locationX,
         locationY,
-        diameter
+        diameter,
+        faceDetectedValues
       )
     );
   },

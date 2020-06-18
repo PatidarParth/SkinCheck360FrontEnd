@@ -127,6 +127,24 @@ class SettingsScreen extends Component {
           />
         </View>
 
+        {/* <View style={styles.notificationView}>
+          <ListItem
+            key="contact-us"
+            leftAvatar={(
+              <MaterialCommunityIcons
+                name="contact-phone"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
+          )}
+            title="Contact Us"
+            titleStyle={{ fontFamily: 'Avenir-Light' }}
+            bottomDivider
+            onPress={() => this.getSupport('Contact Us')}
+          />
+        </View> */}
+
         <Modal visible={this.state.privacyVisible}>
           <Header
             containerStyle={styles.header}

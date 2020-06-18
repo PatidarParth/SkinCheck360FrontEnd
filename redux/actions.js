@@ -111,7 +111,7 @@ export function deletePicture(visitData, visitId, pictureUri) {
 }
 
 export function addPicture(visitData, visitId, pictureUri, pictureNote,
-  pictureLocation, pictureBodyPart, pictureId, locationX, locationY, diameter) {
+  pictureLocation, pictureBodyPart, pictureId, locationX, locationY, diameter,faceDetectedValues) {
   return function action(dispatch) {
     if (!visitData[visitId].visitPictures) {
       visitData[visitId].visitPictures = [];
@@ -127,6 +127,7 @@ export function addPicture(visitData, visitId, pictureUri, pictureNote,
           picture.locationX = locationX;
           picture.locationY = locationY;
           picture.diameter = diameter;
+          picture.faceDetectedValues = faceDetectedValues;
         }
         return picture;
       });
@@ -140,7 +141,8 @@ export function addPicture(visitData, visitId, pictureUri, pictureNote,
         locationX,
         locationY,
         diameter,
-        dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
+        dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
+        faceDetectedValues
       });
     }
     dispatch(actionAddPicture(visitData));

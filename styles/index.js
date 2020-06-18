@@ -96,6 +96,11 @@ export default StyleSheet.create({
     fontFamily: 'Avenir-Light',
     fontWeight: '700'
   },
+  inputFont: {
+    color: '#000000',
+    fontSize: 16,
+    fontFamily: 'Avenir-Light',
+  },
   inputTimePicker: {
     flex: 1,
     paddingTop: 40

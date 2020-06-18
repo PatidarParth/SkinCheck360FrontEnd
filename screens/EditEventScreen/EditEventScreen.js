@@ -110,6 +110,7 @@ class EditEventScreen extends Component {
               placeholder="The name of your doctor or hospital"
               style={styles.flexGrow}
               label="Visit Title"
+              inputStyle={styles.inputFont}
               labelStyle={styles.labelFont}
               errorStyle={{ color: 'red' }}
               errorMessage={this.state.visitTitleError}
@@ -135,6 +136,7 @@ class EditEventScreen extends Component {
                 placeholder="The date of the visit"
                 label="Visit Date"
                 labelStyle={styles.labelFont}
+                inputStyle={styles.inputFont}
                 color="#0A2B66"
                 editable={false}
                 value={this.getDate()}
@@ -162,6 +164,7 @@ class EditEventScreen extends Component {
               placeholder="Any notes about your visit"
               style={styles.flexGrow}
               label="Visit Information"
+              inputStyle={styles.inputFont}
               multiline
               labelStyle={styles.labelFont}
               leftIcon={(

@@ -134,7 +134,8 @@ class AddEventScreen extends Component {
           location,
           location,
           diameter,
-          dateCreated: Moment().format('MM/DD/YYYY hh:mm A')
+          dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
+          faceDetectedValues: null
         });
         this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
       }
@@ -209,6 +210,7 @@ class AddEventScreen extends Component {
             <Input
               placeholder="The name of your doctor or hospital"
               errorStyle={{ color: 'red' }}
+              inputStyle={styles.inputFont}
               errorMessage={this.state.visitTitleError}
               style={styles.flexGrow}
               label="Visit Title"
@@ -235,6 +237,7 @@ class AddEventScreen extends Component {
                 placeholder="The date of the visit"
                 label="Visit Date"
                 labelStyle={styles.labelFont}
+                inputStyle={styles.inputFont}
                 editable={false}
                 value={this.getDate()}
                 style={styles.inputTimePicker}
@@ -262,6 +265,7 @@ class AddEventScreen extends Component {
               style={styles.flexGrow}
               label="Visit Information"
               labelStyle={styles.labelFont}
+              inputStyle={styles.inputFont}
               multiline
               leftIcon={(
                 <MaterialCommunityIcons
