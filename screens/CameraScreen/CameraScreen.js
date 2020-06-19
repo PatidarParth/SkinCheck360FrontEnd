@@ -350,6 +350,27 @@ class CameraScreen extends React.Component {
     this.setState({ cameraZoomValue: zoomValue });
   };
 
+  componentDidUpdate = (oldProps) => {
+    const pictureId = this.props.route.params?.overlayPictureId
+    const visitId = this.props.route.params?.visitId;
+
+    let currentPicture = [];
+    let overlayFaceArray = [];
+    if (pictureId !== undefined) {
+      if (visitId === '') {
+        currentPicture = this.props.route.params?.visitPictures.find(
+          (data) => data.pictureId === pictureId
+        );
+      } else {
+        currentPicture = this.props.visitData[visitId].visitPictures.find(
+          (data) => data.pictureId === pictureId
+        );
+      }
+      overlayFaceArray = currentPicture.faceDetectedValues
+      this.matchOverlayToCamera(overlayFaceArray);
+    }
+  }
+
   renderSvg() {
     return (
       <Svg height="100%" width="100%" style={{ backgroundColor: '#33AAFF' }}>
@@ -377,7 +398,6 @@ class CameraScreen extends React.Component {
     const visitId = this.props.route.params?.visitId;
     // const pictureId = this.props.route.params?.pictureId;
     let currentPicture = [];
-    let overlayFaceArray = [];
     if (visitId === '') {
       currentPicture = this.props.route.params?.visitPictures.find(
         (data) => data.pictureId === pictureId
@@ -396,9 +416,6 @@ class CameraScreen extends React.Component {
       cy = currentPicture.locationY;
     }
     
-    overlayFaceArray = currentPicture.faceDetectedValues
-    this.matchOverlayToCamera(overlayFaceArray);
-
     return (
       <Svg
         height="100%"
