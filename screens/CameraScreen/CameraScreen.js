@@ -222,7 +222,7 @@ class CameraScreen extends React.Component {
         if (cameraLeftEarXPosition !== null || cameraLeftEarYPosition !== null || cameraRightEarXPosition !== null || cameraRightEarYPosition !== null) {
           if (this.state.matchingOverlay !== "Hold Still, Overlay Matches") {
             this.setState({matchingOverlay: "Hold Still, Overlay Matches"})
-            this.setState({overlayMatchColor: "#008000"});
+            this.setState({overlayMatchColor: "#3CB371"});
           }
         }
       }
