@@ -19,7 +19,7 @@ import ImageZoom from 'react-native-image-pan-zoom';
 import { deletePicture } from '../../redux/actions';
 import styles from './styles';
 
-const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 168 : 220;
+const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 141 : 220;
 
 class PhotoScreen extends Component {
   constructor(props) {
@@ -90,7 +90,7 @@ class PhotoScreen extends Component {
           cx={currentPicture.locationX || -100}
           cy={currentPicture.locationY || -100}
           r={currentPicture.diameter || 20}
-          strokeWidth="4"
+          strokeWidth="2"
           stroke="red"
           fill="none"
         />
@@ -115,9 +115,9 @@ class PhotoScreen extends Component {
         (data) => data.pictureId === pictureId
       );
     }
-    let textNoteStyle = { fontStyle: 'normal', color: Colors.blue800 };
+    let textNoteStyle = { fontStyle: 'normal', color: Colors.blue800, fontFamily: 'Avenir-Light' };
     if (!pictureNote) {
-      textNoteStyle = { fontStyle: 'italic', color: Colors.grey500 };
+      textNoteStyle = { fontStyle: 'normal', color: Colors.grey500, fontFamily: 'Avenir-Light' };
     }
     if (currentPicture) {
       pictureUri = currentPicture.uri;
@@ -134,7 +134,7 @@ class PhotoScreen extends Component {
             visible={this.state.showNoteDialog}
             onDismiss={this._hideDialog}
           >
-            <Dialog.Title>Note</Dialog.Title>
+            <Dialog.Title style={{ fontFamily: 'Avenir-Light' }}>Note</Dialog.Title>
             <Dialog.Content>
               <Text style={textNoteStyle}>
                 {`Location: ${pictureLocation
@@ -200,8 +200,6 @@ class PhotoScreen extends Component {
               flex: 0,
               backgroundColor: '#000',
               flexDirection: 'row',
-              width: '100%',
-              height: '15%',
               justifyContent: 'space-around',
               display: 'flex',
               alignItems: 'center'
@@ -217,13 +215,14 @@ class PhotoScreen extends Component {
             >
               <MaterialCommunityIcons
                 size={35}
-                style={{ padding: 10 }}
+                style={{ paddingTop: 10 }}
                 name="delete"
                 color="white"
               />
               <Text
-                color="#FFF"
-                style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+                style={{
+                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                }}
               >
                 Delete
               </Text>
@@ -238,13 +237,14 @@ class PhotoScreen extends Component {
             >
               <MaterialCommunityIcons
                 size={35}
-                name="autorenew"
-                style={{ padding: 10 }}
+                name="note"
+                style={{ paddingTop: 10 }}
                 color="white"
               />
               <Text
-                color="#FFF"
-                style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+                style={{
+                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                }}
               >
                 View Note
               </Text>
@@ -260,12 +260,13 @@ class PhotoScreen extends Component {
               <MaterialCommunityIcons
                 size={35}
                 name="picture-in-picture-bottom-right"
-                style={{ padding: 10 }}
+                style={{ paddingTop: 10 }}
                 color="white"
               />
               <Text
-                color="#FFF"
-                style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+                style={{
+                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                }}
               >
                 Overlay
               </Text>

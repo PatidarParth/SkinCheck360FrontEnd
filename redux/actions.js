@@ -111,7 +111,7 @@ export function deletePicture(visitData, visitId, pictureUri) {
 }
 
 export function addPicture(visitData, visitId, pictureUri, pictureNote,
-  pictureLocation, pictureBodyPart, pictureId, locationX, locationY, diameter,faceDetectedValues) {
+  pictureLocation, pictureBodyPart, pictureId, locationX, locationY, diameter, faceDetectedValues) {
   return function action(dispatch) {
     if (!visitData[visitId].visitPictures) {
       visitData[visitId].visitPictures = [];

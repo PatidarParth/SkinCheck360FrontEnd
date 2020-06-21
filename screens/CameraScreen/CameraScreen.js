@@ -61,7 +61,7 @@ class CameraScreen extends React.Component {
 
     let photo;
     let pictureLocation;
-    let faceDetectedArray = [];
+    const faceDetectedArray = [];
     let overlayDetectedArray;
     let pictureNote;
     let pictureBodyPart;
@@ -108,8 +108,8 @@ class CameraScreen extends React.Component {
       overlayDetectedArray,
       cameraZoomValue: 0,
       overlayPictureId,
-      matchingOverlay: "Overlay does not match",
-      overlayMatchColor: "white"
+      matchingOverlay: 'Overlay does not match',
+      overlayMatchColor: 'white'
     };
     this._onPinchGestureEvent = () => Animated.event([{ nativeEvent: { scale: this._pinchScale } }], {
       useNativeDriver: true
@@ -121,6 +121,7 @@ class CameraScreen extends React.Component {
     this.setState({ hasCameraPermission: status === 'granted' });
   }
 
+  // eslint-disable-next-line react/sort-comp
   savePictureToVisit = async () => {
     const {
       photo,
@@ -151,7 +152,7 @@ class CameraScreen extends React.Component {
     } else {
       const pictureArray = [];
       const picId = this.props.route.params?.pictureId || uuidv4();
-      const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null
+      const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null;
       pictureArray.push({
         pictureId: picId,
         uri: photo,
@@ -170,71 +171,65 @@ class CameraScreen extends React.Component {
 
   // implement face detection callback function
   onFacesDetected = ({ faces }) => {
-    this.setState({faceDetectedArray: faces})  
+    this.setState({ faceDetectedArray: faces });
+    console.log(faces);
   }
 
   // implement face detection error function
+  // eslint-disable-next-line class-methods-use-this
   onFaceDetectionError(error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
 
 
   matchOverlayToCamera = (overlayFaceArray) => {
-    console.log(overlayFaceArray)
-    //overlay left ear
-    let overlayLeftEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) + 10;
-    let overlayLeftEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) - 10;
-    let overlayLeftEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) + 10;
-    let overlayLeftEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) - 10;
-    //overlay right ear
-    let overlayRightEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) + 10;
-    let overlayRightEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) - 10;
-    let overlayRightEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) + 10;
-    let overlayRightEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) - 10;
-    //overlay left eye
-    let overlayLeftEyeXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.x : null) + 10;
-    let overlayLeftEyeXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.x : null) - 10;
-    let overlayLeftEyeYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.y : null) + 10;
-    let overlayLeftEyeYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEyePosition.y : null) - 10;
-    //overlay right eye
-    let overlayRightEyeXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.x : null) + 10;
-    let overlayRightEyeXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.x : null) - 10;
-    let overlayRightEyeYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.y : null) + 10;
-    let overlayRightEyeYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEyePosition.y : null) - 10;
-    //camera left ear
-    let cameraLeftEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.x : null;
-    let cameraLeftEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.y : null;
-    //camera right ear
-    let cameraRightEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.x : null;
-    let cameraRightEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.y : null;
-    //camera left eye
-    let cameraLeftEyeXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEyePosition.x : null;
-    let cameraLeftEyeYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEyePosition.y : null;
-    //camera right eye
-    let cameraRightEyeXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEyePosition.x : null;
-    let cameraRightEyeYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEyePosition.y : null;  
+    // overlay left ear
+    const overlayLeftEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) + 20;
+    const overlayLeftEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) - 20;
+    const overlayLeftEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) + 20;
+    const overlayLeftEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) - 20;
+    // overlay right ear
+    const overlayRightEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) + 20;
+    const overlayRightEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) - 20;
+    const overlayRightEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) + 20;
+    const overlayRightEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) - 20;
+    // overlay nose
+    const overlayNoseXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.x : null) + 20;
+    const overlayNoseXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.x : null) - 20;
+    const overlayNoseYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.y : null) + 20;
+    const overlayLNoseYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.y : null) - 20;
+    // camera left ear
+    const cameraLeftEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.x : null;
+    const cameraLeftEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.y : null;
+    // camera right ear
+    const cameraRightEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.x : null;
+    const cameraRightEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].rightEarPosition.y : null;
+    // camera Nose
+    const cameraNoseXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].noseBasePosition.x : null;
+    const cameraNoseYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].noseBasePosition.y : null;
 
     if (overlayLeftEarXPositionCeiling !== null) {
-      if (((cameraLeftEarXPosition >= overlayLeftEarXPositionFloor && cameraLeftEarXPosition <= overlayLeftEarXPositionCeiling) 
+      if (((cameraLeftEarXPosition >= overlayLeftEarXPositionFloor && cameraLeftEarXPosition <= overlayLeftEarXPositionCeiling)
       && (cameraLeftEarYPosition >= overlayLeftEarYPositionFloor && cameraLeftEarYPosition <= overlayLeftEarYPositionCeiling))
-      && ((cameraRightEarXPosition >= overlayRightEarXPositionFloor && cameraRightEarXPosition <= overlayRightEarXPositionCeiling) 
-      && (cameraRightEarYPosition >= overlayRightEarYPositionFloor && cameraRightEarYPosition <= overlayRightEarYPositionCeiling))) {
-        if (cameraLeftEarXPosition !== null || cameraLeftEarYPosition !== null || cameraRightEarXPosition !== null || cameraRightEarYPosition !== null) {
-          if (this.state.matchingOverlay !== "Hold Still, Overlay Matches") {
-            this.setState({matchingOverlay: "Hold Still, Overlay Matches"})
-            this.setState({overlayMatchColor: "#3CB371"});
+      && ((cameraRightEarXPosition >= overlayRightEarXPositionFloor && cameraRightEarXPosition <= overlayRightEarXPositionCeiling)
+      && (cameraRightEarYPosition >= overlayRightEarYPositionFloor && cameraRightEarYPosition <= overlayRightEarYPositionCeiling))
+      && ((cameraNoseXPosition >= overlayNoseXPositionFloor && cameraNoseXPosition <= overlayNoseXPositionCeiling)
+      && (cameraNoseYPosition >= overlayLNoseYPositionFloor && cameraNoseYPosition <= overlayNoseYPositionCeiling))) {
+        if (cameraLeftEarXPosition !== null || cameraLeftEarYPosition !== null || cameraRightEarXPosition !== null || cameraRightEarYPosition !== null
+          || cameraNoseXPosition !== null || cameraNoseYPosition !== null) {
+          if (this.state.matchingOverlay !== 'Hold Still, Overlay Matches') {
+            this.setState({ matchingOverlay: 'Hold Still, Overlay Matches' });
+            this.setState({ overlayMatchColor: '#3CB371' });
           }
         }
+      } else if (this.state.matchingOverlay !== 'Overlay does not match') {
+        this.setState({ matchingOverlay: 'Overlay does not match' });
+        this.setState({ overlayMatchColor: 'white' });
       }
-    else {
-      if (this.state.matchingOverlay !== "Overlay does not match") {
-        this.setState({matchingOverlay: "Overlay does not match"})
-        this.setState({overlayMatchColor: "white"});
-      }
-    }
-
     }
   }
+
   handleCapture = async () => {
     if (this.state.photoRetry) {
       await this.props.deletePicture(
@@ -308,25 +303,26 @@ class CameraScreen extends React.Component {
     if (this.state.drawEnabled) {
       this._lastScale *= event.nativeEvent.scale;
       this.setState({ diameter: 20 * this._lastScale });
-    } else {
-      const oldValue = this._lastCameraValue;
-      this._lastCameraValue = event.nativeEvent.scale;
-      if (oldValue < this._lastCameraValue) {
-        const newValue = this.state.cameraZoomValue + 0.01;
-        if (newValue > 1) {
-          this.setState({ cameraZoomValue: 1 });
-        } else {
-          this.setState({ cameraZoomValue: newValue });
-        }
-      } else {
-        const newValue = this.state.cameraZoomValue - 0.01;
-        if (newValue < 0) {
-          this.setState({ cameraZoomValue: 0 });
-        } else {
-          this.setState({ cameraZoomValue: newValue });
-        }
-      }
     }
+    // } else {
+    //   const oldValue = this._lastCameraValue;
+    //   this._lastCameraValue = event.nativeEvent.scale;
+    //   if (oldValue < this._lastCameraValue) {
+    //     const newValue = this.state.cameraZoomValue + 0.01;
+    //     if (newValue > 1) {
+    //       this.setState({ cameraZoomValue: 1 });
+    //     } else {
+    //       this.setState({ cameraZoomValue: newValue });
+    //     }
+    //   } else {
+    //     const newValue = this.state.cameraZoomValue - 0.01;
+    //     if (newValue < 0) {
+    //       this.setState({ cameraZoomValue: 0 });
+    //     } else {
+    //       this.setState({ cameraZoomValue: newValue });
+    //     }
+    //   }
+    // }
   };
 
   onStartShouldSetResponder = () => true;
@@ -350,8 +346,8 @@ class CameraScreen extends React.Component {
     this.setState({ cameraZoomValue: zoomValue });
   };
 
-  componentDidUpdate = (oldProps) => {
-    const pictureId = this.props.route.params?.overlayPictureId
+  componentDidUpdate = () => {
+    const pictureId = this.props.route.params?.overlayPictureId;
     const visitId = this.props.route.params?.visitId;
 
     let currentPicture = [];
@@ -366,7 +362,7 @@ class CameraScreen extends React.Component {
           (data) => data.pictureId === pictureId
         );
       }
-      overlayFaceArray = currentPicture.faceDetectedValues
+      overlayFaceArray = currentPicture.faceDetectedValues;
       this.matchOverlayToCamera(overlayFaceArray);
     }
   }
@@ -415,7 +411,7 @@ class CameraScreen extends React.Component {
     if (currentPicture.locationY) {
       cy = currentPicture.locationY;
     }
-    
+
     return (
       <Svg
         height="100%"
@@ -438,7 +434,7 @@ class CameraScreen extends React.Component {
           cx={currentPicture.locationX || -100}
           cy={cy}
           r={currentPicture.diameter || 20}
-          strokeWidth="4"
+          strokeWidth="2"
           stroke="red"
           fill="none"
         />
@@ -452,7 +448,7 @@ class CameraScreen extends React.Component {
       photo,
       type,
       flashMode,
-      drawEnabled, 
+      drawEnabled,
       matchingOverlay
     } = this.state;
 
@@ -494,7 +490,9 @@ class CameraScreen extends React.Component {
                   <Dialog.Content>
                     <Dropdown
                       label="Location"
+                      style={{ fontFamily: 'Avenir-Light' }}
                       data={noteDropdownInfo.location}
+                      itemTextStyle={{ fontFamily: 'Avenir-Light' }}
                       value={this.state.pictureLocation}
                       onChangeText={(value) => {
                         this.setState({ pictureLocation: value });
@@ -502,7 +500,9 @@ class CameraScreen extends React.Component {
                     />
                     <Dropdown
                       label="Body Part"
+                      itemTextStyle={{ fontFamily: 'Avenir-Light' }}
                       data={noteDropdownInfo.bodyParts}
+                      style={{ fontFamily: 'Avenir-Light' }}
                       value={this.state.pictureBodyPart}
                       onChangeText={(value) => {
                         this.setState({ pictureBodyPart: value });
@@ -510,6 +510,7 @@ class CameraScreen extends React.Component {
                     />
                     <TextField
                       label="Notes"
+                      style={{ fontFamily: 'Avenir-Light' }}
                       onChangeText={(text) => {
                         this.setState({ pictureNote: text });
                       }}
@@ -525,42 +526,38 @@ class CameraScreen extends React.Component {
           </Portal>
           {!photo && (
           <Header
-              containerStyle={styles.containerNoPhoto}
-              leftComponent={(
-                <IconButton
-                  icon="chevron-left"
-                  style={styles.leftHeaderComponent}
-                  color="white"
-                  size={40}
-                  onPress={() => this.props.navigation.goBack()}
-                />
+            containerStyle={styles.containerNoPhoto}
+            leftComponent={(
+              <IconButton
+                icon="chevron-left"
+                style={styles.leftHeaderComponent}
+                color="white"
+                size={40}
+                onPress={() => this.props.navigation.goBack()}
+              />
               )}
-              centerComponent={{ text: '', style: styles.headerCenter }}
-            />
+            centerComponent={{ text: '', style: styles.headerCenter }}
+          />
           )}
           {photo && (
             <Header
               containerStyle={{
-                backgroundColor: '#000',
+                backgroundColor: '#0A2B66',
                 justifyContent: 'space-around'
               }}
               leftComponent={{
                 text: 'Cancel',
-                style: { fontSize: 20, color: '#0680CD' },
+                style: { fontSize: 20, color: 'white', fontFamily: 'Avenir-Light' },
                 onPress: () => this.goBack()
               }}
               rightComponent={{
                 text: 'Save',
-                style: { fontSize: 20, color: '#0680CD' },
+                style: { fontSize: 20, color: 'white', fontFamily: 'Avenir-Light' },
                 onPress: () => this.savePictureToVisit()
               }}
             />
           )}
           {!photo && (
-          <PinchGestureHandler
-            onGestureEvent={this._onPinchGestureEvent}
-            onHandlerStateChange={this._onPinchHandlerStateChange}
-          >
             <View style={{ flex: 1 }}>
               <Camera
                 style={{ flex: 1 }}
@@ -590,7 +587,7 @@ class CameraScreen extends React.Component {
                       style={style.slider}
                       minimumValue={0}
                       maximumValue={10}
-                      step={0.5}
+                      step={0.00000000000000000000000000000000000000001}
                       value={this.state.opacity}
                       onValueChange={this.onOpacityChange}
                       minimumTrackTintColor="#FFFFFF"
@@ -611,21 +608,30 @@ class CameraScreen extends React.Component {
                   </ImageZoom>
                 </View>
                 )}
-              {visitPhoto && ( <Text style={{ 
-                  backgroundColor: 'black', 
-                  alignItems: 'center',
-                  fontFamily: 'Avenir-Light', 
-                  fontWeight: "bold",
-                  fontSize: 22,
-                  color: this.state.overlayMatchColor,
-                  alignSelf: 'center',
-                  justifyContent: 'flex-end',
-                  position: 'absolute',
-                  top: 550
-                  }}> 
-                    {this.state.matchingOverlay} 
-                </Text> )}
-                </Camera>
+                {visitPhoto && (
+                  <View
+                    style={{
+                      backgroundColor: 'black',
+                      alignSelf: 'center',
+                      flexDirection: 'row',
+                      flex: 1,
+                      justifyContent: 'center',
+                      position: 'absolute',
+                      bottom: 0,
+                      width: '100%'
+                    }}
+                  >
+                    <Text style={{
+                      fontFamily: 'Avenir-Light',
+                      fontSize: 22,
+                      color: this.state.overlayMatchColor,
+                    }}
+                    >
+                      {this.state.matchingOverlay}
+                    </Text>
+                  </View>
+                )}
+              </Camera>
 
               <View
                 style={{
@@ -644,7 +650,7 @@ class CameraScreen extends React.Component {
                     alignSelf: 'flex-end',
                     alignItems: 'center',
                     paddingBottom: 20,
-                    paddingLeft: 20
+                    paddingLeft: 30
                   }}
                   onPress={() => {
                     const newFlashMode = flashMode === Camera.Constants.FlashMode.off
@@ -668,7 +674,7 @@ class CameraScreen extends React.Component {
                     flex: 1,
                     alignSelf: 'flex-end',
                     alignItems: 'center',
-                    paddingTop: 10
+                    paddingTop: 5
                   }}
                   onPress={() => this.handleCapture()}
                 >
@@ -684,7 +690,7 @@ class CameraScreen extends React.Component {
                     alignSelf: 'flex-end',
                     alignItems: 'center',
                     paddingBottom: 20,
-                    paddingRight: 20
+                    paddingRight: 30
                   }}
                   onPress={() => {
                     const newType = type === Camera.Constants.Type.back
@@ -701,7 +707,6 @@ class CameraScreen extends React.Component {
                 </TouchableOpacity>
               </View>
             </View>
-          </PinchGestureHandler>
           )}
           {photo && (
             <PinchGestureHandler
@@ -723,14 +728,14 @@ class CameraScreen extends React.Component {
                     flexDirection: 'row',
                     justifyContent: 'space-around',
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
                   }}
                 >
                   <TouchableOpacity
                     style={{
                       flex: 1,
                       alignSelf: 'flex-end',
-                      alignItems: 'center'
+                      alignItems: 'center',
                     }}
                     onPress={this.retryPicture}
                   >
@@ -738,11 +743,13 @@ class CameraScreen extends React.Component {
                       size={35}
                       name="autorenew"
                       color="white"
-                      style={{ padding: 10 }}
+                      style={{ paddingTop: 10 }}
                     />
                     <Text
                       color="#FFF"
-                      style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+                      style={{
+                        color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                      }}
                     >
                       Retry
                     </Text>
@@ -758,14 +765,15 @@ class CameraScreen extends React.Component {
                     <MaterialCommunityIcons
                       size={35}
                       name="gesture"
-                      style={{ padding: 10 }}
+                      style={{ paddingTop: 10 }}
                       color={drawIconColor}
                     />
                     <Text
                       style={{
                         color: drawIconColor,
-                        paddingBottom: 30,
-                        fontSize: 16
+                        paddingBottom: 10,
+                        fontSize: 16,
+                        fontFamily: 'Avenir-Light'
                       }}
                     >
                       Mark
@@ -782,12 +790,14 @@ class CameraScreen extends React.Component {
                     <MaterialCommunityIcons
                       size={35}
                       name="note-plus"
-                      style={{ padding: 10 }}
+                      style={{ paddingTop: 10 }}
                       color="white"
                     />
                     <Text
                       color="#FFF"
-                      style={{ color: '#fff', paddingBottom: 30, fontSize: 16 }}
+                      style={{
+                        color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                      }}
                     >
                       Add Notes
                     </Text>
@@ -817,7 +827,7 @@ const style = StyleSheet.create({
   },
   slider: {
     width: 300,
-    height: 40,
+    height: 100,
     flex: 1,
     margin: 20
   }

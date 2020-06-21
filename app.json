@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "1.0.6",
+    "version": "1.0.13",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -24,7 +24,8 @@
     ],
     "ios": {
       "bundleIdentifier": "com.domainname.skincheck360",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "description": ""
   }
