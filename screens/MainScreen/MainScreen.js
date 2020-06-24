@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   RefreshControl,
   View,
-  YellowBox
+  YellowBox,
+  Linking
 } from 'react-native';
 import { ListItem, Header } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
@@ -143,13 +144,13 @@ class MainScreen extends Component {
             visible={this.state.showBanner}
             actions={[
               {
-                label: 'Close',
-                onPress: () => this.setState({ showBanner: false })
+                label: 'Go to Settings',
+                onPress: () => Linking.openURL('app-settings:')
               }
             ]}
           >
-            <Text style={{ fontSize: 16 }}>
-              The camera policy has been declined.
+            <Text style={{ fontSize: 16, fontFamily: 'Avenir-Light' }}>
+              The camera policy has been declined. Please turn on camera in your settings to continue using this app.
             </Text>
           </Banner>
         )}

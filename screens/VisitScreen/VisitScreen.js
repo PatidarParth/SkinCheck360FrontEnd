@@ -8,10 +8,12 @@ import {
   Menu, Divider, Provider, IconButton
 } from 'react-native-paper';
 import { connect } from 'react-redux';
+import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
+import uuidv4 from 'uuid/v4';
 import { deletePicture, addPicture } from '../../redux/actions';
 import styles from './styles';
 
@@ -33,6 +35,8 @@ class VisitScreen extends Component {
   }
 
   componentDidMount() {
+    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
+    });
     this.setState({ visitId: this.props.route.params?.visitId });
   }
 
@@ -87,11 +91,16 @@ class VisitScreen extends Component {
         base64: true,
         exif: true
       });
+      const picId = uuidv4();
+      FileSystem.moveAsync({
+        from: result.uri,
+        to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
+      });
       if (result && result.uri) {
         this.props.addPicture(
           this.props.visitData,
           this.props.route.params?.visitId,
-          result.uri,
+          `photos/Photo_${picId}.jpg`,
           '',
           '',
           '',
@@ -106,11 +115,11 @@ class VisitScreen extends Component {
   };
 
   render() {
+    console.log(`${FileSystem.documentDirectory}`)
     const { visitPictures } = this.props.visitData[
       this.props.route.params?.visitId
     ];
     const { visitData } = this.props;
-
     return (
       <View style={styles.providerView}>
         <Header
@@ -225,7 +234,7 @@ class VisitScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={{ uri: picture.uri }}
+                        source={{ uri: `${FileSystem.documentDirectory}${picture.uri}` }}
                         style={{ height: '100%', width: '100%' }}
                       />
                       <Text style={styles.pictureFont}>{picture.dateCreated}</Text>

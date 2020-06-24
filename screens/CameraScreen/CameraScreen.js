@@ -11,7 +11,7 @@ import {
   Image as RNImage
 } from 'react-native';
 import { PinchGestureHandler } from 'react-native-gesture-handler';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import * as FileSystem from 'expo-file-system';
 import { Dropdown } from 'react-native-material-dropdown';
 import { Header } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
@@ -62,7 +62,6 @@ class CameraScreen extends React.Component {
     let photo;
     let pictureLocation;
     const faceDetectedArray = [];
-    let overlayDetectedArray;
     let pictureNote;
     let pictureBodyPart;
     let locationX = -100;
@@ -105,7 +104,6 @@ class CameraScreen extends React.Component {
       diameter,
       opacity: 4,
       faceDetectedArray,
-      overlayDetectedArray,
       cameraZoomValue: 0,
       overlayPictureId,
       matchingOverlay: 'Overlay does not match',
@@ -119,6 +117,8 @@ class CameraScreen extends React.Component {
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === 'granted' });
+    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
+    });
   }
 
   // eslint-disable-next-line react/sort-comp
@@ -172,7 +172,6 @@ class CameraScreen extends React.Component {
   // implement face detection callback function
   onFacesDetected = ({ faces }) => {
     this.setState({ faceDetectedArray: faces });
-    console.log(faces);
   }
 
   // implement face detection error function
@@ -251,18 +250,28 @@ class CameraScreen extends React.Component {
               rotate: 0
             }
           ]);
+          const picId = this.props.route.params?.pictureId || uuidv4();
+          FileSystem.moveAsync({
+            from: photo.uri,
+            to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
+          });
           this.setState({
-            photo: photo.uri
+            photo: `photos/Photo_${picId}.jpg`
           });
         } else if (this.state.type === Camera.Constants.Type.front) {
+          const picId = this.props.route.params?.pictureId || uuidv4();
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             {
               rotate: 0
             },
             { flip: ImageManipulator.FlipType.Horizontal }
           ]);
+          FileSystem.moveAsync({
+            from: photo.uri,
+            to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
+          });
           this.setState({
-            photo: photo.uri
+            photo: `photos/Photo_${picId}.jpg`
           });
         }
       });
@@ -369,14 +378,14 @@ class CameraScreen extends React.Component {
 
   renderSvg() {
     return (
-      <Svg height="100%" width="100%" style={{ backgroundColor: '#33AAFF' }}>
+      <Svg height="100%" width="100%" style={{ backgroundColor: 'transparent' }}>
         <Image
           x="0"
           y="0"
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
-          href={this.state.photo}
+          href={`${FileSystem.documentDirectory}${this.state.photo}`}
         />
         <Circle
           cx={this.state.locationX}
@@ -427,7 +436,7 @@ class CameraScreen extends React.Component {
           height="100%"
           opacity={this.state.opacity / 10.0}
           preserveAspectRatio="xMidYMid slice"
-          href={currentPicture.uri || ''}
+          href={`${FileSystem.documentDirectory}${currentPicture.uri}` || ''}
         />
         <Circle
           opacity={this.state.opacity / 10.0}
@@ -486,9 +495,8 @@ class CameraScreen extends React.Component {
               style={{ top: -100 }}
             >
               <Dialog.ScrollArea>
-                <KeyboardAwareScrollView>
-                  <Dialog.Content>
-                    <Dropdown
+                <Dialog.Content>
+                  <Dropdown
                       label="Location"
                       style={{ fontFamily: 'Avenir-Light' }}
                       data={noteDropdownInfo.location}
@@ -520,7 +528,6 @@ class CameraScreen extends React.Component {
                   <Dialog.Actions>
                     <Button onPress={this._hideDialog}>Done</Button>
                   </Dialog.Actions>
-                </KeyboardAwareScrollView>
               </Dialog.ScrollArea>
             </Dialog>
           </Portal>
@@ -587,7 +594,7 @@ class CameraScreen extends React.Component {
                       style={style.slider}
                       minimumValue={0}
                       maximumValue={10}
-                      step={0.00000000000000000000000000000000000000001}
+                      step={0.00001}
                       value={this.state.opacity}
                       onValueChange={this.onOpacityChange}
                       minimumTrackTintColor="#FFFFFF"

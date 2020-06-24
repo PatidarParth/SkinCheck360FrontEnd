@@ -16,6 +16,7 @@ import { Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from 'react-redux';
 import ImageZoom from 'react-native-image-pan-zoom';
+import * as FileSystem from 'expo-file-system';
 import { deletePicture } from '../../redux/actions';
 import styles from './styles';
 
@@ -77,14 +78,14 @@ class PhotoScreen extends Component {
     }
 
     return (
-      <Svg height="100%" width="100%" style={{ backgroundColor: '#33AAFF' }}>
+      <Svg height="100%" width="100%" style={{ backgroundColor: 'transparent' }}>
         <Image
           x="0"
           y="0"
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
-          href={currentPicture.uri || ''}
+          href={`${FileSystem.documentDirectory}${currentPicture.uri}` || ''}
         />
         <Circle
           cx={currentPicture.locationX || -100}

@@ -11,6 +11,7 @@ import {
 } from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
+import * as FileSystem from 'expo-file-system';
 import update from 'immutability-helper';
 import { connect } from 'react-redux';
 import { Appearance } from 'react-native-appearance';
@@ -48,6 +49,8 @@ class AddEventScreen extends Component {
   }
 
   componentDidMount() {
+    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
+    });
     this.setState({
       visitId: '',
       visitName: '',
@@ -121,13 +124,18 @@ class AddEventScreen extends Component {
         base64: true,
         exif: true
       });
+      const picId = uuidv4();
+      FileSystem.moveAsync({
+        from: result.uri,
+        to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
+      });
       const emptyString = '';
       const location = -100;
       const diameter = 20;
       if (result && result.uri) {
         this.state.visitPictures.push({
           pictureId: uuidv4(),
-          uri: result.uri,
+          uri: `photos/Photo_${picId}.jpg`,
           emptyString,
           emptyString,
           emptyString,
@@ -328,7 +336,7 @@ class AddEventScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={{ uri: picture.uri }}
+                        source={{ uri: `${FileSystem.documentDirectory}${picture.uri}` }}
                         style={{ height: '100%', width: '100%' }}
                       />
                       <Text style={styles.pictureFont}>{picture.dateCreated}</Text>

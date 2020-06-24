@@ -70,7 +70,7 @@ export default StyleSheet.create({
   buttonSave: {
     paddingRight: 10,
     paddingLeft: 10,
-    paddingBottom: 20,
+    paddingBottom: 50,
   },
   inputSpacer: {
     padding: 10
