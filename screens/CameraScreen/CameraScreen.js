@@ -238,17 +238,31 @@ class CameraScreen extends React.Component {
       );
       await this.setState({ photo: undefined });
     }
-
+    const { height, width } = Dimensions.get('window');
+    console.log(height, width)
+    const maskRowHeight = Math.round((height - 200) / 40);
+    const maskColWidth = (width - 200) / 2;
     this.camera
       .takePictureAsync({
         exif: true
       })
       .then(async (data) => {
+        const width = data.width;
+        const height = data.height;
+        console.log(height, width, maskColWidth, maskRowHeight)
         if (this.state.type === Camera.Constants.Type.back) {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            { rotate: 0 },
+            // {  resize: { width: maskColWidth } }
             {
-              rotate: 0
+              crop: {
+                originX: 0,
+                originY: (height - width) / 2,
+                width: width,
+                height: width
+              }
             }
+
           ]);
           const picId = this.props.route.params?.pictureId || uuidv4();
           FileSystem.moveAsync({
@@ -261,10 +275,16 @@ class CameraScreen extends React.Component {
         } else if (this.state.type === Camera.Constants.Type.front) {
           const picId = this.props.route.params?.pictureId || uuidv4();
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            { rotate: 0 },
+            { flip: ImageManipulator.FlipType.Horizontal },
             {
-              rotate: 0
-            },
-            { flip: ImageManipulator.FlipType.Horizontal }
+              crop: {
+                originX: 0,
+                originY: (height - width) / 2,
+                width: width,
+                height: width
+              }
+            }
           ]);
           FileSystem.moveAsync({
             from: photo.uri,
@@ -452,6 +472,9 @@ class CameraScreen extends React.Component {
   }
 
   render() {
+    const { height, width } = Dimensions.get('window');
+    const maskRowHeight = Math.round((height - 200) / 40);
+    const maskColWidth = (width - 200) / 2;
     const {
       hasCameraPermission,
       photo,
@@ -497,37 +520,37 @@ class CameraScreen extends React.Component {
               <Dialog.ScrollArea>
                 <Dialog.Content>
                   <Dropdown
-                      label="Location"
-                      style={{ fontFamily: 'Avenir-Light' }}
-                      data={noteDropdownInfo.location}
-                      itemTextStyle={{ fontFamily: 'Avenir-Light' }}
-                      value={this.state.pictureLocation}
-                      onChangeText={(value) => {
-                        this.setState({ pictureLocation: value });
-                      }}
-                    />
-                    <Dropdown
-                      label="Body Part"
-                      itemTextStyle={{ fontFamily: 'Avenir-Light' }}
-                      data={noteDropdownInfo.bodyParts}
-                      style={{ fontFamily: 'Avenir-Light' }}
-                      value={this.state.pictureBodyPart}
-                      onChangeText={(value) => {
-                        this.setState({ pictureBodyPart: value });
-                      }}
-                    />
-                    <TextField
-                      label="Notes"
-                      style={{ fontFamily: 'Avenir-Light' }}
-                      onChangeText={(text) => {
-                        this.setState({ pictureNote: text });
-                      }}
-                      value={this.state.pictureNote}
-                    />
-                  </Dialog.Content>
-                  <Dialog.Actions>
-                    <Button onPress={this._hideDialog}>Done</Button>
-                  </Dialog.Actions>
+                    label="Location"
+                    style={{ fontFamily: 'Avenir-Light' }}
+                    data={noteDropdownInfo.location}
+                    itemTextStyle={{ fontFamily: 'Avenir-Light' }}
+                    value={this.state.pictureLocation}
+                    onChangeText={(value) => {
+                      this.setState({ pictureLocation: value });
+                    }}
+                  />
+                  <Dropdown
+                    label="Body Part"
+                    itemTextStyle={{ fontFamily: 'Avenir-Light' }}
+                    data={noteDropdownInfo.bodyParts}
+                    style={{ fontFamily: 'Avenir-Light' }}
+                    value={this.state.pictureBodyPart}
+                    onChangeText={(value) => {
+                      this.setState({ pictureBodyPart: value });
+                    }}
+                  />
+                  <TextField
+                    label="Notes"
+                    style={{ fontFamily: 'Avenir-Light' }}
+                    onChangeText={(text) => {
+                      this.setState({ pictureNote: text });
+                    }}
+                    value={this.state.pictureNote}
+                  />
+                </Dialog.Content>
+                <Dialog.Actions>
+                  <Button onPress={this._hideDialog}>Done</Button>
+                </Dialog.Actions>
               </Dialog.ScrollArea>
             </Dialog>
           </Portal>
@@ -543,7 +566,8 @@ class CameraScreen extends React.Component {
                 onPress={() => this.props.navigation.goBack()}
               />
               )}
-            centerComponent={{ text: '', style: styles.headerCenter }}
+            ce
+            nterComponent={{ text: '', style: styles.headerCenter }}
           />
           )}
           {photo && (
@@ -584,6 +608,69 @@ class CameraScreen extends React.Component {
                 onFacesDetected={this.onFacesDetected}
                 onFacesDetectionError={this.onFacesDetectionError}
               >
+                {!visitPhoto && (
+                <View style={styles.maskOutter}>
+                  <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
+                  <View style={[{ flex: 40 }, styles.maskCenter]}>
+                    <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+                    <View style={styles.maskInner}>
+
+                      {/* top */}
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: 10,
+                          borderColor: '#FFFFFF',
+                          borderTopWidth: 0.5
+                        }}
+                      />
+                      {/* #bottom */}
+                      <View
+                        style={{
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          width: '100%',
+                          height: 10,
+                          borderColor: '#FFFFFF',
+                          borderBottomWidth: 0.5
+                        }}
+                      />
+                      {/* left */}
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: 20,
+                          height: '100%',
+                          borderColor: '#FFFFFF',
+                          borderLeftWidth: 0.5
+                        }}
+                      />
+                      {/* right */}
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          right: 0,
+                          width: 20,
+                          height: '100%',
+                          borderColor: '#FFFFFF',
+                          borderRightWidth: 1
+                        }}
+                      />
+                    </View>
+                    <View style={[{ width: maskColWidth }, styles.maskFrame]} />
+                  </View>
+                  <View
+                    style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]}
+                  />
+                </View>
+                )}
                 {visitPhoto && (
                 <View
                   style={style.overlayPhoto}
@@ -616,27 +703,50 @@ class CameraScreen extends React.Component {
                 </View>
                 )}
                 {visitPhoto && (
-                  <View
-                    style={{
-                      backgroundColor: 'black',
-                      alignSelf: 'center',
-                      flexDirection: 'row',
-                      flex: 1,
-                      justifyContent: 'center',
-                      position: 'absolute',
-                      bottom: 0,
-                      width: '100%'
-                    }}
+                <View
+                  style={{
+                    backgroundColor: 'black',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%'
+                  }}
+                >
+                  <Text style={{
+                    fontFamily: 'Avenir-Light',
+                    fontSize: 22,
+                    color: this.state.overlayMatchColor,
+                  }}
                   >
-                    <Text style={{
-                      fontFamily: 'Avenir-Light',
-                      fontSize: 22,
-                      color: this.state.overlayMatchColor,
-                    }}
-                    >
-                      {this.state.matchingOverlay}
-                    </Text>
-                  </View>
+                    {this.state.matchingOverlay}
+                  </Text>
+                </View>
+                )}
+                {photo && (
+                <View
+                  style={{
+                    backgroundColor: 'black',
+                    alignSelf: 'center',
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    bottom: 0,
+                    width: '100%'
+                  }}
+                >
+                  <Text style={{
+                    fontFamily: 'Avenir-Light',
+                    fontSize: 22,
+                    color: this.state.overlayMatchColor,
+                  }}
+                  >
+                    {this.state.matchingOverlay}
+                  </Text>
+                </View>
                 )}
               </Camera>
 
