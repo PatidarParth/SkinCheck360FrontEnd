@@ -115,7 +115,6 @@ class VisitScreen extends Component {
   };
 
   render() {
-    console.log(`${FileSystem.documentDirectory}`)
     const { visitPictures } = this.props.visitData[
       this.props.route.params?.visitId
     ];

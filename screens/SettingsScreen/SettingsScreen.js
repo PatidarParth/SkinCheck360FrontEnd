@@ -120,7 +120,6 @@ class SettingsScreen extends Component {
             subtitle={this.state.accountUsername}
             subtitleStyle={{ fontFamily: 'Avenir-Light' }}
             bottomDivider
-            onPress={() => this.getSupport('Contact Us')}
           />
         </View>
 
