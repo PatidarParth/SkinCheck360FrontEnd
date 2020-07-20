@@ -1,0 +1,17 @@
+{
+    "projectName": "SkinCheck360FrontEnd",
+    "version": "3.0",
+    "frontend": "javascript",
+    "javascript": {
+        "framework": "react-native",
+        "config": {
+            "SourceDir": "/",
+            "DistributionDir": "/",
+            "BuildCommand": "npm run",
+            "StartCommand": "npm run"
+        }
+    },
+    "providers": [
+        "awscloudformation"
+    ]
+}

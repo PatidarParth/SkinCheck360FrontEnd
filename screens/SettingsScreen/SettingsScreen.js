@@ -11,6 +11,7 @@ import { ListItem, Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import qs from 'qs';
 import { IconButton } from 'react-native-paper';
+import { Auth } from 'aws-amplify';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
 import terms from '../../assets/terms.json';
@@ -20,7 +21,9 @@ class SettingsScreen extends Component {
     super(props);
     this.state = {
       privacyVisible: false,
-      termsVisible: false
+      termsVisible: false,
+      accountUsername: '',
+      accountName: ''
     };
 
     YellowBox.ignoreWarnings([
@@ -30,6 +33,19 @@ class SettingsScreen extends Component {
       'Warning:',
       'Possible'
     ]);
+  }
+
+  async componentDidMount() {
+    const user = await Auth.currentAuthenticatedUser().catch();
+    this.setState({ accountUsername: user.username, accountName: user.attributes.name });
+  }
+
+  signOut = async () => {
+    await Auth.signOut()
+      // eslint-disable-next-line no-console
+      .then((data) => console.log(data))
+      // eslint-disable-next-line no-console
+      .catch((err) => console.log(err));
   }
 
   getLegalPolicy = async (policyName) => {
@@ -86,6 +102,28 @@ class SettingsScreen extends Component {
           containerStyle={styles.header}
           centerComponent={{ text: 'Settings', style: styles.headerCenter }}
         />
+
+        <View style={styles.notificationView}>
+          <Text style={styles.labelFont}>ACCOUNT</Text>
+          <ListItem
+            key="account"
+            leftAvatar={(
+              <MaterialCommunityIcons
+                name="account"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
+          )}
+            title={this.state.accountName}
+            titleStyle={{ fontFamily: 'Avenir-Light' }}
+            subtitle={this.state.accountUsername}
+            subtitleStyle={{ fontFamily: 'Avenir-Light' }}
+            bottomDivider
+            onPress={() => this.getSupport('Contact Us')}
+          />
+        </View>
+
         <View style={styles.notificationView}>
           <Text style={styles.labelFont}>LEGAL</Text>
           {
@@ -127,23 +165,23 @@ class SettingsScreen extends Component {
           />
         </View>
 
-        {/* <View style={styles.notificationView}>
+        <View style={styles.notificationView}>
           <ListItem
-            key="contact-us"
+            key="sign-out"
             leftAvatar={(
               <MaterialCommunityIcons
-                name="contact-phone"
+                name="logout"
                 size={24}
                 style={styles.inputIcon}
                 color="#0A2B66"
               />
           )}
-            title="Contact Us"
-            titleStyle={{ fontFamily: 'Avenir-Light' }}
+            title="Sign Out"
+            titleStyle={{ fontFamily: 'Avenir-Light', color: '#0A2B66', fontWeight: 'bold' }}
             bottomDivider
-            onPress={() => this.getSupport('Contact Us')}
+            onPress={() => this.signOut()}
           />
-        </View> */}
+        </View>
 
         <Modal visible={this.state.privacyVisible}>
           <Header

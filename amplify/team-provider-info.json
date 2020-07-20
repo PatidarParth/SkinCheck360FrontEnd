@@ -1,0 +1,27 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-skincheck360frontend-dev-205534-authRole",
+            "UnauthRoleArn": "arn:aws:iam::496022163873:role/amplify-skincheck360frontend-dev-205534-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::496022163873:role/amplify-skincheck360frontend-dev-205534-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-skincheck360frontend-dev-205534-deployment",
+            "UnauthRoleName": "amplify-skincheck360frontend-dev-205534-unauthRole",
+            "StackName": "amplify-skincheck360frontend-dev-205534",
+            "StackId": "arn:aws:cloudformation:us-east-1:496022163873:stack/amplify-skincheck360frontend-dev-205534/b88dfa80-ca23-11ea-abec-0a54954134e7",
+            "AmplifyAppId": "d28gxcbgfw74s7"
+        },
+        "categories": {
+            "function": {
+                "skincheck360frontend852baea9CustomMessage": {
+                    "REDIRECTURL": "",
+                    "EMAILSUBJECT": "SkinCheck360: Please confirm email",
+                    "EMAILMESSAGE": "Please confirm your email to join the SkinCheck360 team!"
+                }
+            },
+            "auth": {
+                "skincheck360frontend852baea9": {}
+            }
+        }
+    }
+}
