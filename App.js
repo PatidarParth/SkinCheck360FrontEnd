@@ -1,7 +1,6 @@
 // App.js
 /* eslint no-unused-vars: "off" */
 import React, { useEffect } from 'react';
-import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -18,9 +17,14 @@ import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
 
 import { AppearanceProvider } from 'react-native-appearance';
-import { withAuthenticator } from 'aws-amplify-react-native';
+import {
+ RequireNewPassword, ConfirmSignIn, VerifyContact, withAuthenticator
+} from 'aws-amplify-react-native';
 import Amplify from '@aws-amplify/core';
-import { I18n } from 'aws-amplify';
+import SignInScreen from './screens/SignInScreen';
+import SignUpScreen from './screens/SignUpScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
+import ConfirmSignUpScreen from './screens/ConfirmSignUpScreen';
 import MainScreen from './screens/MainScreen';
 import AddEventScreen from './screens/AddEventScreen';
 import CameraScreen from './screens/CameraScreen';
@@ -32,17 +36,6 @@ import config from './aws-exports';
 
 
 import rootReducer from './redux/rootReducer';
-
-const authScreenLabels = {
-  en: {
-    'Sign in to your account': 'Welcome to Skin Check 360',
-    'Create a new account': 'Join Skin Check 360'
-    // 'Custom auth lambda trigger is not configured for the user pool': 'Password cannot be empty'
-  }
-};
-
-I18n.setLanguage('en');
-I18n.putVocabularies(authScreenLabels);
 
 Amplify.configure(config);
 
@@ -97,6 +90,7 @@ function HomeStackScreen() {
       <HomeStack.Screen name="ViewPhoto" component={PhotoScreen} options={{ headerMode: 'none', headerShown: false }} />
       <HomeStack.Screen name="VisitDescription" component={VisitScreen} options={{ headerMode: 'none', headerShown: false }} />
       <HomeStack.Screen name="EditEvent" component={EditEventScreen} options={{ headerMode: 'none', headerShown: false }} />
+      <HomeStack.Screen name="SignIn" component={SignInScreen} options={{ headerMode: 'none', headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
@@ -106,7 +100,7 @@ const tabBarVisible = async (route) => {
     ? route.state.routes[route.state.index].name
     : '';
 
-  if (routeName === 'Camera' || routeName === 'ViewPhoto') {
+  if (routeName === 'Camera' || routeName === 'ViewPhoto' || routeName === 'SignIn') {
     return false;
   }
 
@@ -150,192 +144,6 @@ function MyTabs() {
   );
 }
 
-const AmplifyTheme = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingTop: 100,
-    width: '100%',
-    backgroundColor: '#FFF',
-  },
-  section: {
-    flex: 1,
-    width: '100%',
-    paddingTop: '40%',
-    paddingLeft: 30,
-    paddingRight: 30,
-  },
-  sectionHeader: {
-    width: '100%',
-    marginBottom: 32,
-  },
-  sectionScroll: {
-    flex: 1,
-    width: '100%',
-    paddingTop: 30,
-    paddingLeft: 30,
-    paddingRight: 30
-  },
-  sectionHeaderText: {
-    color: '#0A2B66',
-    fontSize: 20,
-    fontWeight: '100',
-    textAlign: 'center',
-    fontFamily: 'Avenir-Light'
-  },
-  sectionFooter: {
-    width: '100%',
-    padding: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 15,
-    marginBottom: 50,
-  },
-  sectionFooterLink: {
-    fontSize: 14,
-    color: '#0A2B66',
-    alignItems: 'baseline',
-    textAlign: 'center',
-    fontFamily: 'Avenir-Light'
-  },
-  sectionFooterLinkDisabled: {
-    fontSize: 14,
-    color: '#808080',
-    alignItems: 'baseline',
-    textAlign: 'center',
-  },
-  navBar: {
-    marginTop: 1000,
-    padding: 15,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  navButton: {
-    marginLeft: 12,
-    borderRadius: 4,
-  },
-  cell: {
-    flex: 1,
-    width: '50%',
-  },
-  errorRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  errorRowText: {
-    marginLeft: 10,
-    fontFamily: 'Avenir-Light'
-  },
-  photo: {
-    width: '100%',
-  },
-  album: {
-    width: '100%',
-  },
-  button: {
-    backgroundColor: '#0A2B66',
-    alignItems: 'center',
-    padding: 10
-  },
-  buttonDisabled: {
-    backgroundColor: '#808080',
-    alignItems: 'center',
-    padding: 10
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '600',
-    fontFamily: 'Avenir-Light'
-  },
-  formField: {
-    marginBottom: 22,
-  },
-  input: {
-    padding: 12,
-    borderWidth: 1,
-    borderRadius: 3,
-    borderColor: '#0A2B66',
-    fontFamily: 'Avenir-Light'
-  },
-  inputLabel: {
-    marginBottom: 5,
-    fontFamily: 'Avenir-Light',
-  },
-  phoneContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  phoneInput: {
-    flex: 2,
-    padding: 12,
-    borderWidth: 1,
-    borderRadius: 3,
-    borderColor: '#0A2B66',
-    fontFamily: 'Avenir-Light'
-  },
-  picker: {
-    flex: 1,
-    height: 44,
-  },
-  pickerItem: {
-    height: 44,
-  },
-  signedOutMessage: {
-    display: 'none'
-  }
-});
-
-const signUpConfig = {
-  hideAllDefaults: false,
-  signUpFields: [
-    {
-      label: 'Name',
-      key: 'name',
-      placeholder: 'Enter First and Last Name',
-      required: true,
-      displayOrder: 1,
-      type: 'string',
-    },
-    {
-      label: 'Username',
-      key: 'username',
-      placeholder: 'Enter Username',
-      required: true,
-      displayOrder: 2,
-      type: 'string',
-    },
-    {
-      label: 'Email',
-      key: 'email',
-      placeholder: 'Enter Email',
-      required: true,
-      displayOrder: 3,
-      type: 'string',
-    },
-    {
-      label: 'Password',
-      key: 'password',
-      placeholder: 'Enter Password',
-      required: true,
-      displayOrder: 5,
-      type: 'password',
-    },
-    {
-      label: 'Address',
-      key: 'address',
-      placeholder: 'Enter Clinic Address',
-      required: true,
-      displayOrder: 6,
-      type: 'address',
-    }
-  ],
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -345,4 +153,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withAuthenticator(App, false, [], null, AmplifyTheme, signUpConfig);
+export default withAuthenticator(App, false, [
+  <SignInScreen/>,
+  <ConfirmSignIn/>,
+  <VerifyContact/>,
+  <SignUpScreen/>,
+  <ConfirmSignUpScreen/>,
+  <ForgotPasswordScreen/>,
+  <RequireNewPassword />
+], null);

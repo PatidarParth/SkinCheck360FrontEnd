@@ -239,7 +239,7 @@ class CameraScreen extends React.Component {
       await this.setState({ photo: undefined });
     }
     const { height, width } = Dimensions.get('window');
-    console.log(height, width)
+    console.log(height, width);
     const maskRowHeight = Math.round((height - 200) / 40);
     const maskColWidth = (width - 200) / 2;
     this.camera
@@ -247,9 +247,9 @@ class CameraScreen extends React.Component {
         exif: true
       })
       .then(async (data) => {
-        const width = data.width;
-        const height = data.height;
-        console.log(height, width, maskColWidth, maskRowHeight)
+        const { width } = data;
+        const { height } = data;
+        console.log(height, width, maskColWidth, maskRowHeight);
         if (this.state.type === Camera.Constants.Type.back) {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             { rotate: 0 },
@@ -258,7 +258,7 @@ class CameraScreen extends React.Component {
               crop: {
                 originX: 0,
                 originY: (height - width) / 2,
-                width: width,
+                width,
                 height: width
               }
             }
@@ -281,7 +281,7 @@ class CameraScreen extends React.Component {
               crop: {
                 originX: 0,
                 originY: (height - width) / 2,
-                width: width,
+                width,
                 height: width
               }
             }

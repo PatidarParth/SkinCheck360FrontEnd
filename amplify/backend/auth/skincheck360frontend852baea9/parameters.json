@@ -48,23 +48,17 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
-    "triggers": "{\"CustomMessage\":[\"verification-link\"]}",
+    "useDefault": "manual",
+    "triggers": "{}",
     "userPoolGroupList": [],
     "verificationBucketName": "skincheck360frontend852baea9verificationbucket",
     "parentStack": {
         "Ref": "AWS::StackId"
     },
     "permissions": [],
-    "dependsOn": [
-        {
-            "category": "function",
-            "resourceName": "skincheck360frontend852baea9CustomMessage",
-            "triggerProvider": "Cognito",
-            "attributes": [
-                "Arn",
-                "Name"
-            ]
-        }
-    ]
+    "dependsOn": [],
+    "thirdPartyAuth": false,
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "hostedUI": false
 }

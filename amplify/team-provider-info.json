@@ -12,13 +12,6 @@
             "AmplifyAppId": "d28gxcbgfw74s7"
         },
         "categories": {
-            "function": {
-                "skincheck360frontend852baea9CustomMessage": {
-                    "REDIRECTURL": "",
-                    "EMAILSUBJECT": "SkinCheck360: Please confirm email",
-                    "EMAILMESSAGE": "Please confirm your email to join the SkinCheck360 team!"
-                }
-            },
             "auth": {
                 "skincheck360frontend852baea9": {}
             }

@@ -9,18 +9,6 @@ Parameters:
     Type: String
   
   
-  
-  
-  functionskincheck360frontend852baea9CustomMessageArn: 
-    Type: String
-    Default: functionskincheck360frontend852baea9CustomMessageArn
-  
-  functionskincheck360frontend852baea9CustomMessageName: 
-    Type: String
-    Default: functionskincheck360frontend852baea9CustomMessageName
-  
-  
-  
 
     
   identityPoolName:
@@ -103,7 +91,7 @@ Parameters:
                       
   userPoolGroupList:
     Type: CommaDelimitedList
-                  
+      
   verificationBucketName:
     Type: String
                     
@@ -115,7 +103,19 @@ Parameters:
               
   dependsOn:
     Type: CommaDelimitedList
-    
+        
+  thirdPartyAuth:
+    Type: String
+              
+  userPoolGroups:
+    Type: String
+              
+  adminQueries:
+    Type: String
+              
+  hostedUI:
+    Type: String
+                      
 Conditions:
   ShouldNotCreateEnvResources: !Equals [ !Ref env, NONE ]
 
@@ -205,19 +205,6 @@ Resources:
         
       
       
-      LambdaConfig:
-        
-        
-          CustomMessage: !Ref functionskincheck360frontend852baea9CustomMessageArn
-        
-        
-        
-        
-        
-        
-        
-        
-      
       
       AutoVerifiedAttributes: !Ref autoVerifiedAttributes
       
@@ -241,15 +228,6 @@ Resources:
     
   
     
-  
-  UserPoolCustomMessageLambdaInvokePermission: 
-    Type: "AWS::Lambda::Permission"
-    DependsOn: UserPool
-    Properties: 
-      Action: "lambda:invokeFunction"
-      Principal: "cognito-idp.amazonaws.com"
-      FunctionName: !Ref functionskincheck360frontend852baea9CustomMessageName
-      SourceArn: !GetAtt UserPool.Arn
     
   
     
