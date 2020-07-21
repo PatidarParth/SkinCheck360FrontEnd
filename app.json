@@ -15,8 +15,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/duke.png",
-      "resizeMode": "contain",
+      "image": "./assets/splash.png",
       "backgroundColor": "#ffffff"
     },
     "updates": {

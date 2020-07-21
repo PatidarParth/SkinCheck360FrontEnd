@@ -37,6 +37,7 @@ const authScreenLabels = {
   en: {
     'Sign in to your account': 'Welcome to Skin Check 360',
     'Create a new account': 'Join Skin Check 360'
+    // 'Custom auth lambda trigger is not configured for the user pool': 'Password cannot be empty'
   }
 };
 
