@@ -67,6 +67,13 @@ class ConfirmSignUpScreen extends ConfirmSignUp {
     );
   }
 
+  navigateSignIn() {
+    this.setState({ error: '' });
+    this.setState({ username: '' });
+    this.setState({ code: '' });
+    this.props.onStateChange('signIn');
+  }
+
   render() {
     const { authState } = this.props;
     const isEnabled = this.canBeSubmitted();
@@ -107,7 +114,7 @@ class ConfirmSignUpScreen extends ConfirmSignUp {
           </TouchableOpacity>
           <View style={styles.footerRow}>
             <Text style={styles.sectionFooterLabel} onPress={() => this.resendCode()}>Resend Code</Text>
-            <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signIn')}>Back to Sign In</Text>
+            <Text style={styles.sectionFooterLabel} onPress={() => this.navigateSignIn()}>Back to Sign In</Text>
           </View>
           <Text style={styles.errorLabel}>{this.state.error}</Text>
         </KeyboardAwareScrollView>

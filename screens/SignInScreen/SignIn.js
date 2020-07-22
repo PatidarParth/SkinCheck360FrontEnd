@@ -56,10 +56,25 @@ class SignInScreen extends SignIn {
 
  canBeSubmitted() {
    const { username, password } = this.state;
+   console.log(username);
    return (
      username.length > 0
     && password.length > 0
    );
+ }
+
+ navigateForgotPW() {
+   this.setState({ username: '' });
+   this.setState({ password: '' });
+   this.setState({ error: '' });
+   this.props.onStateChange('forgotPassword');
+ }
+
+ navigateSignUp() {
+   this.setState({ username: '' });
+   this.setState({ password: '' });
+   this.setState({ error: '' });
+   this.props.onStateChange('signUp');
  }
 
  render() {
@@ -104,8 +119,8 @@ class SignInScreen extends SignIn {
            <Text style={styles.buttonText}>Sign In</Text>
          </TouchableOpacity>
          <View style={styles.footerRow}>
-           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('forgotPassword', this.state.error)}>Forgot Password</Text>
-           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signUp')}>Sign Up</Text>
+           <Text style={styles.sectionFooterLabel} onPress={() => this.navigateForgotPW()}>Forgot Password</Text>
+           <Text style={styles.sectionFooterLabel} onPress={() => this.navigateSignUp()}>Sign Up</Text>
          </View>
          <Text style={styles.errorLabel}>{this.state.error}</Text>
        </KeyboardAwareScrollView>

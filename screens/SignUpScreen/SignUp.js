@@ -47,7 +47,7 @@ class SignUpScreen extends SignUp {
  }
 
  // eslint-disable-next-line react/sort-comp
- async signIn() {
+ async signUp() {
    // eslint-disable-next-line camelcase
    const {
      username, password, email, phone_number, address, name
@@ -108,6 +108,28 @@ class SignUpScreen extends SignUp {
    && phone_number.length > 0 && address.length > 0
    && name.length > 0
    );
+ }
+
+ navigateConfirmSignUp() {
+   this.setState({ error: '' });
+   this.setState({ username: '' });
+   this.setState({ password: '' });
+   this.setState({ name: '' });
+   this.setState({ email: '' });
+   this.setState({ phone_number: '' });
+   this.setState({ address: '' });
+   this.props.onStateChange('confirmSignUp');
+ }
+
+ navigateSignIn() {
+   this.setState({ error: '' });
+   this.setState({ username: '' });
+   this.setState({ password: '' });
+   this.setState({ name: '' });
+   this.setState({ email: '' });
+   this.setState({ phone_number: '' });
+   this.setState({ address: '' });
+   this.props.onStateChange('signIn');
  }
 
  render() {
@@ -185,14 +207,14 @@ class SignUpScreen extends SignUp {
          />
          <TouchableOpacity
            style={!isEnabled ? styles.disableButton : styles.button}
-           onPress={() => this.signIn()}
+           onPress={() => this.signUp()}
            disabled={!isEnabled}
          >
            <Text style={styles.buttonText}>Sign Up </Text>
          </TouchableOpacity>
          <View style={styles.footerRow}>
-           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('confirmSignUp')}>Confirm a Code</Text>
-           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signIn')}>Sign In</Text>
+           <Text style={styles.sectionFooterLabel} onPress={() => this.navigateConfirmSignUp()}>Confirm a Code</Text>
+           <Text style={styles.sectionFooterLabel} onPress={() => this.navigateSignIn()}>Sign In</Text>
          </View>
          <Text style={styles.errorLabel}>{this.state.error}</Text>
          <Text style={styles.termsLabel}>By signing up, you are agreeing to Skin Check 360 Terms & Conditions</Text>

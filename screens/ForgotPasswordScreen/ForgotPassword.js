@@ -98,6 +98,14 @@ class ForgotPasswordScreen extends ForgotPassword {
     }
   }
 
+  navigateSignIn() {
+    this.setState({ error: '' });
+    this.setState({ username: '' });
+    this.setState({ code: '' });
+    this.setState({ password: '' });
+    this.setState({ sent: null });
+    this.props.onStateChange('signIn');
+  }
 
   render() {
     const { authState } = this.props;
@@ -133,7 +141,7 @@ class ForgotPasswordScreen extends ForgotPassword {
              >
                <Text style={styles.buttonText}>Send</Text>
              </TouchableOpacity>
-             <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signIn')}>Back to Sign In</Text>
+             <Text style={styles.sectionFooterLabel} onPress={() => this.navigateSignIn()}>Back to Sign In</Text>
              <Text style={styles.errorLabel}>{this.state.error}</Text>
            </KeyboardAwareScrollView>
          </View>
@@ -177,7 +185,7 @@ class ForgotPasswordScreen extends ForgotPassword {
              </TouchableOpacity>
              <View style={styles.footerRow}>
                <Text style={styles.sectionFooterLabel} onPress={() => this.ForgotPassword()}>Resend Code</Text>
-               <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signIn')}>Back to Sign In</Text>
+               <Text style={styles.sectionFooterLabel} onPress={() => this.navigateSignIn()}>Back to Sign In</Text>
              </View>
              <Text style={styles.errorLabel}>{this.state.error}</Text>
            </KeyboardAwareScrollView>
