@@ -54,13 +54,22 @@ class SignInScreen extends SignIn {
    }
  }
 
+ canBeSubmitted() {
+   const { username, password } = this.state;
+   return (
+     username.length > 0
+    && password.length > 0
+   );
+ }
+
  render() {
    const { authState } = this.props;
+   const isEnabled = this.canBeSubmitted();
    if (!['signIn', 'signedOut', 'signedUp'].includes(authState)) { return null; }
    return (
      <View style={styles.container}>
        <KeyboardAwareScrollView>
-         <Text style={styles.sectionText}>Welcome to Skin Check 360</Text>
+         <Text style={styles.sectionText}>Skin Check 360</Text>
          <Image
           // eslint-disable-next-line global-require
            source={require('../../assets/TransparentLogo.png')}
@@ -88,17 +97,19 @@ class SignInScreen extends SignIn {
            secureTextEntry
          />
          <TouchableOpacity
-           style={styles.button}
+           style={!isEnabled ? styles.disableButton : styles.button}
            onPress={() => this.signIn()}
+           disabled={!isEnabled}
          >
            <Text style={styles.buttonText}>Sign In</Text>
          </TouchableOpacity>
          <View style={styles.footerRow}>
-           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('forgotPassword')}>Forgot Password</Text>
+           <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('forgotPassword', this.state.error)}>Forgot Password</Text>
            <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signUp')}>Sign Up</Text>
          </View>
          <Text style={styles.errorLabel}>{this.state.error}</Text>
        </KeyboardAwareScrollView>
+       <Text style={styles.termsLabel}>By signing in, you are agreeing to Skin Check 360 Terms & Conditions</Text>
      </View>
    );
  }

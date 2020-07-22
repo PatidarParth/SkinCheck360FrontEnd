@@ -48,16 +48,25 @@ class SignUpScreen extends SignUp {
 
  // eslint-disable-next-line react/sort-comp
  async signIn() {
-   const { username } = this.state;
-   const { password } = this.state;
-   const { email } = this.state;
    // eslint-disable-next-line camelcase
-   const { phone_number } = this.state;
-   const { address } = this.state;
-   const { name } = this.state;
+   const {
+     username, password, email, phone_number, address, name
+   } = this.state;
    const { onStateChange } = this.props;
-   if (!username || !password || !email || !phone_number || !address || !name) {
-     this.setState({ error: 'All fields must be filled out.' });
+   // name check
+   if (/[^a-zA-Z]/.test(name)) {
+     this.setState({ error: 'Name cannot have numbers or symbols.' });
+     return;
+   }
+   // username check
+   if (/[^0-9a-zA-Z]/.test(username)) {
+     this.setState({ error: 'Username cannot have symbols.' });
+     return;
+   }
+   // password check
+   if (password.length < 8 && !(/^(^[\\S]+.*[\\S]+$")$/.test(password))) {
+     // eslint-disable-next-line max-len
+     this.setState({ error: 'Password length must be greater than 6 and Password must have atleast one uppercase, one lowercase, one number, and one symbol.' });
      return;
    }
    try {
@@ -75,21 +84,35 @@ class SignUpScreen extends SignUp {
        this.props.updateUsername(username);
        await Auth.resendSignUp(username);
        this.props.onStateChange('confirmSignUp', {});
-       this.setState({ error: 'Username or Password are incorrect.' });
-     } else if (err.code === 'UserNotFoundException') {
-       // The error happens when the supplied username/email does not exist in the Cognito user pool
-       this.setState({ error: 'Username or Password are incorrect.' });
-     } else if (err.code === 'InvalidParameterException') {
-       // The error happens when the pw is empty
-       this.setState({ error: 'All fields must be filled.' });
+       this.setState({ error: 'Please confirm sign up.' });
+     } else if (err.message === 'Invalid email address format.') {
+       // The error happens when email format is wrong
+       this.setState({ error: 'Email Address format is invalid' });
+     } else if (err.message === 'Invalid phone number format.') {
+       // The error happens when phone number format is wrong
+       this.setState({ error: 'Phone Number format is invalid' });
      } else {
        this.setState({ error: 'Please try again later.' });
      }
    }
  }
 
+ canBeSubmitted() {
+   const {
+     // eslint-disable-next-line camelcase
+     username, password, email, phone_number, address, name
+   } = this.state;
+   return (
+     username.length > 0
+   && password.length > 0 && email.length > 0
+   && phone_number.length > 0 && address.length > 0
+   && name.length > 0
+   );
+ }
+
  render() {
    const { authState } = this.props;
+   const isEnabled = this.canBeSubmitted();
    if (!['signUp'].includes(authState)) { return null; }
    return (
      <View style={styles.container}>
@@ -161,8 +184,9 @@ class SignUpScreen extends SignUp {
            autoCorrect={false}
          />
          <TouchableOpacity
-           style={styles.button}
+           style={!isEnabled ? styles.disableButton : styles.button}
            onPress={() => this.signIn()}
+           disabled={!isEnabled}
          >
            <Text style={styles.buttonText}>Sign Up </Text>
          </TouchableOpacity>
@@ -171,6 +195,7 @@ class SignUpScreen extends SignUp {
            <Text style={styles.sectionFooterLabel} onPress={() => this.props.onStateChange('signIn')}>Sign In</Text>
          </View>
          <Text style={styles.errorLabel}>{this.state.error}</Text>
+         <Text style={styles.termsLabel}>By signing up, you are agreeing to Skin Check 360 Terms & Conditions</Text>
        </KeyboardAwareScrollView>
      </View>
    );

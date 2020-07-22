@@ -7,7 +7,7 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     flexDirection: 'column',
-    paddingTop: '30%',
+    paddingTop: '10%',
     width: '90%'
   },
   labelFont: {
@@ -19,9 +19,9 @@ export default StyleSheet.create({
     fontFamily: 'Avenir-Light',
   },
   logo: {
-    width: 60,
-    height: 60,
-    left: '42.5%',
+    width: 80,
+    height: 90,
+    left: '39%',
     alignItems: 'center'
   },
   input: {
@@ -38,7 +38,7 @@ export default StyleSheet.create({
     fontWeight: '100',
     textAlign: 'center',
     fontFamily: 'Avenir-Light',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   inputLabel: {
     marginBottom: 5,
@@ -50,12 +50,13 @@ export default StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     marginRight: 1,
-
   },
-  buttonDisabled: {
-    backgroundColor: '#808080',
+  disableButton: {
+    backgroundColor: '#C0C0C0',
     alignItems: 'center',
-    padding: 10
+    padding: 10,
+    marginBottom: 20,
+    marginRight: 1,
   },
   buttonText: {
     color: '#fff',
@@ -87,5 +88,11 @@ export default StyleSheet.create({
     alignItems: 'baseline',
     textAlign: 'center',
     fontFamily: 'Avenir-Light'
-  }
+  },
+  termsLabel: {
+    fontSize: 14,
+    color: '#696969',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light',
+  },
 });

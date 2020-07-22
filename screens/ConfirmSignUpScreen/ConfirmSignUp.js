@@ -59,9 +59,17 @@ class ConfirmSignUpScreen extends ConfirmSignUp {
     }
   }
 
+  canBeSubmitted() {
+    const { username, code } = this.state;
+    return (
+      username.length > 0
+     && code.length > 0
+    );
+  }
 
   render() {
     const { authState } = this.props;
+    const isEnabled = this.canBeSubmitted();
     if (!['confirmSignUp'].includes(authState)) { return null; }
     return (
       <View style={styles.container}>
@@ -91,8 +99,9 @@ class ConfirmSignUpScreen extends ConfirmSignUp {
             autoCorrect={false}
           />
           <TouchableOpacity
-            style={styles.button}
+            style={!isEnabled ? styles.disableButton : styles.button}
             onPress={() => this.ConfirmSignUp()}
+            disabled={!isEnabled}
           >
             <Text style={styles.buttonText}>Confirm</Text>
           </TouchableOpacity>

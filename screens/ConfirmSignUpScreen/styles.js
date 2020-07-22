@@ -19,9 +19,9 @@ export default StyleSheet.create({
     fontFamily: 'Avenir-Light',
   },
   logo: {
-    width: 60,
-    height: 60,
-    left: '42.5%',
+    width: 80,
+    height: 90,
+    left: '39%',
     alignItems: 'center'
   },
   input: {
@@ -52,10 +52,12 @@ export default StyleSheet.create({
     marginRight: 1,
 
   },
-  buttonDisabled: {
-    backgroundColor: '#808080',
+  disableButton: {
+    backgroundColor: '#C0C0C0',
     alignItems: 'center',
-    padding: 10
+    padding: 10,
+    marginBottom: 20,
+    marginRight: 1,
   },
   buttonText: {
     color: '#fff',

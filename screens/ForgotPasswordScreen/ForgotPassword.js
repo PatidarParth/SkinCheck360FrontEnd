@@ -33,6 +33,21 @@ class ForgotPasswordScreen extends ForgotPassword {
     this.setState({ password: text });
   }
 
+  canBeSubmitted1() {
+    const { username } = this.state;
+    return (
+      username.length > 0
+    );
+  }
+
+  canBeSubmitted2() {
+    const { code, password } = this.state;
+    return (
+      code.length > 0
+      && password.length > 0
+    );
+  }
+
   // eslint-disable-next-line react/sort-comp
   async ForgotPassword() {
     const { username } = this.state;
@@ -86,6 +101,8 @@ class ForgotPasswordScreen extends ForgotPassword {
 
   render() {
     const { authState } = this.props;
+    const isEnabled1 = this.canBeSubmitted1();
+    const isEnabled2 = this.canBeSubmitted2();
     if (!['forgotPassword'].includes(authState)) { return null; }
     return (
       <View style={styles.container}>
@@ -110,8 +127,9 @@ class ForgotPasswordScreen extends ForgotPassword {
                autoCorrect={false}
              />
              <TouchableOpacity
-               style={styles.button}
+               style={!isEnabled1 ? styles.disableButton : styles.button}
                onPress={() => this.ForgotPassword()}
+               disabled={!isEnabled1}
              >
                <Text style={styles.buttonText}>Send</Text>
              </TouchableOpacity>
@@ -151,8 +169,9 @@ class ForgotPasswordScreen extends ForgotPassword {
                secureTextEntry
              />
              <TouchableOpacity
-               style={styles.button}
+               style={!isEnabled2 ? styles.disableButton : styles.button}
                onPress={() => this.submit()}
+               disabled={!isEnabled2}
              >
                <Text style={styles.buttonText}>Submit</Text>
              </TouchableOpacity>
