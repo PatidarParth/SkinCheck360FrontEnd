@@ -14,14 +14,14 @@ import {
 import { ListItem, Header } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import * as Permissions from 'expo-permissions';
-import { connect } from 'react-redux';
+import { Auth, API, graphqlOperation, Storage} from 'aws-amplify';
 import { logger } from 'react-native-logger';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import { IconButton, Banner } from 'react-native-paper';
-import { fetchVisits, deleteVisit } from '../../redux/actions';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
+import { listByUserOrdered, deleteVisitEntry, deletePicture } from '../../graphQL/queries';
 
 const swipePixelSize = 75;
 
@@ -31,7 +31,9 @@ class MainScreen extends Component {
     this.state = {
       visible: true,
       refreshing: false,
-      showBanner: false
+      showBanner: false,
+      visitEntries: [],
+      username: '',
     };
 
     YellowBox.ignoreWarnings([
@@ -39,11 +41,24 @@ class MainScreen extends Component {
       'VirtualizedList',
       'Accessing view manager',
       'Warning:',
-      'Possible'
+      'Possible',
+      'Non-serializable values were found in the navigation state',
     ]);
   }
 
-  async componentDidMount() {
+
+  componentDidMount = async () => {
+    // graphql api call to fetch based on user
+    const user = await Auth.currentAuthenticatedUser().catch();
+    this.setState({ username: user.username });
+    // fetch all entries
+    this.fetchVisitEntries();
+    // Entries update on navaigation back to this page
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('focus', () => {
+      this.fetchVisitEntries();
+    });
+    // get privacy policy
     const privacyPolicyAccepted = await AsyncStorage.getItem(
       'privacyPolicy'
     ).catch((err) => logger.log('could not receive privacy policy', err));
@@ -52,8 +67,13 @@ class MainScreen extends Component {
     if (privacyPolicyAccepted) {
       this.accessCameraPermissions();
     }
-    this.props.getVisits();
   }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener();
+  }
+
 
   acceptPrivacyPolicy = async () => {
     await AsyncStorage.setItem('privacyPolicy', 'true');
@@ -61,15 +81,13 @@ class MainScreen extends Component {
     this.accessCameraPermissions();
   };
 
-  showDeleteAlert = (key) => {
-    const visitInfo = this.props.visitData[key];
-
-    if (visitInfo) {
+  showDeleteAlert = (visitEntry) => {
+    if (visitEntry) {
       Alert.alert(
         'Delete Visit...',
         `Are you sure you want to delete the visit '${
-          visitInfo.visitName
-        }' on ${Moment(visitInfo.visitDate,).format('MM/DD/YYYY')}`,
+          visitEntry.name
+        }' on ${Moment(visitEntry.date,).format('MM/DD/YYYY')}`,
         [
           {
             text: 'No',
@@ -77,13 +95,21 @@ class MainScreen extends Component {
           },
           {
             text: 'Yes',
-            onPress: () => this.props.deleteVisit(this.props.visitData, key)
+            onPress: () => this.deleteVisitEntries(visitEntry.id)
           }
         ],
         { cancelable: false }
       );
     }
   };
+
+  goToEdit = (rowMap, visitEntry) => {
+    rowMap[visitEntry.id].closeRow();
+    this.props.navigation.navigate('EditEvent', {
+      ...visitEntry
+    });
+  }
+
 
   accessCameraPermissions = async () => {
     const { status } = await Permissions.askAsync(
@@ -95,10 +121,36 @@ class MainScreen extends Component {
     });
   };
 
-  render() {
-    const { cameraPermission } = this.state;
-    const { visitData } = this.props;
+  fetchVisitEntries = async () => {
+    const { username } = this.state;
+    const visitEntries = await API.graphql(graphqlOperation(listByUserOrdered, { owner: username }));
+    this.setState({ visitEntries: visitEntries.data.listByUserOrdered.items });
+  }
 
+  refreshVisitEntries = async () => {
+    this.setState({ refreshing: true });
+    this.fetchVisitEntries();
+    this.setState({ refreshing: false });
+  }
+
+  deleteVisitEntries= async (visitEntryID) => {
+    // eslint-disable-next-line no-shadow
+    const visitEntryObject = this.state.visitEntries.find((visitEntryObject) => visitEntryObject.id === visitEntryID);
+    const pictureItems = visitEntryObject.pictures.items;
+    pictureItems.forEach(async (element) => {
+      // delete from pictures
+      await API.graphql(graphqlOperation(deletePicture, { pictureId: element.id }));
+      // delete from s3
+      await Storage.remove(`uploads/${visitEntryID}/${element.id}`);
+    });
+    // delete visit
+    await API.graphql(graphqlOperation(deleteVisitEntry, { id: visitEntryID }));
+    // fetch updated visits
+    this.fetchVisitEntries();
+  }
+
+  render() {
+    const { cameraPermission, visitEntries } = this.state;
     return (
       <View style={styles.container}>
         <Header
@@ -116,7 +168,6 @@ class MainScreen extends Component {
             />
           )}
         />
-
         <Modal visible={this.state.visible}>
           <View style={styles.privacyNoticeView}>
             <ScrollView style={styles.scrollView}>
@@ -161,12 +212,12 @@ class MainScreen extends Component {
             refreshControl={(
               <RefreshControl
                 refreshing={this.state.refreshing}
-                onRefresh={this.props.getVisits}
+                onRefresh={() => this.refreshVisitEntries()}
               />
             )}
           >
-            {(!visitData
-              || (visitData && Object.keys(visitData).length === 0)) && (
+            {(!visitEntries
+              || (visitEntries && Object.keys(visitEntries).length === 0)) && (
               <View style={styles.visitOuterView}>
                 <View style={styles.visitInnerView}>
                   <MaterialCommunityIcons
@@ -180,14 +231,18 @@ class MainScreen extends Component {
                 </View>
               </View>
             )}
-            {visitData && (
+            {visitEntries && (
               <SwipeListView
-                data={Object.keys(visitData)}
-                keyExtractor={(item) => item}
-                renderItem={(key) => (
+                useFlatList
+                data={visitEntries}
+                // eslint-disable-next-line arrow-body-style
+                keyExtractor={(rowData,) => {
+                  return rowData.id.toString();
+                }}
+                renderItem={(visitEntry) => (
                   <ListItem
-                    title={visitData[key.item].visitName}
-                    subtitle={Moment(visitData[key.item].visitDate).format(
+                    title={visitEntry.item.name}
+                    subtitle={Moment(visitEntry.item.date).format(
                       'MMMM D, YYYY'
                     )}
                     titleStyle={{ fontFamily: 'Avenir-Light', fontSize: 18, fontWeight: '600' }}
@@ -195,17 +250,15 @@ class MainScreen extends Component {
                     bottomDivider
                     chevron={{ color: '#00539B' }}
                     onPress={() => this.props.navigation.navigate('VisitDescription', {
-                      ...visitData[key.item], length: visitData[key.item].visitPictures.length,
+                      ...visitEntry
                     })}
                   />
                 )}
-                renderHiddenItem={(key) => (
+                renderHiddenItem={(visitEntry, rowMap) => (
                   <View style={styles.rowBack}>
                     <View style={styles.swipeView}>
                       <TouchableOpacity
-                        onPress={() => this.props.navigation.navigate('EditEvent', {
-                          ...visitData[key.item]
-                        })}
+                        onPress={() => this.goToEdit(rowMap, visitEntry.item)}
                         style={styles.leftSwipe}
                       >
                         <MaterialCommunityIcons
@@ -219,7 +272,7 @@ class MainScreen extends Component {
                     </View>
                     <View style={styles.rightSwipeView}>
                       <TouchableOpacity
-                        onPress={() => this.showDeleteAlert(key.item)}
+                        onPress={() => this.showDeleteAlert(visitEntry.item)}
                         style={styles.rightSwipe}
                       >
                         <MaterialCommunityIcons
@@ -243,18 +296,5 @@ class MainScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
 
-const mapDispatchToProps = (dispatch) => ({
-  getVisits: () => {
-    dispatch(fetchVisits());
-  },
-  deleteVisit: (visits, visitId) => {
-    dispatch(deleteVisit(visits, visitId));
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
+export default MainScreen;

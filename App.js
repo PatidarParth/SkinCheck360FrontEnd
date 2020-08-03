@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Provider } from 'react-redux';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { applyMiddleware, createStore } from 'redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
@@ -18,7 +18,7 @@ import thunkMiddleware from 'redux-thunk';
 
 import { AppearanceProvider } from 'react-native-appearance';
 import {
- RequireNewPassword, ConfirmSignIn, VerifyContact, withAuthenticator
+  RequireNewPassword, ConfirmSignIn, VerifyContact, withAuthenticator
 } from 'aws-amplify-react-native';
 import Amplify from '@aws-amplify/core';
 import SignInScreen from './screens/SignInScreen';
@@ -47,16 +47,6 @@ const store = createStore(
   )
 );
 
-const theme = {
-  ...DefaultTheme,
-  roundness: 6,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: '#0A2B66',
-    accent: '#0A2B66'
-  }
-};
-
 class App extends React.Component {
   useEffect = () => {
     SplashScreen.true();
@@ -65,7 +55,7 @@ class App extends React.Component {
   render() {
     return (
       <Provider store={store}>
-        <PaperProvider theme={theme}>
+        <PaperProvider>
           <AppearanceProvider>
             <NavigationContainer>
               <MyTabs />
@@ -90,17 +80,16 @@ function HomeStackScreen() {
       <HomeStack.Screen name="ViewPhoto" component={PhotoScreen} options={{ headerMode: 'none', headerShown: false }} />
       <HomeStack.Screen name="VisitDescription" component={VisitScreen} options={{ headerMode: 'none', headerShown: false }} />
       <HomeStack.Screen name="EditEvent" component={EditEventScreen} options={{ headerMode: 'none', headerShown: false }} />
-      <HomeStack.Screen name="SignIn" component={SignInScreen} options={{ headerMode: 'none', headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
 
-const tabBarVisible = async (route) => {
+getTabBarVisibility = (route) => {
   const routeName = route.state
     ? route.state.routes[route.state.index].name
     : '';
 
-  if (routeName === 'Camera' || routeName === 'ViewPhoto' || routeName === 'SignIn') {
+  if (routeName === 'Camera' || routeName === 'ViewPhoto') {
     return false;
   }
 
@@ -127,7 +116,7 @@ function MyTabs() {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
-          tabBarVisible: tabBarVisible(route)
+          tabBarVisible: this.getTabBarVisibility(route)
         })}
       />
       <Tab.Screen
@@ -154,11 +143,11 @@ const styles = StyleSheet.create({
 });
 
 export default withAuthenticator(App, false, [
-  <SignInScreen/>,
-  <ConfirmSignIn/>,
-  <VerifyContact/>,
-  <SignUpScreen/>,
-  <ConfirmSignUpScreen/>,
-  <ForgotPasswordScreen/>,
+  <SignInScreen />,
+  <ConfirmSignIn />,
+  <VerifyContact />,
+  <SignUpScreen />,
+  <ConfirmSignUpScreen />,
+  <ForgotPasswordScreen />,
   <RequireNewPassword />
 ], null);

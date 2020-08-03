@@ -1,0 +1,31 @@
+type VisitEntry @model
+  @key(name: "ByUser",
+  fields: ["owner", "date"],
+  queryField: "listByUserOrdered")
+ {
+  id: ID!
+  owner: String!
+  name: String!
+  date: AWSDateTime!
+  notes: String!
+  pictures: [Picture] @connection(name: "VisitPictures")
+}
+
+type Picture @model {
+  id: ID!
+  note: String!
+  location: String!
+  bodyPart: String!
+  locationX: Int!
+  locationY: Int!
+  diameter: Int!
+  visitEntry: VisitEntry @connection(name: "VisitPictures")
+  bucket: String!
+  fullsize: PhotoS3Info!
+}
+
+type PhotoS3Info {
+    key: String!
+    width: Int!
+    height: Int!
+}

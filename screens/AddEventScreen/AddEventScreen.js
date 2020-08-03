@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  View, TouchableOpacity, Text, ScrollView, Image
+  View, TouchableOpacity, Text, ScrollView, Image, YellowBox
 } from 'react-native';
 import { Input, Header } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,14 +11,13 @@ import {
 } from 'react-native-paper';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
-import * as FileSystem from 'expo-file-system';
 import update from 'immutability-helper';
-import { connect } from 'react-redux';
 import { Appearance } from 'react-native-appearance';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
-import { addVisit } from '../../redux/actions';
+import { API, graphqlOperation, Storage } from 'aws-amplify';
 import styles from './styles';
+import { newVisitEntry, createPicture } from '../../graphQL/queries';
 
 const colorScheme = Appearance.getColorScheme();
 
@@ -28,37 +27,29 @@ class AddEventScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visitId: '',
       visitName: '',
       isDateTimePickerVisible: false,
       visitDate: Date.now(),
       visitNotes: '',
-      edit: false,
       isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: '',
       visitPictures: [],
-      pictureNote: '',
-      pictureLocation: '',
-      pictureBodyPart: '',
       visible: false,
       x: 0,
       y: 0,
       selectedPicture: {},
-      addNewMenuVisible: false
     };
+    YellowBox.ignoreWarnings([
+      'Deprecation warning',
+      'VirtualizedList',
+      'Accessing view manager',
+      'Warning:',
+      'Possible',
+      'Non-serializable values were found in the navigation state',
+    ]);
   }
 
   componentDidMount() {
-    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
-    });
-    this.setState({
-      visitId: '',
-      visitName: '',
-      visitDate: Date.now(),
-      visitNotes: '',
-      edit: false,
-    });
-
     // eslint-disable-next-line no-undef
     subscription = Appearance.addChangeListener(
       ({ colorScheme: _colorScheme }) => {
@@ -74,17 +65,19 @@ class AddEventScreen extends Component {
     } else if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
       if (newProps.route.params?.pictureArray !== undefined && newProps.route.params?.pictureArray.length > 0) {
         // edit the pic with new pic
-        if (this.state.visitPictures.find((e) => e.pictureId === newProps.route.params?.picId)) {
+        if (this.state.visitPictures.find((e) => e.id === newProps.route.params?.picId)) {
           const updatedArray = update(
             this.state.visitPictures, {
-              $splice: [[this.state.visitPictures.findIndex((e) => e.pictureId === newProps.route.params?.picId), 1,
+              $splice: [[this.state.visitPictures.findIndex((e) => e.id === newProps.route.params?.picId), 1,
                 newProps.route.params?.pictureArray[0]]]
             }
           ); // array.splice(start, deleteCount, item1)
+          // eslint-disable-next-line react/no-did-update-set-state
           this.setState(() => ({ visitPictures: updatedArray }));
         // new pic first time
         } else {
           this.state.visitPictures.push(newProps.route.params?.pictureArray[0]);
+          // eslint-disable-next-line react/no-did-update-set-state
           this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
         }
       }
@@ -109,7 +102,6 @@ class AddEventScreen extends Component {
   };
 
   navigateToCamera = () => {
-    this.setState({ addNewMenuVisible: false });
     this.props.navigation.navigate('Camera', {
       visitId: '',
     });
@@ -117,33 +109,24 @@ class AddEventScreen extends Component {
 
   importImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    this.setState({ addNewMenuVisible: false });
     if (status === 'granted') {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
         exif: true
       });
-      const picId = uuidv4();
-      FileSystem.moveAsync({
-        from: result.uri,
-        to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
-      });
-      const emptyString = '';
-      const location = -100;
-      const diameter = 20;
       if (result && result.uri) {
         this.state.visitPictures.push({
-          pictureId: uuidv4(),
-          uri: `photos/Photo_${picId}.jpg`,
-          emptyString,
-          emptyString,
-          emptyString,
-          location,
-          location,
-          diameter,
+          id: uuidv4(),
+          uri: result.uri,
+          note: '',
+          location: '',
+          bodyPart: '',
+          locationX: -100,
+          locationY: -100,
+          diameter: -20,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
-          faceDetectedValues: null
+          faceDetectedValues: []
         });
         this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
       }
@@ -152,34 +135,54 @@ class AddEventScreen extends Component {
 
   saveVisit = async () => {
     if (this.state.visitName) {
-      const id = this.state.edit ? this.state.visitId : uuidv4();
-      this.props.addVisit(
-        this.props.visitData,
-        id,
-        this.state.visitName,
-        new Date(this.state.visitDate).toString(),
-        this.state.visitNotes,
-        this.state.visitPictures
-      );
-
-      this.props.navigation.navigate('Home');
+      // eslint-disable-next-line max-len
+      // upload the visit Entry
+      const visitId = await API.graphql(graphqlOperation(newVisitEntry, { name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes }));
+      const { visitPictures } = this.state;
+      // upload each picture to s3
+      visitPictures.forEach(async (element, index) => {
+        const response = await fetch(element.uri);
+        const blob = await response.blob();
+        const S3key = await Storage.put(
+          `uploads/${visitId.data.createVisitEntry.id}/${element.id}`,
+          blob,
+          {
+            contentType: 'image/png',
+            metadata: { visitEntryId: visitId.data.createVisitEntry.id }
+          }
+        );
+        if (index === visitPictures.length - 1) {
+          this.storeVisitPhotoInfo(S3key, element, visitId.data.createVisitEntry.id, true);
+        } else {
+          this.storeVisitPhotoInfo(S3key, element, visitId.data.createVisitEntry.id, false);
+        }
+      });
     } else {
       this.setState(() => ({ visitTitleError: 'Visit Title is required.' }));
     }
   };
 
+  storeVisitPhotoInfo = (S3key, item, visitEntryId, lastValueBoolean) => {
+    if (lastValueBoolean) {
+      return API.graphql(graphqlOperation(createPicture, {
+        // eslint-disable-next-line max-len
+        key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+      })).then(this.props.navigation.navigate('Home'));
+    }
+    return API.graphql(graphqlOperation(createPicture, {
+    // eslint-disable-next-line max-len
+      key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+    }));
+  }
+
   displayDateTimePicker = (display) => this.setState({ isDateTimePickerVisible: display });
 
-  view = () => {
+  viewIndividualPhoto = (picture) => {
     this.setState({ visible: false });
     this.props.navigation.navigate('ViewPhoto', {
       visitId: '',
-      pictureId: this.state.selectedPicture.pictureId,
-      pictureUri: this.state.selectedPicture.uri,
-      pictureNote: this.state.selectedPicture.pictureNote,
-      pictureLocation: this.state.selectedPicture.pictureLocation,
-      pictureBodyPart: this.state.selectedPicture.pictureBodyPart,
-      visitPictures: this.state.visitPictures,
+      currentPicture: picture,
+      visitPictures: this.state.visitPictures
     });
   };
 
@@ -187,7 +190,7 @@ class AddEventScreen extends Component {
     this.setState({ visible: false });
     this.props.navigation.navigate('Camera', {
       visitId: '',
-      overlayPictureId: this.state.selectedPicture.pictureId,
+      overlayPicture: this.state.selectedPicture,
       visitPictures: this.state.visitPictures
     });
   };
@@ -308,25 +311,13 @@ class AddEventScreen extends Component {
                   <TouchableOpacity
                     key={`picture-${i}`}
                     style={styles.pictureButton}
-                    onPress={() => this.props.navigation.navigate('ViewPhoto', {
-                      visitId: '',
-                      pictureId: picture.pictureId,
-                      pictureUri: picture.uri,
-                      pictureNote: picture.pictureNote,
-                      pictureLocation: picture.pictureLocation,
-                      pictureBodyPart: picture.pictureBodyPart,
-                      visitPictures: this.state.visitPictures
-                    })}
+                    onPress={() => this.viewIndividualPhoto(picture)}
                     onLongPress={(name) => {
                       this.setState({
                         x: name.nativeEvent.pageX,
                         y: name.nativeEvent.pageY,
                         selectedPicture: picture,
-                        visitId: this.props.route.params?.visitId,
                         pictureUri: picture.uri,
-                        pictureNote: picture.pictureNote,
-                        pictureLocation: picture.pictureLocation,
-                        pictureBodyPart: picture.pictureBodyPart,
                         visible: true
                       });
                     }}
@@ -336,7 +327,7 @@ class AddEventScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={{ uri: `${FileSystem.documentDirectory}${picture.uri}` }}
+                        source={{ uri: `${picture.uri}` }}
                         style={{ height: '100%', width: '100%' }}
                       />
                       <Text style={styles.pictureFont}>{picture.dateCreated}</Text>
@@ -374,7 +365,7 @@ class AddEventScreen extends Component {
               onDismiss={() => this.setState({ visible: false })}
               anchor={{ x: this.state.x, y: this.state.y }}
             >
-              <Menu.Item onPress={() => this.view()} title="View" />
+              <Menu.Item onPress={() => this.viewIndividualPhoto(this.state.selectedPicture)} title="View" />
               <Divider />
               <Menu.Item onPress={this.overlayPicture} title="Overlay" />
               <Divider />
@@ -387,15 +378,5 @@ class AddEventScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
 
-const mapDispatchToProps = (dispatch) => ({
-  addVisit: (visitData, id, name, created, information, pictures) => {
-    dispatch(addVisit(visitData, id, name, created, information, pictures));
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddEventScreen);
+export default AddEventScreen;

@@ -14,10 +14,7 @@ import {
 import Svg, { Circle, Image } from 'react-native-svg';
 import { Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { connect } from 'react-redux';
 import ImageZoom from 'react-native-image-pan-zoom';
-import * as FileSystem from 'expo-file-system';
-import { deletePicture } from '../../redux/actions';
 import styles from './styles';
 
 const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 141 : 220;
@@ -37,46 +34,26 @@ class PhotoScreen extends Component {
   _showDialog = () => this.setState({ showNoteDialog: true });
 
   overlayPicture = () => {
+    const currentPicture = this.props.route.params?.currentPicture;
     this.props.navigation.navigate('Camera', {
       visitId: this.props.route.params?.visitId,
-      overlayPictureId: this.props.route.params?.pictureId,
+      overlayPicture: currentPicture,
       visitPictures: this.props.route.params?.visitPictures
     });
   };
 
   deletePicture = () => {
     // visit does not actually exist
-    pictureURI = this.props.route.params?.pictureUri;
+    const currentPicture = this.props.route.params?.currentPicture;
     if (this.props.route.params?.visitId === '') {
-      this.props.navigation.navigate('AddEvent', { pictureUri: pictureURI });
-    }
-    // visit already exist
-    else {
-      this.props.deletePicture(
-        this.props.visitData,
-        this.props.route.params?.visitId,
-        this.props.route.params?.pictureUri
-      );
+      this.props.navigation.navigate('AddEvent', { pictureUri: currentPicture.uri });
+    } else {
+      this.props.navigation.navigate('VisitDescription', { pictureId: currentPicture.id });
     }
   };
 
   renderSvg() {
-    const visitId = this.props.route.params?.visitId;
-    const pictureId = this.props.route.params?.pictureId;
-    let currentPicture = [];
-    if (visitId === '') {
-      currentPicture = this.props.route.params?.visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    } else {
-      currentPicture = this.props.visitData[visitId].visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    }
-    if (!currentPicture) {
-      return <Svg />;
-    }
-
+    const currentPicture = this.props.route.params?.currentPicture;
     return (
       <Svg height="100%" width="100%" style={{ backgroundColor: 'transparent' }}>
         <Image
@@ -85,7 +62,7 @@ class PhotoScreen extends Component {
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
-          href={`${FileSystem.documentDirectory}${currentPicture.uri}` || ''}
+          href={`${currentPicture.uri}` || ''}
         />
         <Circle
           cx={currentPicture.locationX || -100}
@@ -100,34 +77,13 @@ class PhotoScreen extends Component {
   }
 
   render() {
-    let pictureUri = this.props.route.params?.pictureUri;
-    let pictureNote = '';
-    let pictureLocation = '';
-    let pictureBodyPart = '';
-    const pictureId = this.props.route.params?.pictureId;
+    const currentPicture = this.props.route.params?.currentPicture;
+    const pictureLocation = currentPicture.location;
+    const pictureBodyPart = currentPicture.bodyPart;
+    const pictureNote = currentPicture.note;
+    const pictureId = currentPicture.id;
+    const pictureUri = currentPicture.uri;
     const visitId = this.props.route.params?.visitId;
-    let currentPicture = [];
-    if (visitId === '') {
-      currentPicture = this.props.route.params?.visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    } else {
-      currentPicture = this.props.visitData[visitId].visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    }
-    let textNoteStyle = { fontStyle: 'normal', color: Colors.blue800, fontFamily: 'Avenir-Light' };
-    if (!pictureNote) {
-      textNoteStyle = { fontStyle: 'normal', color: Colors.grey500, fontFamily: 'Avenir-Light' };
-    }
-    if (currentPicture) {
-      pictureUri = currentPicture.uri;
-      pictureLocation = currentPicture.pictureLocation;
-      pictureBodyPart = currentPicture.pictureBodyPart;
-      pictureNote = currentPicture.pictureNote;
-    } else {
-      this.props.navigation.goBack();
-    }
     return (
       <Provider>
         <Portal>
@@ -135,22 +91,25 @@ class PhotoScreen extends Component {
             visible={this.state.showNoteDialog}
             onDismiss={this._hideDialog}
           >
-            <Dialog.Title style={{ fontFamily: 'Avenir-Light' }}>Note</Dialog.Title>
+            <Dialog.Title style={{ fontSize: 20, fontFamily: 'Avenir-Light' }}>Picture Notes</Dialog.Title>
             <Dialog.Content>
-              <Text style={textNoteStyle}>
-                {`Location: ${pictureLocation
+              <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Location:</Text>
+              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+                {`${pictureLocation
                 || 'No location specified'}`}
               </Text>
-              <Text style={textNoteStyle}>
-                {`Body Part: ${pictureBodyPart
+              <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Body Part:</Text>
+              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+                {`${pictureBodyPart
                 || 'No body part specified'}`}
               </Text>
-              <Text style={textNoteStyle}>
-                {`Notes: ${pictureNote || 'No notes have been entered'}`}
+              <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Picture Notes:</Text>
+              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+                {`${pictureNote || 'No notes have been entered'}`}
               </Text>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={this._hideDialog}>Done</Button>
+              <Button color="#0A2B66" onPress={this._hideDialog}>Done</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
@@ -279,15 +238,4 @@ class PhotoScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  deletePicture: (visitData, visitId, pictureUri) => {
-    dispatch(deletePicture(visitData, visitId, pictureUri));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PhotoScreen);
+export default PhotoScreen;

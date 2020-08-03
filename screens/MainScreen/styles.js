@@ -52,7 +52,6 @@ export default StyleSheet.create({
   swipeView: {
     display: 'flex',
     flex: 0,
-    backgroundColor: '#0A2B66'
   },
   leftSwipe: {
     display: 'flex',
@@ -61,7 +60,8 @@ export default StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
+    backgroundColor: '#0A2B66'
   },
   leftSwipeIcon: {
     paddingRight: 30
@@ -73,11 +73,11 @@ export default StyleSheet.create({
     alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   rightSwipeView: {
     display: 'flex',
-    backgroundColor: '#0A2B66',
+    backgroundColor: '#FF0000',
     flex: 0
   },
   privacyNoticeView: {

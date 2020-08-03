@@ -8,11 +8,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { IconButton } from 'react-native-paper';
 import Moment from 'moment';
-import uuidv4 from 'uuid/v4';
-import { connect } from 'react-redux';
+import { API, graphqlOperation } from 'aws-amplify';
 import { Appearance } from 'react-native-appearance';
-import { addVisit } from '../../redux/actions';
 import styles from './styles';
+import { updateVisitEntry } from '../../graphQL/queries';
 
 const colorScheme = Appearance.getColorScheme();
 class EditEventScreen extends Component {
@@ -27,21 +26,18 @@ class EditEventScreen extends Component {
       visitDate: Date.now(),
       visitPictures: [],
       visitNotes: '',
-      edit: false,
       isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: ''
     };
   }
 
   componentDidMount() {
-    const visitId = this.props.route.params?.visitId;
     this.setState({
-      visitId,
-      visitName: this.props.visitData[visitId].visitName,
-      visitDate: this.props.visitData[visitId].visitDate,
-      visitNotes: this.props.visitData[visitId].visitNotes,
-      visitPictures: this.props.visitData[visitId].visitPictures,
-      edit: true
+      visitId: this.props.route.params?.id,
+      visitName: this.props.route.params?.name,
+      visitDate: this.props.route.params?.date,
+      visitNotes: this.props.route.params?.notes,
+      // visitPictures: this.props.visitData[visitId].visitPictures,
     });
 
     // eslint-disable-next-line no-undef
@@ -71,15 +67,10 @@ class EditEventScreen extends Component {
 
   saveVisit = async () => {
     if (this.state.visitName) {
-      const id = this.state.edit ? this.state.visitId : uuidv4();
-      this.props.addVisit(
-        this.props.visitData,
-        id,
-        this.state.visitName,
-        new Date(this.state.visitDate).toString(),
-        this.state.visitNotes,
-        this.state.visitPictures
-      );
+      await API.graphql(graphqlOperation(updateVisitEntry, {
+        // eslint-disable-next-line max-len
+        id: this.state.visitId, name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes
+      }));
       this.props.navigation.navigate('Home');
     } else {
       this.setState(() => ({ visitTitleError: 'Visit Title is required.' }));
@@ -195,15 +186,5 @@ class EditEventScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
 
-const mapDispatchToProps = (dispatch) => ({
-  addVisit: (visitData, id, name, created, information, pictures) => {
-    dispatch(addVisit(visitData, id, name, created, information, pictures));
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditEventScreen);
+export default EditEventScreen;

@@ -56,7 +56,6 @@ class SignInScreen extends SignIn {
 
  canBeSubmitted() {
    const { username, password } = this.state;
-   console.log(username);
    return (
      username.length > 0
     && password.length > 0

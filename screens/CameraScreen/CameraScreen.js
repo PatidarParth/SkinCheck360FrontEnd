@@ -1,3 +1,4 @@
+/* eslint-disable react/sort-comp */
 import React from 'react';
 import {
   Text,
@@ -8,10 +9,10 @@ import {
   StyleSheet,
   Platform,
   Slider,
+  YellowBox,
   Image as RNImage
 } from 'react-native';
 import { PinchGestureHandler } from 'react-native-gesture-handler';
-import * as FileSystem from 'expo-file-system';
 import { Dropdown } from 'react-native-material-dropdown';
 import { Header } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
@@ -31,9 +32,7 @@ import {
   Portal,
   Provider
 } from 'react-native-paper';
-import { connect } from 'react-redux';
 import ImageZoom from 'react-native-image-pan-zoom';
-import { addPicture, deletePicture } from '../../redux/actions';
 import styles from './styles';
 import noteDropdownInfo from '../../assets/notes.json';
 
@@ -56,38 +55,14 @@ class CameraScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    const pictureId = this.props.route.params?.pictureId;
-    const overlayPictureId = this.props.route.params?.overlayPictureId;
-
     let photo;
-    let pictureLocation;
+    const pictureLocation = '';
     const faceDetectedArray = [];
-    let pictureNote;
-    let pictureBodyPart;
-    let locationX = -100;
-    let locationY = -100;
-    let diameter = 20;
-    let visit = [];
-    if (this.props.route.params?.visitId !== '') {
-      visit = this.props.visitData[
-        this.props.route.params?.visitId
-      ];
-    }
-    if (pictureId && visit.length > 0) {
-      const existingPicture = visit.visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-
-      if (existingPicture) {
-        photo = existingPicture.uri;
-        pictureLocation = existingPicture.pictureLocation;
-        pictureBodyPart = existingPicture.pictureBodyPart;
-        pictureNote = existingPicture.pictureNote;
-        locationX = existingPicture.locationX || -100;
-        locationY = existingPicture.locationY || -100;
-        diameter = existingPicture.diameter || 20;
-      }
-    }
+    const pictureNote = '';
+    const pictureBodyPart = '';
+    const locationX = -100;
+    const locationY = -100;
+    const diameter = 20;
     this.state = {
       hasCameraPermission: null,
       drawEnabled: false,
@@ -95,7 +70,6 @@ class CameraScreen extends React.Component {
       flashMode: Camera.Constants.FlashMode.off,
       showNoteDialog: false,
       photo,
-      pictureId,
       pictureLocation,
       pictureBodyPart,
       pictureNote,
@@ -105,21 +79,74 @@ class CameraScreen extends React.Component {
       opacity: 4,
       faceDetectedArray,
       cameraZoomValue: 0,
-      overlayPictureId,
       matchingOverlay: 'Overlay does not match',
       overlayMatchColor: 'white'
     };
     this._onPinchGestureEvent = () => Animated.event([{ nativeEvent: { scale: this._pinchScale } }], {
       useNativeDriver: true
     });
+
+    YellowBox.ignoreWarnings([
+      'Deprecation warning',
+      'VirtualizedList',
+      'Accessing view manager',
+      'Warning:',
+      'Possible',
+      'Non-serializable values were found in the navigation state',
+    ]);
   }
 
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
     this.setState({ hasCameraPermission: status === 'granted' });
-    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
-    });
   }
+
+  handleCapture = async () => {
+    // const { height, width } = Dimensions.get('window');
+    // const maskRowHeight = Math.round((height - 200) / 40);
+    // const maskColWidth = (width - 200) / 2;
+    this.camera
+      .takePictureAsync({
+        exif: true
+      })
+      .then(async (data) => {
+        // const { width } = data;
+        // const { height } = data;
+        if (this.state.type === Camera.Constants.Type.back) {
+          const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            { rotate: 0 },
+            // {  resize: { width: maskColWidth } }
+            // {
+            //   crop: {
+            //     originX: 0,
+            //     originY: (height - width) / 2,
+            //     width,
+            //     height: width
+            //   }
+            // }
+          ]);
+          this.setState({
+            photo: photo.uri
+          });
+        } else if (this.state.type === Camera.Constants.Type.front) {
+          const photo = await ImageManipulator.manipulateAsync(data.uri, [
+            { rotate: 0 },
+            { flip: ImageManipulator.FlipType.Horizontal },
+            // {
+            //   crop: {
+            //     originX: 0,
+            //     originY: (height - width) / 2,
+            //     width,
+            //     height: width
+            //   }
+            // }
+          ]);
+          this.setState({
+            photo: photo.uri
+          });
+        }
+      });
+  };
 
   // eslint-disable-next-line react/sort-comp
   savePictureToVisit = async () => {
@@ -128,43 +155,30 @@ class CameraScreen extends React.Component {
       pictureNote,
       pictureLocation,
       pictureBodyPart,
-      pictureId,
       locationX,
       locationY,
       diameter,
       faceDetectedArray
     } = this.state;
+    const pictureArray = [];
+    const picId = this.props.route.params?.pictureId || uuidv4();
+    const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : '[]';
+    pictureArray.push({
+      temporary: 'temporary',
+      id: picId,
+      uri: photo,
+      note: pictureNote,
+      location: pictureLocation,
+      bodyPart: pictureBodyPart,
+      locationX,
+      locationY,
+      diameter,
+      dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
+      faceDetectedValues
+    });
     if (this.props.route.params?.visitId !== '') {
-      this.props.addPicture(
-        this.props.visitData,
-        this.props.route.params?.visitId,
-        photo,
-        pictureNote,
-        pictureLocation,
-        pictureBodyPart,
-        pictureId,
-        locationX,
-        locationY,
-        diameter,
-        faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null
-      );
-      this.props.navigation.navigate('VisitDescription');
+      this.props.navigation.navigate('VisitDescription', { pictureArray, picId });
     } else {
-      const pictureArray = [];
-      const picId = this.props.route.params?.pictureId || uuidv4();
-      const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : null;
-      pictureArray.push({
-        pictureId: picId,
-        uri: photo,
-        pictureNote,
-        pictureLocation,
-        pictureBodyPart,
-        locationX,
-        locationY,
-        diameter,
-        dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
-        faceDetectedValues
-      });
       this.props.navigation.navigate('AddEvent', { pictureArray, picId });
     }
   };
@@ -229,77 +243,8 @@ class CameraScreen extends React.Component {
     }
   }
 
-  handleCapture = async () => {
-    if (this.state.photoRetry) {
-      await this.props.deletePicture(
-        undefined,
-        undefined,
-        this.state.photoRetry
-      );
-      await this.setState({ photo: undefined });
-    }
-    const { height, width } = Dimensions.get('window');
-    console.log(height, width);
-    const maskRowHeight = Math.round((height - 200) / 40);
-    const maskColWidth = (width - 200) / 2;
-    this.camera
-      .takePictureAsync({
-        exif: true
-      })
-      .then(async (data) => {
-        const { width } = data;
-        const { height } = data;
-        console.log(height, width, maskColWidth, maskRowHeight);
-        if (this.state.type === Camera.Constants.Type.back) {
-          const photo = await ImageManipulator.manipulateAsync(data.uri, [
-            { rotate: 0 },
-            // {  resize: { width: maskColWidth } }
-            {
-              crop: {
-                originX: 0,
-                originY: (height - width) / 2,
-                width,
-                height: width
-              }
-            }
-
-          ]);
-          const picId = this.props.route.params?.pictureId || uuidv4();
-          FileSystem.moveAsync({
-            from: photo.uri,
-            to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
-          });
-          this.setState({
-            photo: `photos/Photo_${picId}.jpg`
-          });
-        } else if (this.state.type === Camera.Constants.Type.front) {
-          const picId = this.props.route.params?.pictureId || uuidv4();
-          const photo = await ImageManipulator.manipulateAsync(data.uri, [
-            { rotate: 0 },
-            { flip: ImageManipulator.FlipType.Horizontal },
-            {
-              crop: {
-                originX: 0,
-                originY: (height - width) / 2,
-                width,
-                height: width
-              }
-            }
-          ]);
-          FileSystem.moveAsync({
-            from: photo.uri,
-            to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
-          });
-          this.setState({
-            photo: `photos/Photo_${picId}.jpg`
-          });
-        }
-      });
-  };
-
   retryPicture = () => {
-    this.setState((prevState) => ({
-      photoRetry: prevState.photo,
+    this.setState(() => ({
       photo: undefined,
       locationX: -100,
       locationY: -100,
@@ -333,39 +278,9 @@ class CameraScreen extends React.Component {
       this._lastScale *= event.nativeEvent.scale;
       this.setState({ diameter: 20 * this._lastScale });
     }
-    // } else {
-    //   const oldValue = this._lastCameraValue;
-    //   this._lastCameraValue = event.nativeEvent.scale;
-    //   if (oldValue < this._lastCameraValue) {
-    //     const newValue = this.state.cameraZoomValue + 0.01;
-    //     if (newValue > 1) {
-    //       this.setState({ cameraZoomValue: 1 });
-    //     } else {
-    //       this.setState({ cameraZoomValue: newValue });
-    //     }
-    //   } else {
-    //     const newValue = this.state.cameraZoomValue - 0.01;
-    //     if (newValue < 0) {
-    //       this.setState({ cameraZoomValue: 0 });
-    //     } else {
-    //       this.setState({ cameraZoomValue: newValue });
-    //     }
-    //   }
-    // }
   };
 
   onStartShouldSetResponder = () => true;
-
-  goBack = async () => {
-    if (this.state.photoRetry) {
-      await this.props.deletePicture(
-        this.props.visitData,
-        this.props.route.params?.visitId,
-        this.state.photoRetry
-      );
-    }
-    this.props.navigation.goBack();
-  };
 
   onOpacityChange = (v) => {
     this.setState({ opacity: v });
@@ -376,23 +291,11 @@ class CameraScreen extends React.Component {
   };
 
   componentDidUpdate = () => {
-    const pictureId = this.props.route.params?.overlayPictureId;
-    const visitId = this.props.route.params?.visitId;
-
-    let currentPicture = [];
-    let overlayFaceArray = [];
-    if (pictureId !== undefined) {
-      if (visitId === '') {
-        currentPicture = this.props.route.params?.visitPictures.find(
-          (data) => data.pictureId === pictureId
-        );
-      } else {
-        currentPicture = this.props.visitData[visitId].visitPictures.find(
-          (data) => data.pictureId === pictureId
-        );
+    if (this.props.route.params?.overlayPicture) {
+      const overlayFaceArray = this.props.route.params?.overlayPicture.faceDetectedValues;
+      if (overlayFaceArray && overlayFaceArray !== '[]') {
+        this.matchOverlayToCamera(overlayFaceArray);
       }
-      overlayFaceArray = currentPicture.faceDetectedValues;
-      this.matchOverlayToCamera(overlayFaceArray);
     }
   }
 
@@ -405,7 +308,7 @@ class CameraScreen extends React.Component {
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
-          href={`${FileSystem.documentDirectory}${this.state.photo}`}
+          href={`${this.state.photo}`}
         />
         <Circle
           cx={this.state.locationX}
@@ -419,26 +322,10 @@ class CameraScreen extends React.Component {
     );
   }
 
-  renderOverlaySvg(pictureId) {
-    const visitId = this.props.route.params?.visitId;
-    // const pictureId = this.props.route.params?.pictureId;
-    let currentPicture = [];
-    if (visitId === '') {
-      currentPicture = this.props.route.params?.visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    } else {
-      currentPicture = this.props.visitData[visitId].visitPictures.find(
-        (data) => data.pictureId === pictureId
-      );
-    }
-    if (!currentPicture) {
-      return <Svg />;
-    }
-
+  renderOverlaySvg(overlayPicture) {
     let cy = -100;
-    if (currentPicture.locationY) {
-      cy = currentPicture.locationY;
+    if (overlayPicture.locationY) {
+      cy = overlayPicture.locationY;
     }
 
     return (
@@ -456,13 +343,13 @@ class CameraScreen extends React.Component {
           height="100%"
           opacity={this.state.opacity / 10.0}
           preserveAspectRatio="xMidYMid slice"
-          href={`${FileSystem.documentDirectory}${currentPicture.uri}` || ''}
+          href={`${overlayPicture.uri}` || ''}
         />
         <Circle
           opacity={this.state.opacity / 10.0}
-          cx={currentPicture.locationX || -100}
+          cx={overlayPicture.locationX || -100}
           cy={cy}
-          r={currentPicture.diameter || 20}
+          r={overlayPicture.diameter || 20}
           strokeWidth="2"
           stroke="red"
           fill="none"
@@ -481,7 +368,6 @@ class CameraScreen extends React.Component {
       type,
       flashMode,
       drawEnabled,
-      matchingOverlay
     } = this.state;
 
     const drawIconColor = drawEnabled ? '#0680CD' : 'white';
@@ -493,21 +379,9 @@ class CameraScreen extends React.Component {
     if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;
     }
-    let visitPictures = [];
 
-    if (this.props.route.params?.visitId !== '') {
-      visitPictures = this.props.visitData[
-        this.props.route.params?.visitId].visitPictures;
-    } else {
-      visitPictures = this.props.route.params?.visitPictures;
-    }
 
-    let visitPhoto = null;
-    if (visitPictures && this.state.overlayPictureId) {
-      visitPhoto = visitPictures.find(
-        (p) => p.pictureId === this.state.overlayPictureId
-      );
-    }
+    const overlayPicture = this.props.route.params?.overlayPicture;
     return (
       <Provider>
         <View style={{ flex: 1, backgroundColor: '#fff' }}>
@@ -579,7 +453,7 @@ class CameraScreen extends React.Component {
               leftComponent={{
                 text: 'Cancel',
                 style: { fontSize: 20, color: 'white', fontFamily: 'Avenir-Light' },
-                onPress: () => this.goBack()
+                onPress: () => this.props.navigation.goBack()
               }}
               rightComponent={{
                 text: 'Save',
@@ -608,7 +482,7 @@ class CameraScreen extends React.Component {
                 onFacesDetected={this.onFacesDetected}
                 onFacesDetectionError={this.onFacesDetectionError}
               >
-                {!visitPhoto && (
+                {!overlayPicture && (
                 <View style={styles.maskOutter}>
                   <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
                   <View style={[{ flex: 40 }, styles.maskCenter]}>
@@ -671,10 +545,10 @@ class CameraScreen extends React.Component {
                   />
                 </View>
                 )}
-                {visitPhoto && (
+                {overlayPicture && (
                 <View
                   style={style.overlayPhoto}
-                  key={`picture-${visitPhoto.uri}`}
+                  key={`picture-${overlayPicture.uri}`}
                 >
                   <View style={style.sliderContainer}>
                     <Slider
@@ -698,11 +572,11 @@ class CameraScreen extends React.Component {
                         Dimensions.get('screen').height - IMAGE_CROP_HEIGHT
                       }
                   >
-                    {this.renderOverlaySvg(visitPhoto.pictureId)}
+                    {this.renderOverlaySvg(overlayPicture)}
                   </ImageZoom>
                 </View>
                 )}
-                {visitPhoto && (
+                {overlayPicture && (
                 <View
                   style={{
                     backgroundColor: 'black',
@@ -949,44 +823,5 @@ const style = StyleSheet.create({
     margin: 20
   }
 });
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
 
-const mapDispatchToProps = (dispatch) => ({
-  addPicture: (
-    visitData,
-    visitId,
-    pictureUri,
-    pictureNote,
-    pictureLocation,
-    pictureBodyPart,
-    pictureId,
-    locationX,
-    locationY,
-    diameter,
-    faceDetectedValues
-  ) => {
-    dispatch(
-      addPicture(
-        visitData,
-        visitId,
-        pictureUri,
-        pictureNote,
-        pictureLocation,
-        pictureBodyPart,
-        pictureId,
-        locationX,
-        locationY,
-        diameter,
-        faceDetectedValues
-      )
-    );
-  },
-  deletePicture: (visitData, visitId, pictureUri) => {
-    dispatch(deletePicture(visitData, visitId, pictureUri));
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(CameraScreen);
+export default CameraScreen;

@@ -1,80 +1,108 @@
 // Aboutscreen.js
 import React, { Component } from 'react';
 import {
-  View, Text, Image, ScrollView, TouchableOpacity
+  View, Text, Image, ScrollView, TouchableOpacity, YellowBox
 } from 'react-native';
 import { Header, Input } from 'react-native-elements';
 import {
   Menu, Divider, Provider, IconButton
 } from 'react-native-paper';
-import { connect } from 'react-redux';
-import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
-import { deletePicture, addPicture } from '../../redux/actions';
+import { API, graphqlOperation, Storage } from 'aws-amplify';
 import styles from './styles';
+import { deletePicture, getVisitEntry, createPicture } from '../../graphQL/queries';
 
 class VisitScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visitId: '',
-      visitPictures: [],
-      pictureNote: '',
-      pictureLocation: '',
-      pictureBodyPart: '',
       visible: false,
+      selectedPicture: {},
       x: 0,
       y: 0,
-      selectedPicture: {},
-      addNewMenuVisible: false
+      newPicturesToAdd: [],
     };
+    YellowBox.ignoreWarnings([
+      'Deprecation warning',
+      'VirtualizedList',
+      'Accessing view manager',
+      'Warning:',
+      'Possible',
+      'Non-serializable values were found in the navigation state',
+    ]);
   }
 
-  componentDidMount() {
-    FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}photos`).catch(() => {
-    });
-    this.setState({ visitId: this.props.route.params?.visitId });
+  componentDidMount = async () => {
+    // get photos object
+    const photosItems = this.props.route.params?.item.pictures.items;
+    await this.fetchPictures(photosItems);
   }
 
-  view = () => {
-    this.setState({ visible: false });
+  componentDidUpdate = async (oldProps) => {
+    const newProps = this.props;
+    if ((this.props.route.params?.pictureId !== undefined) && (this.props.route.params?.pictureId === this.state.selectedPicture.id)) {
+      await this.deletePicture(this.state.selectedPicture);
+    } else if (oldProps.route.params?.pictureArray !== newProps.route.params?.pictureArray) {
+      if (newProps.route.params?.pictureArray !== undefined && newProps.route.params?.pictureArray.length > 0) {
+        // edit the pic with new pic
+        if (this.state.newPicturesToAdd.find((e) => e.id === newProps.route.params?.picId)) {
+          const updatedArray = update(
+            this.state.newPicturesToAdd, {
+              $splice: [[this.state.newPicturesToAdd.findIndex((e) => e.id === newProps.route.params?.picId), 1,
+                newProps.route.params?.pictureArray[0]]]
+            }
+          ); // array.splice(start, deleteCount, item1)
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState(() => ({ newPicturesToAdd: updatedArray }));
+        // new pic first time
+        } else {
+          this.state.newPicturesToAdd.push(newProps.route.params?.pictureArray[0]);
+          // eslint-disable-next-line react/no-did-update-set-state
+          this.setState((prevState) => ({ newPicturesToAdd: prevState.newPicturesToAdd }));
+        }
+      }
+    }
+  }
 
+  fetchPictures = async (pictureObject) => {
+    if (pictureObject.length > 0) {
+      await Promise.all(pictureObject.map(async (item) => {
+        const { key } = item.fullsize;
+        const uri = await Storage.get(key.substring(5).slice(0, -1));
+        Object.assign(item, { uri });
+      }));
+      this.setState({ visitPictures: pictureObject });
+    } else {
+      this.setState({ visitPictures: [] });
+    }
+  }
+
+  viewIndividualPhoto = (picture) => {
+    this.setState({ visible: false, selectedPicture: picture });
     this.props.navigation.navigate('ViewPhoto', {
-      visitId: this.state.visitId,
-      pictureId: this.state.selectedPicture.pictureId,
-      pictureUri: this.state.selectedPicture.uri,
-      pictureNote: this.state.selectedPicture.pictureNote,
-      pictureLocation: this.state.selectedPicture.pictureLocation,
-      pictureBodyPart: this.state.selectedPicture.pictureBodyPart,
-      visitPictures: this.state.visitPictures,
+      visitId: this.props.route.params?.item.id,
+      currentPicture: picture,
+      visitPictures: this.state.visitPictures
     });
   };
+
 
   overlayPicture = () => {
     this.setState({ visible: false });
     this.props.navigation.navigate('Camera', {
-      visitId: this.state.visitId,
-      overlayPictureId: this.state.selectedPicture.pictureId
+      visitId: this.props.route.params?.item.id,
+      overlayPicture: this.state.selectedPicture,
+      visitPictures: this.state.visitPictures
     });
   };
 
-  deletePicture = () => {
-    this.props.deletePicture(
-      this.props.visitData,
-      this.state.visitId,
-      this.state.pictureUri
-    );
-    this.setState({ visible: false });
-  };
-
   navigateToCamera = () => {
-    this.setState({ addNewMenuVisible: false });
     this.props.navigation.navigate('Camera', {
-      visitId: this.state.visitId
+      visitId: this.props.route.params?.item.id
     });
   };
 
@@ -84,41 +112,79 @@ class VisitScreen extends Component {
 
   importImage = async () => {
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    this.setState({ addNewMenuVisible: false });
     if (status === 'granted') {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
         exif: true
       });
-      const picId = uuidv4();
-      FileSystem.moveAsync({
-        from: result.uri,
-        to: `${FileSystem.documentDirectory}photos/Photo_${picId}.jpg`
-      });
       if (result && result.uri) {
-        this.props.addPicture(
-          this.props.visitData,
-          this.props.route.params?.visitId,
-          `photos/Photo_${picId}.jpg`,
-          '',
-          '',
-          '',
-          undefined,
-          -100,
-          -100,
-          20,
-          null
-        );
+        this.state.newPicturesToAdd.push({
+          id: uuidv4(),
+          uri: result.uri,
+          note: '',
+          location: '',
+          bodyPart: '',
+          locationX: -100,
+          locationY: -100,
+          diameter: -20,
+          dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
+          faceDetectedValues: []
+        });
+        this.setState((prevState) => ({ newPicturesToAdd: prevState.newPicturesToAdd }));
       }
     }
   };
 
+  deletePicture = async (selectedPicture) => {
+    // temporary picture delete
+    if (selectedPicture.temporary !== undefined) {
+      this.setState({ visible: false, selectedPicture: [] });
+      this.setState((prevState) => ({ newPicturesToAdd: prevState.newPicturesToAdd.filter((item) => item.uri !== selectedPicture.uri) }));
+    } else {
+      // delete from dynamo
+      await API.graphql(graphqlOperation(deletePicture, { pictureId: this.state.selectedPicture.id }));
+      // delete from s3
+      await Storage.remove(`uploads/${this.props.route.params?.item.id}/${this.state.selectedPicture.id}`);
+      // fetch pictures again to refresh
+      const updatedVisitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.item.id }));
+      // fetch update pictures object now
+      this.fetchPictures(updatedVisitEntry.data.getVisitEntry.pictures.items);
+      this.setState({ visible: false, selectedPicture: '{}' });
+    }
+  }
+
+  saveNewPics = async () => {
+    const { newPicturesToAdd } = this.state;
+    if (newPicturesToAdd.length > 0) {
+      // upload each picture to s3
+      newPicturesToAdd.forEach(async (element) => {
+        const response = await fetch(element.uri);
+        const blob = await response.blob();
+        const S3key = await Storage.put(
+          `uploads/${this.props.route.params?.item.id}/${element.id}`,
+          blob,
+          {
+            contentType: 'image/png',
+            metadata: { visitEntryId: this.props.route.params?.item.id }
+          }
+        );
+        await this.storeVisitPhotoInfo(S3key, element, this.props.route.params?.item.id);
+      });
+    }
+    this.props.navigation.navigate('Home');
+  };
+
+  storeVisitPhotoInfo = async (S3key, item, visitEntryId) => {
+    await API.graphql(graphqlOperation(createPicture, {
+      // eslint-disable-next-line max-len
+      key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+    }));
+  }
+
   render() {
-    const { visitPictures } = this.props.visitData[
-      this.props.route.params?.visitId
-    ];
-    const { visitData } = this.props;
+    const { visitPictures } = this.state;
+    const { newPicturesToAdd } = this.state;
     return (
       <View style={styles.providerView}>
         <Header
@@ -132,7 +198,7 @@ class VisitScreen extends Component {
               onPress={() => this.props.navigation.goBack()}
             />
           )}
-          centerComponent={{ text: this.props.route.params?.visitName, style: styles.headerCenter }}
+          centerComponent={{ text: this.props.route.params?.item.name, style: styles.headerCenter }}
           rightComponent={(
             <IconButton
               icon="square-edit-outline"
@@ -140,7 +206,7 @@ class VisitScreen extends Component {
               color="white"
               size={30}
               onPress={() => this.props.navigation.navigate('EditEvent', {
-                ...visitData[this.props.route.params?.visitId]
+                ...this.props.route.params?.item
               })}
             />
           )}
@@ -152,7 +218,7 @@ class VisitScreen extends Component {
             color="#0A2B66"
             inputStyle={styles.inputFont}
             editable={false}
-            value={Moment(this.props.route.params?.visitDate).format(
+            value={Moment(this.props.route.params?.item.date).format(
               'MMMM D, YYYY'
             )}
             style={styles.inputTimePicker}
@@ -174,7 +240,7 @@ class VisitScreen extends Component {
             color="#0A2B66"
             editable={false}
             multiline
-            value={this.props.route.params?.visitNotes}
+            value={this.props.route.params?.item.notes}
             style={styles.inputTimePicker}
             leftIcon={(
               <MaterialCommunityIcons
@@ -188,8 +254,9 @@ class VisitScreen extends Component {
         </View>
         <Provider>
           <ScrollView>
-            {(!visitPictures
-                || (visitPictures && visitPictures.length === 0)) && (
+            {((!visitPictures
+                || (visitPictures && visitPictures.length === 0))) && ((!newPicturesToAdd
+                  || (newPicturesToAdd && newPicturesToAdd.length === 0))) && (
                   <View style={styles.inputSpacer}>
                     <View style={styles.notificationView}>
                       <Text style={styles.notificationText}>
@@ -205,25 +272,12 @@ class VisitScreen extends Component {
                   <TouchableOpacity
                     key={`picture-${i}`}
                     style={styles.pictureButton}
-                    onPress={() => this.props.navigation.navigate('ViewPhoto', {
-                      visitId: this.state.visitId,
-                      pictureId: picture.pictureId,
-                      pictureUri: picture.uri,
-                      pictureNote: picture.pictureNote,
-                      pictureLocation: picture.pictureLocation,
-                      pictureBodyPart: picture.pictureBodyPart,
-                      visitPictures: this.state.visitPictures
-                    })}
+                    onPress={() => this.viewIndividualPhoto(picture)}
                     onLongPress={(name) => {
                       this.setState({
                         x: name.nativeEvent.pageX,
                         y: name.nativeEvent.pageY,
                         selectedPicture: picture,
-                        visitId: this.props.route.params?.visitId,
-                        pictureUri: picture.uri,
-                        pictureNote: picture.pictureNote,
-                        pictureLocation: picture.pictureLocation,
-                        pictureBodyPart: picture.pictureBodyPart,
                         visible: true
                       });
                     }}
@@ -233,10 +287,38 @@ class VisitScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={{ uri: `${FileSystem.documentDirectory}${picture.uri}` }}
+                        source={picture.uri ? { uri: picture.uri } : null}
                         style={{ height: '100%', width: '100%' }}
                       />
-                      <Text style={styles.pictureFont}>{picture.dateCreated}</Text>
+                      <Text style={styles.pictureFont}>{ Moment(picture.createdAt).format('MM/DD/YYYY hh:mm A')}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              {newPicturesToAdd
+                && newPicturesToAdd.length > 0
+                && newPicturesToAdd.map((picture, i) => (
+                  <TouchableOpacity
+                    key={`picture-${i}`}
+                    style={styles.pictureButton}
+                    onPress={() => this.viewIndividualPhoto(picture)}
+                    onLongPress={(name) => {
+                      this.setState({
+                        x: name.nativeEvent.pageX,
+                        y: name.nativeEvent.pageY,
+                        selectedPicture: picture,
+                        visible: true
+                      });
+                    }}
+                  >
+                    <View
+                      key={`picture-${picture.uri}`}
+                      style={{ padding: 20, height: 200 }}
+                    >
+                      <Image
+                        source={picture.uri ? { uri: picture.uri } : null}
+                        style={{ height: '100%', width: '100%' }}
+                      />
+                      <Text style={styles.pictureFont}>{ Moment(picture.createdAt).format('MM/DD/YYYY hh:mm A')}</Text>
                     </View>
                   </TouchableOpacity>
                 ))}
@@ -257,17 +339,28 @@ class VisitScreen extends Component {
                 </TouchableOpacity>
               </View>
             </View>
+            <View style={styles.buttonSave}>
+              {newPicturesToAdd
+                && newPicturesToAdd.length > 0 && (
+                <TouchableOpacity
+                  style={styles.primaryButton}
+                  onPress={() => this.saveNewPics()}
+                >
+                  <Text style={styles.primaryText}>Save New Pictures</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           </ScrollView>
           <Menu
             visible={this.state.visible}
             onDismiss={() => this.setState({ visible: false })}
             anchor={{ x: this.state.x, y: this.state.y }}
           >
-            <Menu.Item onPress={() => this.view()} title="View" />
+            <Menu.Item onPress={() => this.viewIndividualPhoto(this.state.selectedPicture)} title="View" />
             <Divider />
             <Menu.Item onPress={this.overlayPicture} title="Overlay" />
             <Divider />
-            <Menu.Item onPress={this.deletePicture} title="Delete" />
+            <Menu.Item onPress={() => this.deletePicture(this.state.selectedPicture)} title="Delete" />
           </Menu>
         </Provider>
       </View>
@@ -275,44 +368,4 @@ class VisitScreen extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  visitData: state.visits.visits.visitData,
-  visits: state.visits
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  deletePicture: (visitData, visitId, pictureUri) => {
-    dispatch(deletePicture(visitData, visitId, pictureUri));
-  },
-  addPicture: (
-    visitData,
-    visitId,
-    pictureUri,
-    pictureNote,
-    pictureLocation,
-    pictureBodyPart,
-    pictureId,
-    locationX,
-    locationY,
-    diameter,
-    faceDetectedValues
-  ) => {
-    dispatch(
-      addPicture(
-        visitData,
-        visitId,
-        pictureUri,
-        pictureNote,
-        pictureLocation,
-        pictureBodyPart,
-        pictureId,
-        locationX,
-        locationY,
-        diameter,
-        faceDetectedValues
-      )
-    );
-  }
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(VisitScreen);
+export default VisitScreen;

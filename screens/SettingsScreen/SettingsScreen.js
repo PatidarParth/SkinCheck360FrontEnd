@@ -35,17 +35,13 @@ class SettingsScreen extends Component {
     ]);
   }
 
-  async componentDidMount() {
+  componentDidMount = async () => {
     const user = await Auth.currentAuthenticatedUser().catch();
     this.setState({ accountUsername: user.username, accountName: user.attributes.name });
   }
 
   signOut = async () => {
-    await Auth.signOut()
-      // eslint-disable-next-line no-console
-      .then((data) => console.log(data))
-      // eslint-disable-next-line no-console
-      .catch((err) => console.log(err));
+    await Auth.signOut();
   }
 
   getLegalPolicy = async (policyName) => {
