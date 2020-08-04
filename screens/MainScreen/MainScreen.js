@@ -14,7 +14,9 @@ import {
 import { ListItem, Header } from 'react-native-elements';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import * as Permissions from 'expo-permissions';
-import { Auth, API, graphqlOperation, Storage} from 'aws-amplify';
+import {
+  Auth, API, graphqlOperation, Storage
+} from 'aws-amplify';
 import { logger } from 'react-native-logger';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
@@ -52,11 +54,11 @@ class MainScreen extends Component {
     const user = await Auth.currentAuthenticatedUser().catch();
     this.setState({ username: user.username });
     // fetch all entries
-    this.fetchVisitEntries();
+    await this.fetchVisitEntries();
     // Entries update on navaigation back to this page
     const { navigation } = this.props;
-    this.focusListener = navigation.addListener('focus', () => {
-      this.fetchVisitEntries();
+    this.focusListener = navigation.addListener('focus', async () => {
+      await this.fetchVisitEntries();
     });
     // get privacy policy
     const privacyPolicyAccepted = await AsyncStorage.getItem(
@@ -206,17 +208,7 @@ class MainScreen extends Component {
           </Banner>
         )}
 
-        {cameraPermission === 'granted' && (
-          <ScrollView
-            contentContainerStyle={styles.scrollView}
-            refreshControl={(
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={() => this.refreshVisitEntries()}
-              />
-            )}
-          >
-            {(!visitEntries
+        {cameraPermission === 'granted' && (!visitEntries
               || (visitEntries && Object.keys(visitEntries).length === 0)) && (
               <View style={styles.visitOuterView}>
                 <View style={styles.visitInnerView}>
@@ -230,66 +222,70 @@ class MainScreen extends Component {
                   </Text>
                 </View>
               </View>
-            )}
-            {visitEntries && (
-              <SwipeListView
-                useFlatList
-                data={visitEntries}
+        )}
+        {cameraPermission === 'granted' && visitEntries && (
+        <SwipeListView
+          refreshControl={(
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={() => this.refreshVisitEntries()}
+            />
+              )}
+          useFlatList
+          data={visitEntries}
                 // eslint-disable-next-line arrow-body-style
-                keyExtractor={(rowData,) => {
-                  return rowData.id.toString();
-                }}
-                renderItem={(visitEntry) => (
-                  <ListItem
-                    title={visitEntry.item.name}
-                    subtitle={Moment(visitEntry.item.date).format(
-                      'MMMM D, YYYY'
-                    )}
-                    titleStyle={{ fontFamily: 'Avenir-Light', fontSize: 18, fontWeight: '600' }}
-                    subtitleStyle={{ fontFamily: 'Avenir-Light', fontSize: 14 }}
-                    bottomDivider
-                    chevron={{ color: '#00539B' }}
-                    onPress={() => this.props.navigation.navigate('VisitDescription', {
-                      ...visitEntry
-                    })}
+          keyExtractor={(rowData,) => {
+            return rowData.id.toString();
+          }}
+          renderItem={(visitEntry) => (
+            <ListItem
+              title={visitEntry.item.name}
+              subtitle={Moment(visitEntry.item.date).format(
+                'MMMM D, YYYY'
+              )}
+              titleStyle={{ fontFamily: 'Avenir-Light', fontSize: 18, fontWeight: '600' }}
+              subtitleStyle={{ fontFamily: 'Avenir-Light', fontSize: 14 }}
+              bottomDivider
+              chevron={{ color: '#00539B' }}
+              onPress={() => this.props.navigation.navigate('VisitDescription', {
+                ...visitEntry.item, username: this.state.username
+              })}
+            />
+          )}
+          renderHiddenItem={(visitEntry, rowMap) => (
+            <View style={styles.rowBack}>
+              <View style={styles.swipeView}>
+                <TouchableOpacity
+                  onPress={() => this.goToEdit(rowMap, visitEntry.item)}
+                  style={styles.leftSwipe}
+                >
+                  <MaterialCommunityIcons
+                    color="white"
+                    size={30}
+                    style={styles.leftSwipeIcon}
+                    name="square-edit-outline"
+                    backgroundColor="#00539B"
                   />
-                )}
-                renderHiddenItem={(visitEntry, rowMap) => (
-                  <View style={styles.rowBack}>
-                    <View style={styles.swipeView}>
-                      <TouchableOpacity
-                        onPress={() => this.goToEdit(rowMap, visitEntry.item)}
-                        style={styles.leftSwipe}
-                      >
-                        <MaterialCommunityIcons
-                          color="white"
-                          size={30}
-                          style={styles.leftSwipeIcon}
-                          name="square-edit-outline"
-                          backgroundColor="#00539B"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <View style={styles.rightSwipeView}>
-                      <TouchableOpacity
-                        onPress={() => this.showDeleteAlert(visitEntry.item)}
-                        style={styles.rightSwipe}
-                      >
-                        <MaterialCommunityIcons
-                          color="white"
-                          size={30}
-                          name="trash-can-outline"
-                          backgroundColor="#00539B"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )}
-                leftOpenValue={swipePixelSize}
-                rightOpenValue={-swipePixelSize}
-              />
-            )}
-          </ScrollView>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.rightSwipeView}>
+                <TouchableOpacity
+                  onPress={() => this.showDeleteAlert(visitEntry.item)}
+                  style={styles.rightSwipe}
+                >
+                  <MaterialCommunityIcons
+                    color="white"
+                    size={30}
+                    name="trash-can-outline"
+                    backgroundColor="#00539B"
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+          leftOpenValue={swipePixelSize}
+          rightOpenValue={-swipePixelSize}
+        />
         )}
       </View>
     );

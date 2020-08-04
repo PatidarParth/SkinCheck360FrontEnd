@@ -291,12 +291,13 @@ class CameraScreen extends React.Component {
   };
 
   componentDidUpdate = () => {
-    if (this.props.route.params?.overlayPicture) {
-      const overlayFaceArray = this.props.route.params?.overlayPicture.faceDetectedValues;
-      if (overlayFaceArray && overlayFaceArray !== '[]') {
-        this.matchOverlayToCamera(overlayFaceArray);
-      }
-    }
+    // if (this.props.route.params?.overlayPicture.faceDetectedValues !== undefined) {
+    //   const overlayFaceArray = this.props.route.params?.overlayPicture.faceDetectedValues;
+    //   console.log(overlayFaceArray);
+    //   if (overlayFaceArray.length > 0 && overlayFaceArray !== '[]') {
+    //     this.matchOverlayToCamera(overlayFaceArray);
+    //   }
+    // }
   }
 
   renderSvg() {

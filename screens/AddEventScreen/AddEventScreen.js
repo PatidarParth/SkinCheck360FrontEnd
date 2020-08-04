@@ -12,18 +12,13 @@ import {
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import update from 'immutability-helper';
-import { Appearance } from 'react-native-appearance';
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import { API, graphqlOperation, Storage } from 'aws-amplify';
 import styles from './styles';
 import { newVisitEntry, createPicture } from '../../graphQL/queries';
 
-const colorScheme = Appearance.getColorScheme();
-
 class AddEventScreen extends Component {
-  subscription;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +26,6 @@ class AddEventScreen extends Component {
       isDateTimePickerVisible: false,
       visitDate: Date.now(),
       visitNotes: '',
-      isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: '',
       visitPictures: [],
       visible: false,
@@ -50,12 +44,6 @@ class AddEventScreen extends Component {
   }
 
   componentDidMount() {
-    // eslint-disable-next-line no-undef
-    subscription = Appearance.addChangeListener(
-      ({ colorScheme: _colorScheme }) => {
-        this.setState({ isDarkModeEnabled: _colorScheme === 'dark' });
-      }
-    );
   }
 
   componentDidUpdate = (oldProps) => {
@@ -82,11 +70,6 @@ class AddEventScreen extends Component {
         }
       }
     }
-  }
-
-  componentWillUnmount() {
-    // eslint-disable-next-line no-undef
-    if (subscription) subscription.remove();
   }
 
   handleDatePicked = (dateTime) => {
@@ -140,10 +123,11 @@ class AddEventScreen extends Component {
       const visitId = await API.graphql(graphqlOperation(newVisitEntry, { name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes }));
       const { visitPictures } = this.state;
       // upload each picture to s3
-      visitPictures.forEach(async (element, index) => {
+      visitPictures.forEach(async (element) => {
+        this.storeVisitPhotoInfo(`uploads/${visitId.data.createVisitEntry.id}/${element.id}`, element, visitId.data.createVisitEntry.id);
         const response = await fetch(element.uri);
         const blob = await response.blob();
-        const S3key = await Storage.put(
+        await Storage.put(
           `uploads/${visitId.data.createVisitEntry.id}/${element.id}`,
           blob,
           {
@@ -151,29 +135,17 @@ class AddEventScreen extends Component {
             metadata: { visitEntryId: visitId.data.createVisitEntry.id }
           }
         );
-        if (index === visitPictures.length - 1) {
-          this.storeVisitPhotoInfo(S3key, element, visitId.data.createVisitEntry.id, true);
-        } else {
-          this.storeVisitPhotoInfo(S3key, element, visitId.data.createVisitEntry.id, false);
-        }
       });
+      this.props.navigation.navigate('Home');
     } else {
       this.setState(() => ({ visitTitleError: 'Visit Title is required.' }));
     }
   };
 
-  storeVisitPhotoInfo = (S3key, item, visitEntryId, lastValueBoolean) => {
-    if (lastValueBoolean) {
-      return API.graphql(graphqlOperation(createPicture, {
-        // eslint-disable-next-line max-len
-        key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
-      })).then(this.props.navigation.navigate('Home'));
-    }
-    return API.graphql(graphqlOperation(createPicture, {
+  storeVisitPhotoInfo = (S3key, item, visitEntryId) => API.graphql(graphqlOperation(createPicture, {
     // eslint-disable-next-line max-len
-      key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
-    }));
-  }
+    key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+  }));
 
   displayDateTimePicker = (display) => this.setState({ isDateTimePickerVisible: display });
 
@@ -267,7 +239,6 @@ class AddEventScreen extends Component {
               isVisible={this.state.isDateTimePickerVisible}
               onConfirm={this.handleDatePicked}
               onCancel={() => this.displayDateTimePicker(false)}
-              isDarkModeEnabled={this.state.isDarkModeEnabled}
             />
           </View>
           <View style={styles.innerSpacer}>

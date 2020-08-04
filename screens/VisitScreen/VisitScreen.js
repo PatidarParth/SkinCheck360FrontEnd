@@ -13,8 +13,10 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { API, graphqlOperation, Storage } from 'aws-amplify';
+import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './styles';
 import { deletePicture, getVisitEntry, createPicture } from '../../graphQL/queries';
+
 
 class VisitScreen extends Component {
   constructor(props) {
@@ -25,6 +27,7 @@ class VisitScreen extends Component {
       x: 0,
       y: 0,
       newPicturesToAdd: [],
+      loading: false
     };
     YellowBox.ignoreWarnings([
       'Deprecation warning',
@@ -38,8 +41,9 @@ class VisitScreen extends Component {
 
   componentDidMount = async () => {
     // get photos object
-    const photosItems = this.props.route.params?.item.pictures.items;
-    await this.fetchPictures(photosItems);
+    const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
+    this.setState({ visitPictures: visitEntry.data.getVisitEntry.pictures.items });
+    await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
   }
 
   componentDidUpdate = async (oldProps) => {
@@ -72,19 +76,18 @@ class VisitScreen extends Component {
     if (pictureObject.length > 0) {
       await Promise.all(pictureObject.map(async (item) => {
         const { key } = item.fullsize;
-        const uri = await Storage.get(key.substring(5).slice(0, -1));
+        const uri = await Storage.get(key);
         Object.assign(item, { uri });
       }));
       this.setState({ visitPictures: pictureObject });
-    } else {
-      this.setState({ visitPictures: [] });
+      console.log(pictureObject)
     }
   }
 
   viewIndividualPhoto = (picture) => {
     this.setState({ visible: false, selectedPicture: picture });
     this.props.navigation.navigate('ViewPhoto', {
-      visitId: this.props.route.params?.item.id,
+      visitId: this.props.route.params?.id,
       currentPicture: picture,
       visitPictures: this.state.visitPictures
     });
@@ -94,7 +97,7 @@ class VisitScreen extends Component {
   overlayPicture = () => {
     this.setState({ visible: false });
     this.props.navigation.navigate('Camera', {
-      visitId: this.props.route.params?.item.id,
+      visitId: this.props.route.params?.id,
       overlayPicture: this.state.selectedPicture,
       visitPictures: this.state.visitPictures
     });
@@ -102,12 +105,8 @@ class VisitScreen extends Component {
 
   navigateToCamera = () => {
     this.props.navigation.navigate('Camera', {
-      visitId: this.props.route.params?.item.id
+      visitId: this.props.route.params?.id
     });
-  };
-
-  savePictures = () => {
-    this.props.navigation.navigate('Home');
   };
 
   importImage = async () => {
@@ -145,9 +144,9 @@ class VisitScreen extends Component {
       // delete from dynamo
       await API.graphql(graphqlOperation(deletePicture, { pictureId: this.state.selectedPicture.id }));
       // delete from s3
-      await Storage.remove(`uploads/${this.props.route.params?.item.id}/${this.state.selectedPicture.id}`);
+      await Storage.remove(`uploads/${this.props.route.params?.id}/${this.state.selectedPicture.id}`);
       // fetch pictures again to refresh
-      const updatedVisitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.item.id }));
+      const updatedVisitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
       // fetch update pictures object now
       this.fetchPictures(updatedVisitEntry.data.getVisitEntry.pictures.items);
       this.setState({ visible: false, selectedPicture: '{}' });
@@ -162,14 +161,14 @@ class VisitScreen extends Component {
         const response = await fetch(element.uri);
         const blob = await response.blob();
         const S3key = await Storage.put(
-          `uploads/${this.props.route.params?.item.id}/${element.id}`,
+          `uploads/${this.props.route.params?.id}/${element.id}`,
           blob,
           {
             contentType: 'image/png',
-            metadata: { visitEntryId: this.props.route.params?.item.id }
+            metadata: { visitEntryId: this.props.route.params?.id }
           }
         );
-        await this.storeVisitPhotoInfo(S3key, element, this.props.route.params?.item.id);
+        await this.storeVisitPhotoInfo(S3key, element, this.props.route.params?.id);
       });
     }
     this.props.navigation.navigate('Home');
@@ -198,7 +197,7 @@ class VisitScreen extends Component {
               onPress={() => this.props.navigation.goBack()}
             />
           )}
-          centerComponent={{ text: this.props.route.params?.item.name, style: styles.headerCenter }}
+          centerComponent={{ text: this.props.route.params?.name, style: styles.headerCenter }}
           rightComponent={(
             <IconButton
               icon="square-edit-outline"
@@ -218,7 +217,7 @@ class VisitScreen extends Component {
             color="#0A2B66"
             inputStyle={styles.inputFont}
             editable={false}
-            value={Moment(this.props.route.params?.item.date).format(
+            value={Moment(this.props.route.params?.date).format(
               'MMMM D, YYYY'
             )}
             style={styles.inputTimePicker}
@@ -240,7 +239,7 @@ class VisitScreen extends Component {
             color="#0A2B66"
             editable={false}
             multiline
-            value={this.props.route.params?.item.notes}
+            value={this.props.route.params?.notes}
             style={styles.inputTimePicker}
             leftIcon={(
               <MaterialCommunityIcons
@@ -266,6 +265,14 @@ class VisitScreen extends Component {
                   </View>
             )}
             <View style={styles.scrollView}>
+              {/* <Spinner
+                          // visibility of Overlay Loading Spinner
+                visible
+                          // Text with the Spinner
+                textContent="Loading..."
+                          // Text style of the Spinner Text
+                textStyle={styles.spinnerTextStyle}
+              /> */}
               {visitPictures
                 && visitPictures.length > 0
                 && visitPictures.map((picture, i) => (
@@ -289,6 +296,7 @@ class VisitScreen extends Component {
                       <Image
                         source={picture.uri ? { uri: picture.uri } : null}
                         style={{ height: '100%', width: '100%' }}
+                        //onLoadEnd={this.setState({ loading: false })}
                       />
                       <Text style={styles.pictureFont}>{ Moment(picture.createdAt).format('MM/DD/YYYY hh:mm A')}</Text>
                     </View>

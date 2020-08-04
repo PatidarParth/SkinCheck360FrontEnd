@@ -15,6 +15,7 @@ import Svg, { Circle, Image } from 'react-native-svg';
 import { Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ImageZoom from 'react-native-image-pan-zoom';
+// import Spinner from 'react-native-loading-spinner-overlay';
 import styles from './styles';
 
 const IMAGE_CROP_HEIGHT = Platform.OS === 'ios' ? 141 : 220;
@@ -23,7 +24,8 @@ class PhotoScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showNoteDialog: false
+      showNoteDialog: false,
+      loading: false
     };
   }
 
@@ -52,17 +54,31 @@ class PhotoScreen extends Component {
     }
   };
 
+  // _onLoad = () => {
+  //   console.log("loaded")
+  //   // this.setState(() => ({ loaded: true }))
+  // }
+
   renderSvg() {
     const currentPicture = this.props.route.params?.currentPicture;
     return (
       <Svg height="100%" width="100%" style={{ backgroundColor: 'transparent' }}>
+        {/* <Spinner
+                          // visibility of Overlay Loading Spinner
+          visible={this.state.loading}
+                          // Text with the Spinner
+          textContent="Loading"
+                          // Text style of the Spinner Text
+          textStyle={styles.spinnerTextStyle}
+        /> */}
         <Image
           x="0"
           y="0"
           width="100%"
           height="100%"
           preserveAspectRatio="xMidYMid slice"
-          href={`${currentPicture.uri}` || ''}
+          href={`${currentPicture.uri}`}
+          //test={this._onLoad()}
         />
         <Circle
           cx={currentPicture.locationX || -100}
@@ -94,17 +110,26 @@ class PhotoScreen extends Component {
             <Dialog.Title style={{ fontSize: 20, fontFamily: 'Avenir-Light' }}>Picture Notes</Dialog.Title>
             <Dialog.Content>
               <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Location:</Text>
-              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+              <Text style={{
+                fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light'
+              }}
+              >
                 {`${pictureLocation
                 || 'No location specified'}`}
               </Text>
               <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Body Part:</Text>
-              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+              <Text style={{
+                fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light'
+              }}
+              >
                 {`${pictureBodyPart
                 || 'No body part specified'}`}
               </Text>
               <Text style={{ fontSize: 18, fontFamily: 'Avenir-Light' }}>Picture Notes:</Text>
-              <Text style={{ fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light' }}>
+              <Text style={{
+                fontSize: 15, fontStyle: 'normal', color: Colors.grey700, fontFamily: 'Avenir-Light'
+              }}
+              >
                 {`${pictureNote || 'No notes have been entered'}`}
               </Text>
             </Dialog.Content>

@@ -10,12 +10,12 @@ import { applyMiddleware, createStore } from 'redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { StyleSheet } from 'react-native';
+import { StyleSheet, AppState } from 'react-native';
 import { SplashScreen } from 'expo';
 
 import { createLogger } from 'redux-logger';
 import thunkMiddleware from 'redux-thunk';
-
+import { Auth } from 'aws-amplify';
 import { AppearanceProvider } from 'react-native-appearance';
 import {
   RequireNewPassword, ConfirmSignIn, VerifyContact, withAuthenticator
@@ -48,9 +48,23 @@ const store = createStore(
 );
 
 class App extends React.Component {
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
   useEffect = () => {
     SplashScreen.true();
   };
+
+  _handleAppStateChange = async (nextAppState) => {
+    if (nextAppState === 'background') {
+      await Auth.signOut();
+    }
+  }
 
   render() {
     return (
