@@ -19,6 +19,7 @@ import { TextField } from 'react-native-material-textfield';
 import Svg, { Circle, Image } from 'react-native-svg';
 import { THREE } from 'expo-three';
 import * as Permissions from 'expo-permissions';
+import { API, graphqlOperation, Storage } from 'aws-amplify';
 import { Camera } from 'expo-camera';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as FaceDetector from 'expo-face-detector';
@@ -33,6 +34,7 @@ import {
   Provider
 } from 'react-native-paper';
 import ImageZoom from 'react-native-image-pan-zoom';
+import { deletePicture } from '../../graphQL/queries';
 import styles from './styles';
 import noteDropdownInfo from '../../assets/notes.json';
 
@@ -115,7 +117,7 @@ class CameraScreen extends React.Component {
         if (this.state.type === Camera.Constants.Type.back) {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             { rotate: 0 },
-            // {  resize: { width: maskColWidth } }
+            { resize: { width: 600 } }
             // {
             //   crop: {
             //     originX: 0,
@@ -124,7 +126,7 @@ class CameraScreen extends React.Component {
             //     height: width
             //   }
             // }
-          ]);
+          ], { compress: 1, format: ImageManipulator.SaveFormat.JPEG, base64: true });
           this.setState({
             photo: photo.uri
           });
@@ -132,6 +134,7 @@ class CameraScreen extends React.Component {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             { rotate: 0 },
             { flip: ImageManipulator.FlipType.Horizontal },
+            { resize: { width: 600 } }
             // {
             //   crop: {
             //     originX: 0,
@@ -140,7 +143,7 @@ class CameraScreen extends React.Component {
             //     height: width
             //   }
             // }
-          ]);
+          ], { compress: 1, format: ImageManipulator.SaveFormat.JPEG, base64: true });
           this.setState({
             photo: photo.uri
           });
@@ -160,6 +163,11 @@ class CameraScreen extends React.Component {
       diameter,
       faceDetectedArray
     } = this.state;
+    if (this.props.route.params?.pictureId && this.props.route.params?.visitId) {
+      await API.graphql(graphqlOperation(deletePicture, { pictureId: this.props.route.params?.pictureId }));
+      // delete from s3
+      await Storage.remove(`uploads/${this.props.route.params?.visitId}/${this.props.route.params?.pictureId}`);
+    }
     const pictureArray = [];
     const picId = this.props.route.params?.pictureId || uuidv4();
     const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : '[]';

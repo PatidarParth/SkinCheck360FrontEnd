@@ -28,7 +28,8 @@ export default StyleSheet.create({
   notificationText: {
     fontSize: 18,
     fontFamily: 'Avenir-Light',
-    paddingTop: 20
+    paddingTop: 20,
+    alignSelf: 'center',
   },
   textHeader: {
     fontSize: 20,

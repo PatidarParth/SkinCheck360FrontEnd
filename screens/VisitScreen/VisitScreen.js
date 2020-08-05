@@ -14,6 +14,7 @@ import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { API, graphqlOperation, Storage } from 'aws-amplify';
 import Spinner from 'react-native-loading-spinner-overlay';
+import update from 'immutability-helper';
 import styles from './styles';
 import { deletePicture, getVisitEntry, createPicture } from '../../graphQL/queries';
 
@@ -40,10 +41,13 @@ class VisitScreen extends Component {
   }
 
   componentDidMount = async () => {
-    // get photos object
-    const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
-    this.setState({ visitPictures: visitEntry.data.getVisitEntry.pictures.items });
-    await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
+    const photosItems = this.props.route.params?.pictures.items;
+    await this.fetchPictures(photosItems);
+    const { navigation } = this.props;
+    this.focusListener = navigation.addListener('focus', async () => {
+      const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
+      await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
+    });
   }
 
   componentDidUpdate = async (oldProps) => {
@@ -80,7 +84,8 @@ class VisitScreen extends Component {
         Object.assign(item, { uri });
       }));
       this.setState({ visitPictures: pictureObject });
-      console.log(pictureObject)
+    } else {
+      this.setState({ visitPictures: [] });
     }
   }
 
@@ -115,7 +120,7 @@ class VisitScreen extends Component {
       const result = await ImagePicker.launchImageLibraryAsync({
         allowsEditing: true,
         base64: true,
-        exif: true
+        exif: true,
       });
       if (result && result.uri) {
         this.state.newPicturesToAdd.push({
@@ -126,7 +131,7 @@ class VisitScreen extends Component {
           bodyPart: '',
           locationX: -100,
           locationY: -100,
-          diameter: -20,
+          diameter: 20,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
           faceDetectedValues: []
         });
@@ -158,17 +163,17 @@ class VisitScreen extends Component {
     if (newPicturesToAdd.length > 0) {
       // upload each picture to s3
       newPicturesToAdd.forEach(async (element) => {
+        await this.storeVisitPhotoInfo(`uploads/${this.props.route.params?.id}/${element.id}`, element, this.props.route.params?.id);
         const response = await fetch(element.uri);
         const blob = await response.blob();
-        const S3key = await Storage.put(
+        await Storage.put(
           `uploads/${this.props.route.params?.id}/${element.id}`,
           blob,
           {
-            contentType: 'image/png',
+            contentType: 'image/jpeg',
             metadata: { visitEntryId: this.props.route.params?.id }
           }
         );
-        await this.storeVisitPhotoInfo(S3key, element, this.props.route.params?.id);
       });
     }
     this.props.navigation.navigate('Home');
@@ -294,9 +299,8 @@ class VisitScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={picture.uri ? { uri: picture.uri } : null}
+                        source={{ uri: picture.uri }}
                         style={{ height: '100%', width: '100%' }}
-                        //onLoadEnd={this.setState({ loading: false })}
                       />
                       <Text style={styles.pictureFont}>{ Moment(picture.createdAt).format('MM/DD/YYYY hh:mm A')}</Text>
                     </View>
@@ -323,7 +327,7 @@ class VisitScreen extends Component {
                       style={{ padding: 20, height: 200 }}
                     >
                       <Image
-                        source={picture.uri ? { uri: picture.uri } : null}
+                        source={{ uri: picture.uri }}
                         style={{ height: '100%', width: '100%' }}
                       />
                       <Text style={styles.pictureFont}>{ Moment(picture.createdAt).format('MM/DD/YYYY hh:mm A')}</Text>

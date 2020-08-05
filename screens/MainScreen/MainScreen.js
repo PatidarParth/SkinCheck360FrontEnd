@@ -210,18 +210,25 @@ class MainScreen extends Component {
 
         {cameraPermission === 'granted' && (!visitEntries
               || (visitEntries && Object.keys(visitEntries).length === 0)) && (
-              <View style={styles.visitOuterView}>
-                <View style={styles.visitInnerView}>
-                  <MaterialCommunityIcons
-                    size={40}
-                    name="calendar-remove"
-                    style={{ paddingTop: 20 }}
+              <ScrollView
+                style={styles.scrollView}
+                contentContainerStyle={styles.scrollView}
+                refreshControl={(
+                  <RefreshControl
+                    refreshing={this.state.refreshing}
+                    onRefresh={() => this.refreshVisitEntries()}
                   />
+                    )}
+              >
+                <View style={{
+                  flex: 0.9, flexDirection: 'row', justifyContent: 'center'
+                }}
+                >
                   <Text style={styles.notificationText}>
-                    There are no visits entered
+                    There are currently no visits entered.
                   </Text>
                 </View>
-              </View>
+              </ScrollView>
         )}
         {cameraPermission === 'granted' && visitEntries && (
         <SwipeListView

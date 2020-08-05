@@ -107,7 +107,7 @@ class AddEventScreen extends Component {
           bodyPart: '',
           locationX: -100,
           locationY: -100,
-          diameter: -20,
+          diameter: 20,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
           faceDetectedValues: []
         });
@@ -123,7 +123,7 @@ class AddEventScreen extends Component {
       const visitId = await API.graphql(graphqlOperation(newVisitEntry, { name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes }));
       const { visitPictures } = this.state;
       // upload each picture to s3
-      visitPictures.forEach(async (element) => {
+      visitPictures.forEach(async (element) => { 
         this.storeVisitPhotoInfo(`uploads/${visitId.data.createVisitEntry.id}/${element.id}`, element, visitId.data.createVisitEntry.id);
         const response = await fetch(element.uri);
         const blob = await response.blob();
@@ -131,7 +131,7 @@ class AddEventScreen extends Component {
           `uploads/${visitId.data.createVisitEntry.id}/${element.id}`,
           blob,
           {
-            contentType: 'image/png',
+            contentType: 'image/jpeg',
             metadata: { visitEntryId: visitId.data.createVisitEntry.id }
           }
         );
