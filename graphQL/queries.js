@@ -22,6 +22,14 @@ query listByUserOrdered($owner: String!) {
                 fullsize {
                   key
                 }
+                faceDetectedValues {
+                  leftEarXPosition
+                  leftEarYPosition
+                  rightEarXPosition
+                  rightEarYPosition
+                  noseBaseXPosition
+                  noseBaseYPosition
+                }
               }
             }
         }
@@ -49,8 +57,8 @@ export const updateVisitEntry = `mutation updateVisitEntry($id: ID!, $name: Stri
   }
 }`;
 
-export const createPicture = `mutation createPicture($key: String!, $pictureSize: Int!, $pictureId: ID!, $pictureNote: String!, $pictureLocation: String!, $pictureBodyPart: String!, $picturelocationX: Float!, $picturelocationY: Float!, $pictureDiameter: Float!, $pictureVisitEntryId: ID, $bucket: String!){
-  createPicture(input: {fullsize: {key:$key, width: $pictureSize, height: $pictureSize}, id: $pictureId, note: $pictureNote, location: $pictureLocation, bodyPart: $pictureBodyPart, locationX: $picturelocationX, locationY: $picturelocationY, diameter: $pictureDiameter, pictureVisitEntryId: $pictureVisitEntryId, bucket: $bucket}) {
+export const createPicture = `mutation createPicture($leftEarXPosition: Float!, $leftEarYPosition: Float!, $rightEarXPosition: Float!, $rightEarYPosition: Float!, $noseBaseXPosition: Float!, $noseBaseYPosition: Float!, $key: String!, $pictureSize: Int!, $pictureId: ID!, $pictureNote: String!, $pictureLocation: String!, $pictureBodyPart: String!, $picturelocationX: Float!, $picturelocationY: Float!, $pictureDiameter: Float!, $pictureVisitEntryId: ID, $bucket: String!){
+  createPicture(input: {faceDetectedValues: {leftEarXPosition: $leftEarXPosition, leftEarYPosition: $leftEarYPosition, rightEarXPosition: $rightEarXPosition, rightEarYPosition: $rightEarYPosition, noseBaseXPosition: $noseBaseXPosition, noseBaseYPosition: $noseBaseYPosition}, fullsize: {key:$key, width: $pictureSize, height: $pictureSize}, id: $pictureId, note: $pictureNote, location: $pictureLocation, bodyPart: $pictureBodyPart, locationX: $picturelocationX, locationY: $picturelocationY, diameter: $pictureDiameter, pictureVisitEntryId: $pictureVisitEntryId, bucket: $bucket}) {
     id
     bucket
   }
@@ -83,6 +91,14 @@ export const getVisitEntry = `query getVisitEntry($visitId: ID!){
         bucket
         fullsize {
           key
+        }
+        faceDetectedValues {
+          leftEarXPosition
+          leftEarYPosition
+          rightEarXPosition
+          rightEarYPosition
+          noseBaseXPosition
+          noseBaseYPosition
         }
       }
     }

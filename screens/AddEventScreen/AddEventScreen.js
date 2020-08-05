@@ -109,7 +109,7 @@ class AddEventScreen extends Component {
           locationY: -100,
           diameter: 20,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
-          faceDetectedValues: []
+          faceDetectedValues: '[]'
         });
         this.setState((prevState) => ({ visitPictures: prevState.visitPictures }));
       }
@@ -123,7 +123,7 @@ class AddEventScreen extends Component {
       const visitId = await API.graphql(graphqlOperation(newVisitEntry, { name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes }));
       const { visitPictures } = this.state;
       // upload each picture to s3
-      visitPictures.forEach(async (element) => { 
+      visitPictures.forEach(async (element) => {
         this.storeVisitPhotoInfo(`uploads/${visitId.data.createVisitEntry.id}/${element.id}`, element, visitId.data.createVisitEntry.id);
         const response = await fetch(element.uri);
         const blob = await response.blob();
@@ -142,10 +142,22 @@ class AddEventScreen extends Component {
     }
   };
 
-  storeVisitPhotoInfo = (S3key, item, visitEntryId) => API.graphql(graphqlOperation(createPicture, {
-    // eslint-disable-next-line max-len
-    key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
-  }));
+  storeVisitPhotoInfo = (S3key, item, visitEntryId) => {
+    console.log(item)
+    if (item.faceDetectedValues !== '[]') {
+      console.log("in here")
+      API.graphql(graphqlOperation(createPicture, {
+        // eslint-disable-next-line max-len
+        leftEarXPosition: item.faceDetectedValues.leftEarXPosition, leftEarYPosition: item.faceDetectedValues.leftEarYPosition, rightEarXPosition: item.faceDetectedValues.rightEarXPosition, rightEarYPosition: item.faceDetectedValues.rightEarYPosition, noseBaseXPosition: item.faceDetectedValues.noseBaseXPosition, noseBaseYPosition: item.faceDetectedValues.noseBaseYPosition, key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+      }));
+    } else {
+      const faceDetectedValue = 0;
+      API.graphql(graphqlOperation(createPicture, {
+        // eslint-disable-next-line max-len
+        leftEarXPosition: faceDetectedValue, leftEarYPosition: faceDetectedValue, rightEarXPosition: faceDetectedValue, rightEarYPosition: faceDetectedValue, noseBaseXPosition: faceDetectedValue, noseBaseYPosition: faceDetectedValue, key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+      }));
+    }
+  };
 
   displayDateTimePicker = (display) => this.setState({ isDateTimePickerVisible: display });
 

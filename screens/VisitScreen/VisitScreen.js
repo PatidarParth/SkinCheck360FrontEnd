@@ -1,7 +1,7 @@
 // Aboutscreen.js
 import React, { Component } from 'react';
 import {
-  View, Text, Image, ScrollView, TouchableOpacity, YellowBox
+  View, Text, Image, ScrollView, TouchableOpacity, YellowBox, RefreshControl
 } from 'react-native';
 import { Header, Input } from 'react-native-elements';
 import {
@@ -28,7 +28,7 @@ class VisitScreen extends Component {
       x: 0,
       y: 0,
       newPicturesToAdd: [],
-      loading: false
+      refreshing: false,
     };
     YellowBox.ignoreWarnings([
       'Deprecation warning',
@@ -98,6 +98,12 @@ class VisitScreen extends Component {
     });
   };
 
+  refreshVisitEntries = async () => {
+    this.setState({ refreshing: true });
+    const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
+    await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
+    this.setState({ refreshing: false });
+  }
 
   overlayPicture = () => {
     this.setState({ visible: false });
@@ -133,7 +139,7 @@ class VisitScreen extends Component {
           locationY: -100,
           diameter: 20,
           dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
-          faceDetectedValues: []
+          faceDetectedValues: '[]'
         });
         this.setState((prevState) => ({ newPicturesToAdd: prevState.newPicturesToAdd }));
       }
@@ -179,12 +185,20 @@ class VisitScreen extends Component {
     this.props.navigation.navigate('Home');
   };
 
-  storeVisitPhotoInfo = async (S3key, item, visitEntryId) => {
-    await API.graphql(graphqlOperation(createPicture, {
-      // eslint-disable-next-line max-len
-      key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
-    }));
-  }
+  storeVisitPhotoInfo = (S3key, item, visitEntryId) => {
+    if (item.faceDetectedValues !== '[]') {
+      API.graphql(graphqlOperation(createPicture, {
+        // eslint-disable-next-line max-len
+        leftEarXPosition: item.faceDetectedValues.leftEarXPosition, leftEarYPosition: item.faceDetectedValues.leftEarYPosition, rightEarXPosition: item.faceDetectedValues.rightEarXPosition, rightEarYPosition: item.faceDetectedValues.rightEarYPosition, noseBaseXPosition: item.faceDetectedValues.noseBaseXPosition, noseBaseYPosition: item.faceDetectedValues.noseBaseYPosition, key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+      }));
+    } else {
+      const faceDetectedValue = 0;
+      API.graphql(graphqlOperation(createPicture, {
+        // eslint-disable-next-line max-len
+        leftEarXPosition: faceDetectedValue, leftEarYPosition: faceDetectedValue, rightEarXPosition: faceDetectedValue, rightEarYPosition: faceDetectedValue, noseBaseXPosition: faceDetectedValue, noseBaseYPosition: faceDetectedValue, key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'
+      }));
+    }
+  };
 
   render() {
     const { visitPictures } = this.state;
@@ -257,7 +271,14 @@ class VisitScreen extends Component {
           />
         </View>
         <Provider>
-          <ScrollView>
+          <ScrollView
+            refreshControl={(
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => this.refreshVisitEntries()}
+              />
+              )}
+          >
             {((!visitPictures
                 || (visitPictures && visitPictures.length === 0))) && ((!newPicturesToAdd
                   || (newPicturesToAdd && newPicturesToAdd.length === 0))) && (

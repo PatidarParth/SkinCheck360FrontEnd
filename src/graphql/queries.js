@@ -80,6 +80,14 @@ export const getPicture = /* GraphQL */ `
         width
         height
       }
+      faceDetectedValues {
+        leftEarXPosition
+        leftEarYPosition
+        rightEarXPosition
+        rightEarYPosition
+        noseBaseXPosition
+        noseBaseYPosition
+      }
       createdAt
       updatedAt
     }
@@ -114,6 +122,14 @@ export const listPictures = /* GraphQL */ `
           key
           width
           height
+        }
+        faceDetectedValues {
+          leftEarXPosition
+          leftEarYPosition
+          rightEarXPosition
+          rightEarYPosition
+          noseBaseXPosition
+          noseBaseYPosition
         }
         createdAt
         updatedAt

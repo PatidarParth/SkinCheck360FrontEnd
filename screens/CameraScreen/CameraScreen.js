@@ -170,7 +170,17 @@ class CameraScreen extends React.Component {
     }
     const pictureArray = [];
     const picId = this.props.route.params?.pictureId || uuidv4();
-    const faceDetectedValues = faceDetectedArray[0] !== undefined ? faceDetectedArray[0] : '[]';
+    const faceDetectedValues = [];
+    if (faceDetectedArray[0] !== undefined) {
+      faceDetectedValues.push({
+        leftEarXPosition: faceDetectedArray[0].leftEarPosition.x,
+        leftEarYPosition: faceDetectedArray[0].leftEarPosition.y,
+        rightEarXPosition: faceDetectedArray[0].rightEarPosition.x,
+        rightEarYPosition: faceDetectedArray[0].rightEarPosition.y,
+        noseBaseXPosition: faceDetectedArray[0].noseBasePosition.x,
+        noseBaseYPosition: faceDetectedArray[0].noseBasePosition.y,
+      });
+    }
     pictureArray.push({
       temporary: 'temporary',
       id: picId,
@@ -182,7 +192,7 @@ class CameraScreen extends React.Component {
       locationY,
       diameter,
       dateCreated: Moment().format('MM/DD/YYYY hh:mm A'),
-      faceDetectedValues
+      faceDetectedValues: faceDetectedValues[0] !== undefined ? faceDetectedValues[0] : '[]'
     });
     if (this.props.route.params?.visitId !== '') {
       this.props.navigation.navigate('VisitDescription', { pictureArray, picId });
@@ -206,20 +216,20 @@ class CameraScreen extends React.Component {
 
   matchOverlayToCamera = (overlayFaceArray) => {
     // overlay left ear
-    const overlayLeftEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) + 20;
-    const overlayLeftEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.x : null) - 20;
-    const overlayLeftEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) + 20;
-    const overlayLeftEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarPosition.y : null) - 20;
+    const overlayLeftEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarXPosition : null) + 20;
+    const overlayLeftEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarXPosition : null) - 20;
+    const overlayLeftEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.leftEarYPosition : null) + 20;
+    const overlayLeftEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.leftEarYPosition : null) - 20;
     // overlay right ear
-    const overlayRightEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) + 20;
-    const overlayRightEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.x : null) - 20;
-    const overlayRightEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) + 20;
-    const overlayRightEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarPosition.y : null) - 20;
+    const overlayRightEarXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarXPosition : null) + 20;
+    const overlayRightEarXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarXPosition : null) - 20;
+    const overlayRightEarYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.rightEarYPosition : null) + 20;
+    const overlayRightEarYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.rightEarYPosition : null) - 20;
     // overlay nose
-    const overlayNoseXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.x : null) + 20;
-    const overlayNoseXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.x : null) - 20;
-    const overlayNoseYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.y : null) + 20;
-    const overlayLNoseYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBasePosition.y : null) - 20;
+    const overlayNoseXPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBaseXPosition : null) + 20;
+    const overlayNoseXPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBaseXPosition : null) - 20;
+    const overlayNoseYPositionCeiling = Math.ceil(overlayFaceArray !== null ? overlayFaceArray.noseBaseYPosition : null) + 20;
+    const overlayLNoseYPositionFloor = Math.floor(overlayFaceArray !== null ? overlayFaceArray.noseBaseYPosition : null) - 20;
     // camera left ear
     const cameraLeftEarXPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.x : null;
     const cameraLeftEarYPosition = this.state.faceDetectedArray[0] !== undefined ? this.state.faceDetectedArray[0].leftEarPosition.y : null;
@@ -299,13 +309,12 @@ class CameraScreen extends React.Component {
   };
 
   componentDidUpdate = () => {
-    // if (this.props.route.params?.overlayPicture.faceDetectedValues !== undefined) {
-    //   const overlayFaceArray = this.props.route.params?.overlayPicture.faceDetectedValues;
-    //   console.log(overlayFaceArray);
-    //   if (overlayFaceArray.length > 0 && overlayFaceArray !== '[]') {
-    //     this.matchOverlayToCamera(overlayFaceArray);
-    //   }
-    // }
+    if (this.props.route.params?.overlayPicture) {
+      if (this.props.route.params?.overlayPicture.faceDetectedValues !== []) {
+        const overlayFaceArray = this.props.route.params?.overlayPicture.faceDetectedValues;
+        this.matchOverlayToCamera(overlayFaceArray);
+      }
+    }
   }
 
   renderSvg() {

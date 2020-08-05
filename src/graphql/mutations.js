@@ -125,6 +125,14 @@ export const createPicture = /* GraphQL */ `
         width
         height
       }
+      faceDetectedValues {
+        leftEarXPosition
+        leftEarYPosition
+        rightEarXPosition
+        rightEarYPosition
+        noseBaseXPosition
+        noseBaseYPosition
+      }
       createdAt
       updatedAt
     }
@@ -161,6 +169,14 @@ export const updatePicture = /* GraphQL */ `
         width
         height
       }
+      faceDetectedValues {
+        leftEarXPosition
+        leftEarYPosition
+        rightEarXPosition
+        rightEarYPosition
+        noseBaseXPosition
+        noseBaseYPosition
+      }
       createdAt
       updatedAt
     }
@@ -196,6 +212,14 @@ export const deletePicture = /* GraphQL */ `
         key
         width
         height
+      }
+      faceDetectedValues {
+        leftEarXPosition
+        leftEarYPosition
+        rightEarXPosition
+        rightEarYPosition
+        noseBaseXPosition
+        noseBaseYPosition
       }
       createdAt
       updatedAt
