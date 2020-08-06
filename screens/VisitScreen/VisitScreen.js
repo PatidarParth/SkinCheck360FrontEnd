@@ -62,6 +62,7 @@ class VisitScreen extends Component {
           // eslint-disable-next-line react/no-did-update-set-state
           const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
           await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
+          // eslint-disable-next-line react/no-did-update-set-state
           this.setState(() => ({ newPicturesToAdd: updatedArray }));
         // new pic first time
         } else {

@@ -8,7 +8,7 @@ query listByUserOrdered($owner: String!) {
             name
             date
             notes
-            pictures {
+            pictures(sortDirection: ASC) {
               items {
                 id
                 createdAt
@@ -78,7 +78,7 @@ export const getVisitEntry = `query getVisitEntry($visitId: ID!){
     id      
     date
     notes
-    pictures {
+    pictures(sortDirection: ASC) {
       items {
         id
         createdAt

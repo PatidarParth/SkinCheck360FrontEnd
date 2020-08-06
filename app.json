@@ -27,7 +27,10 @@
     "ios": {
       "bundleIdentifier": "com.domainname.skincheck360",
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "This app will use face ID and Touch ID"
+      }
     },
     "description": ""
   }

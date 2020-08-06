@@ -57,7 +57,7 @@ scanBiometrics = async () => {
   const username = await SecureStore.getItemAsync('SkinCheck360KeyChainAuthUsername', { keychainService: 'iOS' });
   const password = await SecureStore.getItemAsync('SkinCheck360KeyChainAuthPassword', { keychainService: 'iOS' });
   const { onStateChange } = this.props;
-  const result = await LocalAuthentication.authenticateAsync({ promptMessage: `Sign in ${username.slice(0, 2)}***** using Touch Id` });
+  const result = await LocalAuthentication.authenticateAsync({ promptMessage: `Sign in as ${username.slice(0, 2)}***** using Touch ID` });
   if (result.success) {
     await Auth.signIn(username, password);
     onStateChange('signedIn');
