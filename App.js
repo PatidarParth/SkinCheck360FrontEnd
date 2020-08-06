@@ -10,7 +10,9 @@ import { applyMiddleware, createStore } from 'redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { StyleSheet, AppState } from 'react-native';
+import {
+  StyleSheet, AppState
+} from 'react-native';
 import { SplashScreen } from 'expo';
 
 import { createLogger } from 'redux-logger';

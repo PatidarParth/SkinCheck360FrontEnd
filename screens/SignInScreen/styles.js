@@ -50,13 +50,15 @@ export default StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     marginRight: 1,
+    width: '85%'
   },
   disableButton: {
     backgroundColor: '#C0C0C0',
     alignItems: 'center',
     padding: 10,
     marginBottom: 20,
-    marginRight: 1,
+    marginRight: 10,
+    width: '85%'
   },
   buttonText: {
     color: '#fff',
@@ -69,6 +71,11 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingBottom: 10
+  },
+  signInButtonView: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   sectionFooter: {
     alignItems: 'center',

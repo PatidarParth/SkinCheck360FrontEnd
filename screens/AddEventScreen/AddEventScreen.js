@@ -143,9 +143,7 @@ class AddEventScreen extends Component {
   };
 
   storeVisitPhotoInfo = (S3key, item, visitEntryId) => {
-    console.log(item)
     if (item.faceDetectedValues !== '[]') {
-      console.log("in here")
       API.graphql(graphqlOperation(createPicture, {
         // eslint-disable-next-line max-len
         leftEarXPosition: item.faceDetectedValues.leftEarXPosition, leftEarYPosition: item.faceDetectedValues.leftEarYPosition, rightEarXPosition: item.faceDetectedValues.rightEarXPosition, rightEarYPosition: item.faceDetectedValues.rightEarYPosition, noseBaseXPosition: item.faceDetectedValues.noseBaseXPosition, noseBaseYPosition: item.faceDetectedValues.noseBaseYPosition, key: S3key, pictureSize: 600, pictureId: item.id, pictureNote: item.note, pictureLocation: item.location, pictureBodyPart: item.bodyPart, picturelocationX: item.locationX, picturelocationY: item.locationY, pictureDiameter: item.diameter, pictureVisitEntryId: visitEntryId, bucket: 'skincheck360images205534-dev'

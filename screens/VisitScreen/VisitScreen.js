@@ -43,11 +43,6 @@ class VisitScreen extends Component {
   componentDidMount = async () => {
     const photosItems = this.props.route.params?.pictures.items;
     await this.fetchPictures(photosItems);
-    const { navigation } = this.props;
-    this.focusListener = navigation.addListener('focus', async () => {
-      const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
-      await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
-    });
   }
 
   componentDidUpdate = async (oldProps) => {
@@ -65,9 +60,13 @@ class VisitScreen extends Component {
             }
           ); // array.splice(start, deleteCount, item1)
           // eslint-disable-next-line react/no-did-update-set-state
+          const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
+          await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
           this.setState(() => ({ newPicturesToAdd: updatedArray }));
         // new pic first time
         } else {
+          const visitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
+          await this.fetchPictures(visitEntry.data.getVisitEntry.pictures.items);
           this.state.newPicturesToAdd.push(newProps.route.params?.pictureArray[0]);
           // eslint-disable-next-line react/no-did-update-set-state
           this.setState((prevState) => ({ newPicturesToAdd: prevState.newPicturesToAdd }));

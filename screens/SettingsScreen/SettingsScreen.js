@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import qs from 'qs';
 import { IconButton } from 'react-native-paper';
 import { Auth } from 'aws-amplify';
+import * as SecureStore from 'expo-secure-store';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
 import terms from '../../assets/terms.json';
@@ -23,7 +24,8 @@ class SettingsScreen extends Component {
       privacyVisible: false,
       termsVisible: false,
       accountUsername: '',
-      accountName: ''
+      accountName: '',
+      isTouchIDEnabled: false,
     };
 
     YellowBox.ignoreWarnings([
@@ -38,10 +40,26 @@ class SettingsScreen extends Component {
   componentDidMount = async () => {
     const user = await Auth.currentAuthenticatedUser().catch();
     this.setState({ accountUsername: user.username, accountName: user.attributes.name });
+    const { navigation } = this.props;
+    const savedValueOfTouchId = (await SecureStore.getItemAsync('isTouchIdEnabled', { keychainService: 'iOS' }) === 'true');
+    this.setState({ isTouchIDEnabled: savedValueOfTouchId });
+    this.focusListener = navigation.addListener('focus', async () => {
+      const touchId = (await SecureStore.getItemAsync('isTouchIdEnabled', { keychainService: 'iOS' }) === 'true');
+      this.setState({ isTouchIDEnabled: touchId });
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    this.focusListener();
   }
 
   signOut = async () => {
     await Auth.signOut();
+  }
+
+  enableTouchId = async (isTouchIDEnabled) => {
+    await SecureStore.setItemAsync('isTouchIdEnabled', isTouchIDEnabled.toString(), { keychainService: 'iOS' });
   }
 
   getLegalPolicy = async (policyName) => {
@@ -81,6 +99,7 @@ class SettingsScreen extends Component {
   };
 
   render() {
+    const { isTouchIDEnabled } = this.state;
     const legalList = [
       {
         name: 'Privacy Policy',
@@ -98,7 +117,6 @@ class SettingsScreen extends Component {
           containerStyle={styles.header}
           centerComponent={{ text: 'Settings', style: styles.headerCenter }}
         />
-
         <View style={styles.notificationView}>
           <Text style={styles.labelFont}>ACCOUNT</Text>
           <ListItem
@@ -115,6 +133,33 @@ class SettingsScreen extends Component {
             titleStyle={{ fontFamily: 'Avenir-Light' }}
             subtitle={this.state.accountUsername}
             subtitleStyle={{ fontFamily: 'Avenir-Light' }}
+            bottomDivider
+          />
+        </View>
+
+        <View style={styles.notificationView}>
+          <Text style={styles.labelFont}>TOUCH ID</Text>
+          <ListItem
+            switch={{
+              onValueChange: () => {
+                this.enableTouchId(!isTouchIDEnabled);
+                this.setState((prevState) => ({
+                  isTouchIDEnabled: !prevState.isTouchIDEnabled
+                }));
+              },
+              value: isTouchIDEnabled
+            }}
+            key="touchID"
+            leftAvatar={(
+              <MaterialCommunityIcons
+                name="fingerprint"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
+          )}
+            title="Enable Touch ID"
+            titleStyle={{ fontFamily: 'Avenir-Light' }}
             bottomDivider
           />
         </View>
