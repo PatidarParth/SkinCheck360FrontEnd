@@ -224,7 +224,7 @@ class VisitScreen extends Component {
               color="white"
               size={30}
               onPress={() => this.props.navigation.navigate('EditEvent', {
-                ...this.props.route.params?.item
+                id: this.props.route.params?.id, name: this.props.route.params?.name, date: this.props.route.params?.date, notes: this.props.route.params?.notes
               })}
             />
           )}

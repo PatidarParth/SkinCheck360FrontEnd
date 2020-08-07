@@ -9,14 +9,10 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import { IconButton } from 'react-native-paper';
 import Moment from 'moment';
 import { API, graphqlOperation } from 'aws-amplify';
-import { Appearance } from 'react-native-appearance';
 import styles from './styles';
 import { updateVisitEntry } from '../../graphQL/queries';
 
-const colorScheme = Appearance.getColorScheme();
 class EditEventScreen extends Component {
-  subscription;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +22,6 @@ class EditEventScreen extends Component {
       visitDate: Date.now(),
       visitPictures: [],
       visitNotes: '',
-      isDarkModeEnabled: colorScheme === 'dark',
       visitTitleError: ''
     };
   }
@@ -39,18 +34,6 @@ class EditEventScreen extends Component {
       visitNotes: this.props.route.params?.notes,
       // visitPictures: this.props.visitData[visitId].visitPictures,
     });
-
-    // eslint-disable-next-line no-undef
-    subscription = Appearance.addChangeListener(
-      ({ colorScheme: _colorScheme }) => {
-        this.setState({ isDarkModeEnabled: _colorScheme === 'dark' });
-      }
-    );
-  }
-
-  componentWillUnmount() {
-    // eslint-disable-next-line no-undef
-    if (subscription) subscription.remove();
   }
 
   handleDatePicked = (dateTime) => {
