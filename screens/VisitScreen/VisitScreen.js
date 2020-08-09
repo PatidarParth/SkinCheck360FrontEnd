@@ -80,8 +80,11 @@ class VisitScreen extends Component {
     if (pictureObject.length > 0) {
       await Promise.all(pictureObject.map(async (item) => {
         const { key } = item.fullsize;
+        const anatomicKey = `anatomicOutline/${key.substring(key.indexOf('/') + 1)}.jpeg`;
         const uri = await Storage.get(key);
+        const anatomicURI = await Storage.get(anatomicKey);
         Object.assign(item, { uri });
+        Object.assign(item, { anatomicURI });
       }));
       this.setState({ visitPictures: pictureObject });
     } else {
@@ -105,9 +108,10 @@ class VisitScreen extends Component {
     this.setState({ refreshing: false });
   }
 
-  overlayPicture = () => {
+  overlayPicture = (typeOfOverlay) => {
     this.setState({ visible: false });
     this.props.navigation.navigate('Camera', {
+      overlayType: typeOfOverlay,
       visitId: this.props.route.params?.id,
       overlayPicture: this.state.selectedPicture,
       visitPictures: this.state.visitPictures
@@ -156,6 +160,7 @@ class VisitScreen extends Component {
       await API.graphql(graphqlOperation(deletePicture, { pictureId: this.state.selectedPicture.id }));
       // delete from s3
       await Storage.remove(`uploads/${this.props.route.params?.id}/${this.state.selectedPicture.id}`);
+      await Storage.remove(`anatomicOutline/${this.props.route.params?.id}/${this.state.selectedPicture.id}.jpeg`);
       // fetch pictures again to refresh
       const updatedVisitEntry = await API.graphql(graphqlOperation(getVisitEntry, { visitId: this.props.route.params?.id }));
       // fetch update pictures object now
@@ -391,7 +396,9 @@ class VisitScreen extends Component {
           >
             <Menu.Item onPress={() => this.viewIndividualPhoto(this.state.selectedPicture)} title="View" />
             <Divider />
-            <Menu.Item onPress={this.overlayPicture} title="Overlay" />
+            <Menu.Item onPress={() => this.overlayPicture('photo')} title="Photo Overlay" />
+            <Divider />
+            <Menu.Item onPress={() => this.overlayPicture('anatomic')} title="Anatomic Overlay" />
             <Divider />
             <Menu.Item onPress={() => this.deletePicture(this.state.selectedPicture)} title="Delete" />
           </Menu>

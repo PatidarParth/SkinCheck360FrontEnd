@@ -144,6 +144,7 @@ class MainScreen extends Component {
       await API.graphql(graphqlOperation(deletePicture, { pictureId: element.id }));
       // delete from s3
       await Storage.remove(`uploads/${visitEntryID}/${element.id}`);
+      await Storage.remove(`anatomicOutline/${visitEntryID}/${element.id}.jpeg`);
     });
     // delete visit
     await API.graphql(graphqlOperation(deleteVisitEntry, { id: visitEntryID }));

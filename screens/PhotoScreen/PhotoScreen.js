@@ -35,9 +35,10 @@ class PhotoScreen extends Component {
 
   _showDialog = () => this.setState({ showNoteDialog: true });
 
-  overlayPicture = () => {
+  overlayPicture = (typeOfOverlay) => {
     const currentPicture = this.props.route.params?.currentPicture;
     this.props.navigation.navigate('Camera', {
+      overlayType: typeOfOverlay,
       visitId: this.props.route.params?.visitId,
       overlayPicture: currentPicture,
       visitPictures: this.props.route.params?.visitPictures
@@ -78,7 +79,7 @@ class PhotoScreen extends Component {
           height="100%"
           preserveAspectRatio="xMidYMid slice"
           href={`${currentPicture.uri}`}
-          //test={this._onLoad()}
+          // test={this._onLoad()}
         />
         <Circle
           cx={currentPicture.locationX || -100}
@@ -206,10 +207,13 @@ class PhotoScreen extends Component {
               />
               <Text
                 style={{
-                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                  textAlign: 'center', color: '#fff', paddingBottom: 15, fontSize: 14, fontFamily: 'Avenir-Light'
                 }}
               >
                 Delete
+                {' '}
+                {'\n'}
+                {' '}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -228,10 +232,16 @@ class PhotoScreen extends Component {
               />
               <Text
                 style={{
-                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                  textAlign: 'center', color: '#fff', paddingBottom: 15, fontSize: 14, fontFamily: 'Avenir-Light'
                 }}
               >
-                View Note
+                View
+                {' '}
+                {' '}
+                {'\n'}
+                {' '}
+                {' '}
+                Photo Notes
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -240,7 +250,7 @@ class PhotoScreen extends Component {
                 alignSelf: 'flex-end',
                 alignItems: 'center'
               }}
-              onPress={this.overlayPicture}
+              onPress={() => this.overlayPicture('photo')}
             >
               <MaterialCommunityIcons
                 size={35}
@@ -250,12 +260,40 @@ class PhotoScreen extends Component {
               />
               <Text
                 style={{
-                  color: '#fff', paddingBottom: 10, fontSize: 16, fontFamily: 'Avenir-Light'
+                  textAlign: 'center', color: '#fff', paddingBottom: 15, fontSize: 14, fontFamily: 'Avenir-Light'
                 }}
               >
+                Photo
+                {' '}
+                {'\n'}
+                {' '}
                 Overlay
               </Text>
             </TouchableOpacity>
+            {visitId !== '' && (
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignSelf: 'flex-end',
+                alignItems: 'center'
+              }}
+              onPress={() => this.overlayPicture('anatomic')}
+            >
+              <MaterialCommunityIcons
+                size={35}
+                name="human"
+                style={{ paddingTop: 10 }}
+                color="white"
+              />
+              <Text
+                style={{
+                  textAlign: 'center', color: '#fff', paddingBottom: 15, fontSize: 14, fontFamily: 'Avenir-Light'
+                }}
+              >
+                Anatomic Overlay
+              </Text>
+            </TouchableOpacity>
+            )}
           </View>
         </View>
       </Provider>

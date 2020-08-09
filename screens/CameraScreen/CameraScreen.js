@@ -167,6 +167,7 @@ class CameraScreen extends React.Component {
       await API.graphql(graphqlOperation(deletePicture, { pictureId: this.props.route.params?.pictureId }));
       // delete from s3
       await Storage.remove(`uploads/${this.props.route.params?.visitId}/${this.props.route.params?.pictureId}`);
+      await Storage.remove(`anatomicOutline/${this.props.route.params?.visitId}/${this.state.pictureId}.jpeg`);
     }
     const pictureArray = [];
     const picId = this.props.route.params?.pictureId || uuidv4();
@@ -346,6 +347,10 @@ class CameraScreen extends React.Component {
       cy = overlayPicture.locationY;
     }
 
+    let URI = overlayPicture.uri;
+    if (this.props.route.params?.overlayType === 'anatomic') {
+      URI = overlayPicture.anatomicURI;
+    }
     return (
       <Svg
         height="100%"
@@ -361,7 +366,7 @@ class CameraScreen extends React.Component {
           height="100%"
           opacity={this.state.opacity / 10.0}
           preserveAspectRatio="xMidYMid slice"
-          href={`${overlayPicture.uri}` || ''}
+          href={`${URI}` || ''}
         />
         <Circle
           opacity={this.state.opacity / 10.0}
