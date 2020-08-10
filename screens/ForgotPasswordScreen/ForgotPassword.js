@@ -62,7 +62,6 @@ class ForgotPasswordScreen extends ForgotPassword {
       this.setState({ sent: 'sent' });
       this.setState({ error: '' });
     } catch (err) {
-      console.log(err);
       if (err.code === 'UserNotFoundException') {
         // The error happens when the supplied username/email does not exist in the Cognito user pool
         this.setState({ error: 'Username not found.' });

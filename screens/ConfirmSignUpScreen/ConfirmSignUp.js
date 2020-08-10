@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, TouchableOpacity, Text, ScrollView, Image, TextInput
+  View, TouchableOpacity, Text, Image, TextInput
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 

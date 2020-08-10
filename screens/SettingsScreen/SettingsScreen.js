@@ -71,6 +71,7 @@ class SettingsScreen extends Component {
     }
   };
 
+  // eslint-disable-next-line consistent-return
   getSupport = async (supportNames) => {
     // Contact Us
     if (supportNames === 'Contact Us') {

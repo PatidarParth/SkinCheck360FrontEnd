@@ -79,7 +79,6 @@ class SignUpScreen extends SignUp {
      });
      onStateChange('confirmSignUp');
    } catch (err) {
-     console.log(err);
      if (err.code === 'UserNotConfirmedException') {
        this.props.updateUsername(username);
        await Auth.resendSignUp(username);

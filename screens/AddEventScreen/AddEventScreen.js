@@ -118,8 +118,8 @@ class AddEventScreen extends Component {
 
   saveVisit = async () => {
     if (this.state.visitName) {
-      // eslint-disable-next-line max-len
       // upload the visit Entry
+      // eslint-disable-next-line max-len
       const visitId = await API.graphql(graphqlOperation(newVisitEntry, { name: this.state.visitName, date: Moment(this.state.visitDate).format('YYYY-MM-DDThh:mm:ss.sssZ'), notes: this.state.visitNotes }));
       const { visitPictures } = this.state;
       // upload each picture to s3

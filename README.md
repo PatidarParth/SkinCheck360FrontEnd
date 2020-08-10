@@ -15,3 +15,4 @@ $util.qr($context.args.input.put("owner", $context.identity.username))
 
 ### Resources
 * [How to set up amplify](https://read.acloud.guru/build-your-own-multi-user-photo-album-app-with-react-graphql-and-aws-amplify-bcaeba942159)
+* [Focus box around camera](https://forums.expo.io/t/help-cropping-square-at-the-center-of-image-using-expo-imagemanipulator/10294/2)

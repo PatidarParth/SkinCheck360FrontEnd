@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { API, graphqlOperation, Storage } from 'aws-amplify';
-import Spinner from 'react-native-loading-spinner-overlay';
+// import Spinner from 'react-native-loading-spinner-overlay';
 import update from 'immutability-helper';
 import styles from './styles';
 import { deletePicture, getVisitEntry, createPicture } from '../../graphQL/queries';
@@ -229,6 +229,7 @@ class VisitScreen extends Component {
               color="white"
               size={30}
               onPress={() => this.props.navigation.navigate('EditEvent', {
+                // eslint-disable-next-line max-len
                 id: this.props.route.params?.id, name: this.props.route.params?.name, date: this.props.route.params?.date, notes: this.props.route.params?.notes
               })}
             />

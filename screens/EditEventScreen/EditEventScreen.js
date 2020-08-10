@@ -20,7 +20,6 @@ class EditEventScreen extends Component {
       visitName: '',
       isDateTimePickerVisible: false,
       visitDate: Date.now(),
-      visitPictures: [],
       visitNotes: '',
       visitTitleError: ''
     };

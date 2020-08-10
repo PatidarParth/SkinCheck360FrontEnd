@@ -24,8 +24,8 @@ class PhotoScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showNoteDialog: false,
-      loading: false
+      showNoteDialog: false
+      // loading: false
     };
   }
 

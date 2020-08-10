@@ -9,7 +9,7 @@ export default StyleSheet.create({
     flexDirection: 'column',
     paddingTop: '10%',
     width: '90%',
-    height: "100%"
+    height: '100%'
   },
   labelFont: {
     color: '#000000',
