@@ -32,7 +32,7 @@ class MainScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      visible: true,
+      visible: false,
       refreshing: false,
       showBanner: false,
       visitEntries: [],
@@ -62,16 +62,17 @@ class MainScreen extends Component {
     this.focusListener = navigation.addListener('focus', async () => {
       await this.fetchVisitEntries();
     });
+    this.setState({ spinnerEnabled: false });
+
     // get privacy policy
     const privacyPolicyAccepted = await AsyncStorage.getItem(
       'privacyPolicy'
     ).catch((err) => logger.log('could not receive privacy policy', err));
 
-    this.setState({ spinnerEnabled: false });
-    this.setState({ visible: !privacyPolicyAccepted });
-
-    if (privacyPolicyAccepted) {
+    if (privacyPolicyAccepted === 'true') {
       this.accessCameraPermissions();
+    } else {
+      this.setState({ visible: true });
     }
   }
 
@@ -158,8 +159,42 @@ class MainScreen extends Component {
 
   render() {
     const { cameraPermission, visitEntries } = this.state;
+
+    if (this.state.visible) {
+      return (
+        <View style={styles.privacyNoticeView}>
+          <ScrollView style={styles.scrollView}>
+            <Text style={styles.textHeader}>Privacy Notice</Text>
+            {privacyPolicy.policyLines.map((policyRow, i) => (
+              <View key={`row-${i}`}>
+                <Text style={policyRow.style || styles.text}>
+                  {policyRow.text}
+                </Text>
+                <Text />
+              </View>
+            ))}
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => this.acceptPrivacyPolicy()}
+            >
+              <Text style={styles.primaryText}>ACCEPT</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
+        <Spinner
+          // visibility of Overlay Loading Spinner
+          visible={this.state.spinnerEnabled}
+          // Text with the Spinner
+          textContent="Logging you in"
+          // Text style of the Spinner Text
+          textStyle={styles.spinnerTextStyle}
+          overlayColor="gray"
+          animation="fade"
+        />
         <Header
           containerStyle={styles.header}
           centerComponent={{ text: 'All Visits', style: styles.headerCenter }}
@@ -175,37 +210,6 @@ class MainScreen extends Component {
             />
           )}
         />
-        <Spinner
-          // visibility of Overlay Loading Spinner
-          visible={this.state.spinnerEnabled}
-          // Text with the Spinner
-          textContent="Logging in"
-          // Text style of the Spinner Text
-          textStyle={styles.spinnerTextStyle}
-          overlayColor="gray"
-          animation="fade"
-        />
-        <Modal visible={this.state.visible}>
-          <View style={styles.privacyNoticeView}>
-            <ScrollView style={styles.scrollView}>
-              <Text style={styles.textHeader}>Privacy Notice</Text>
-              {privacyPolicy.policyLines.map((policyRow, i) => (
-                <View key={`row-${i}`}>
-                  <Text style={policyRow.style || styles.text}>
-                    {policyRow.text}
-                  </Text>
-                  <Text />
-                </View>
-              ))}
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => this.acceptPrivacyPolicy()}
-              >
-                <Text style={styles.primaryText}>ACCEPT</Text>
-              </TouchableOpacity>
-            </ScrollView>
-          </View>
-        </Modal>
 
         {cameraPermission === 'denied' && (
           <Banner
