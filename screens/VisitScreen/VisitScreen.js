@@ -13,7 +13,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import uuidv4 from 'uuid/v4';
 import { API, graphqlOperation, Storage } from 'aws-amplify';
-// import Spinner from 'react-native-loading-spinner-overlay';
 import update from 'immutability-helper';
 import styles from './styles';
 import { deletePicture, getVisitEntry, createPicture } from '../../graphQL/queries';
@@ -28,7 +27,7 @@ class VisitScreen extends Component {
       x: 0,
       y: 0,
       newPicturesToAdd: [],
-      refreshing: false,
+      refreshing: false
     };
     YellowBox.ignoreWarnings([
       'Deprecation warning',
@@ -221,7 +220,7 @@ class VisitScreen extends Component {
               onPress={() => this.props.navigation.goBack()}
             />
           )}
-          centerComponent={{ text: this.props.route.params?.name, style: styles.headerCenter }}
+          centerComponent={{ text: 'Visit Information', style: styles.headerCenter }}
           rightComponent={(
             <IconButton
               icon="square-edit-outline"
@@ -235,6 +234,26 @@ class VisitScreen extends Component {
             />
           )}
         />
+        <View style={styles.innerSpacer}>
+          <Input
+            label="Visit Title"
+            labelStyle={styles.labelFont}
+            inputStyle={styles.inputFont}
+            color="#0A2B66"
+            editable={false}
+            multiline
+            value={this.props.route.params?.name}
+            style={styles.inputTimePicker}
+            leftIcon={(
+              <MaterialCommunityIcons
+                name="medical-bag"
+                size={24}
+                style={styles.inputIcon}
+                color="#0A2B66"
+              />
+                      )}
+          />
+        </View>
         <View style={styles.innerSpacer}>
           <Input
             label="Visit Date"
@@ -297,14 +316,6 @@ class VisitScreen extends Component {
                   </View>
             )}
             <View style={styles.scrollView}>
-              {/* <Spinner
-                          // visibility of Overlay Loading Spinner
-                visible
-                          // Text with the Spinner
-                textContent="Loading..."
-                          // Text style of the Spinner Text
-                textStyle={styles.spinnerTextStyle}
-              /> */}
               {visitPictures
                 && visitPictures.length > 0
                 && visitPictures.map((picture, i) => (

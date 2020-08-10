@@ -18,6 +18,7 @@ import {
   Auth, API, graphqlOperation, Storage
 } from 'aws-amplify';
 import { logger } from 'react-native-logger';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Moment from 'moment';
 import { IconButton, Banner } from 'react-native-paper';
@@ -36,6 +37,7 @@ class MainScreen extends Component {
       showBanner: false,
       visitEntries: [],
       username: '',
+      spinnerEnabled: true
     };
 
     YellowBox.ignoreWarnings([
@@ -64,6 +66,8 @@ class MainScreen extends Component {
     const privacyPolicyAccepted = await AsyncStorage.getItem(
       'privacyPolicy'
     ).catch((err) => logger.log('could not receive privacy policy', err));
+
+    this.setState({ spinnerEnabled: false });
     this.setState({ visible: !privacyPolicyAccepted });
 
     if (privacyPolicyAccepted) {
@@ -170,6 +174,16 @@ class MainScreen extends Component {
               }}
             />
           )}
+        />
+        <Spinner
+          // visibility of Overlay Loading Spinner
+          visible={this.state.spinnerEnabled}
+          // Text with the Spinner
+          textContent="Logging in"
+          // Text style of the Spinner Text
+          textStyle={styles.spinnerTextStyle}
+          overlayColor="gray"
+          animation="fade"
         />
         <Modal visible={this.state.visible}>
           <View style={styles.privacyNoticeView}>

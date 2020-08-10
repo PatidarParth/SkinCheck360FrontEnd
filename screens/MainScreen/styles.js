@@ -83,5 +83,10 @@ export default StyleSheet.create({
   privacyNoticeView: {
     padding: 20,
     fontFamily: 'Avenir-Light'
+  },
+  spinnerTextStyle: {
+    fontFamily: 'Avenir-Light',
+    color: '#0A2B66',
+    fontWeight: 'normal'
   }
 });
