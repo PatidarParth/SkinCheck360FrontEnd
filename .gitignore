@@ -9,6 +9,7 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
+.DS_Store
 
 #amplify
 amplify/\#current-cloud-backend

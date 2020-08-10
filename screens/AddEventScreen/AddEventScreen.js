@@ -348,7 +348,7 @@ class AddEventScreen extends Component {
             >
               <Menu.Item onPress={() => this.viewIndividualPhoto(this.state.selectedPicture)} title="View" />
               <Divider />
-              <Menu.Item onPress={this.overlayPicture} title="Overlay" />
+              <Menu.Item onPress={this.overlayPicture} title="Photo Overlay" />
               <Divider />
               <Menu.Item onPress={() => this.deletePicture(this.state.pictureUri)} title="Delete" />
             </Menu>
