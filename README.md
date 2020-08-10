@@ -6,11 +6,11 @@
 * Install expo client on phone and run the app by scanning the qr code.
 
 ### How to build new release
-* Run this 
+* Run: 
 ```
 expo build:ios --clear-provisioning-profile
 ```
-* Use trajsporter to upload the new image and release using TestFlight on apple store connect
+* Use transporter to upload the new image and release using TestFlight on apple store connect
 
 ### To update Amplify
 * First add this line of code to the mutation for visit entry 
