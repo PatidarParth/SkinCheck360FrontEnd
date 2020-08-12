@@ -54,13 +54,13 @@ class SignUpScreen extends SignUp {
    } = this.state;
    const { onStateChange } = this.props;
    // name check
-   if (/[^a-zA-Z]/.test(name)) {
+   if (/[^a-zA-Z _]/.test(name)) {
      this.setState({ error: 'Name cannot have numbers or symbols.' });
      return;
    }
    // username check
    if (/[^0-9a-zA-Z]/.test(username)) {
-     this.setState({ error: 'Username cannot have symbols.' });
+     this.setState({ error: 'Username cannot have spaces or symbols.' });
      return;
    }
    // password check
@@ -90,6 +90,9 @@ class SignUpScreen extends SignUp {
      } else if (err.message === 'Invalid phone number format.') {
        // The error happens when phone number format is wrong
        this.setState({ error: 'Phone Number format is invalid' });
+     } else if (err.message === 'User already exists') {
+       // The error happens when phone number format is wrong
+       this.setState({ error: 'Username already exists' });
      } else {
        this.setState({ error: 'Please try again later.' });
      }
