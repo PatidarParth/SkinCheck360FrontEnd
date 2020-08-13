@@ -105,3 +105,22 @@ export const getVisitEntry = `query getVisitEntry($visitId: ID!){
     }
   }
 }`;
+
+export const createIsPrivatePolicyAccepted = `mutation createIsPrivatePolicyAccepted($username: String!, $isPrivatePolicyAccepted: Boolean!)
+{
+  createIsPrivatePolicyAccepted(input: {username: $username, isPrivatePolicyAccepted: $isPrivatePolicyAccepted }) {
+    id
+    username
+    isPrivatePolicyAccepted
+  }
+}`;
+
+export const checkIfPrivatePolicyAccepted = `query listIsPrivatePolicyAccepteds($username: String!){
+  listIsPrivatePolicyAccepteds(filter: { username:{
+        eq: $username
+    }}) {
+    items{
+      id
+    }
+  }
+}`;

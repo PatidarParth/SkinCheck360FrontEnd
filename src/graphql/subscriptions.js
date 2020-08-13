@@ -208,3 +208,36 @@ export const onDeletePicture = /* GraphQL */ `
     }
   }
 `;
+export const onCreateIsPrivatePolicyAccepted = /* GraphQL */ `
+  subscription OnCreateIsPrivatePolicyAccepted {
+    onCreateIsPrivatePolicyAccepted {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateIsPrivatePolicyAccepted = /* GraphQL */ `
+  subscription OnUpdateIsPrivatePolicyAccepted {
+    onUpdateIsPrivatePolicyAccepted {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteIsPrivatePolicyAccepted = /* GraphQL */ `
+  subscription OnDeleteIsPrivatePolicyAccepted {
+    onDeleteIsPrivatePolicyAccepted {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;

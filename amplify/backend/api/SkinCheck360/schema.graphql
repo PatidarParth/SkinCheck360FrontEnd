@@ -39,3 +39,9 @@ type faceDetectedValues {
     noseBaseXPosition: Float!
     noseBaseYPosition: Float!
 }
+
+
+type isPrivatePolicyAccepted @model {
+  username: String!
+  isPrivatePolicyAccepted: Boolean!
+}

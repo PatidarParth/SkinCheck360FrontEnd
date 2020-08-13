@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import {
   Alert,
-  AsyncStorage,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -24,7 +22,9 @@ import Moment from 'moment';
 import { IconButton, Banner } from 'react-native-paper';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
-import { listByUserOrdered, deleteVisitEntry, deletePicture } from '../../graphQL/queries';
+import {
+  listByUserOrdered, deleteVisitEntry, deletePicture, createIsPrivatePolicyAccepted, checkIfPrivatePolicyAccepted
+} from '../../graphQL/queries';
 
 const swipePixelSize = 75;
 
@@ -64,12 +64,9 @@ class MainScreen extends Component {
     });
     this.setState({ spinnerEnabled: false });
 
-    // get privacy policy
-    const privacyPolicyAccepted = await AsyncStorage.getItem(
-      'privacyPolicy'
-    ).catch((err) => logger.log('could not receive privacy policy', err));
-
-    if (privacyPolicyAccepted === 'true') {
+    // check to see if privatePolicy is accepted
+    const isPrivatePolicyAccepted = await API.graphql(graphqlOperation(checkIfPrivatePolicyAccepted, { username: this.state.username }));
+    if (isPrivatePolicyAccepted.data.listIsPrivatePolicyAccepteds.items.length > 0) {
       this.accessCameraPermissions();
     } else {
       this.setState({ visible: true });
@@ -83,7 +80,12 @@ class MainScreen extends Component {
 
 
   acceptPrivacyPolicy = async () => {
-    await AsyncStorage.setItem('privacyPolicy', 'true');
+    // eslint-disable-next-line max-len
+    const checkIfPrivatePolicyAlreadySet = await API.graphql(graphqlOperation(checkIfPrivatePolicyAccepted, { username: this.state.username }));
+    if (checkIfPrivatePolicyAlreadySet.data.listIsPrivatePolicyAccepteds.items.length === 0) {
+      // eslint-disable-next-line max-len
+      await API.graphql(graphqlOperation(createIsPrivatePolicyAccepted, { username: this.state.username, isPrivatePolicyAccepted: true }));
+    }
     await this.setState({ visible: false });
     this.accessCameraPermissions();
   };

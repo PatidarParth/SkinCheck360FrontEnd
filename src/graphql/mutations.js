@@ -226,3 +226,45 @@ export const deletePicture = /* GraphQL */ `
     }
   }
 `;
+export const createIsPrivatePolicyAccepted = /* GraphQL */ `
+  mutation CreateIsPrivatePolicyAccepted(
+    $input: CreateIsPrivatePolicyAcceptedInput!
+    $condition: ModelisPrivatePolicyAcceptedConditionInput
+  ) {
+    createIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateIsPrivatePolicyAccepted = /* GraphQL */ `
+  mutation UpdateIsPrivatePolicyAccepted(
+    $input: UpdateIsPrivatePolicyAcceptedInput!
+    $condition: ModelisPrivatePolicyAcceptedConditionInput
+  ) {
+    updateIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteIsPrivatePolicyAccepted = /* GraphQL */ `
+  mutation DeleteIsPrivatePolicyAccepted(
+    $input: DeleteIsPrivatePolicyAcceptedInput!
+    $condition: ModelisPrivatePolicyAcceptedConditionInput
+  ) {
+    deleteIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;

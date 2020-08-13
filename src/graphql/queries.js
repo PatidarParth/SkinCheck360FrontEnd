@@ -138,6 +138,39 @@ export const listPictures = /* GraphQL */ `
     }
   }
 `;
+export const getIsPrivatePolicyAccepted = /* GraphQL */ `
+  query GetIsPrivatePolicyAccepted($id: ID!) {
+    getIsPrivatePolicyAccepted(id: $id) {
+      id
+      username
+      isPrivatePolicyAccepted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listIsPrivatePolicyAccepteds = /* GraphQL */ `
+  query ListIsPrivatePolicyAccepteds(
+    $filter: ModelisPrivatePolicyAcceptedFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listIsPrivatePolicyAccepteds(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        username
+        isPrivatePolicyAccepted
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
 export const listByUserOrdered = /* GraphQL */ `
   query ListByUserOrdered(
     $owner: String
