@@ -208,9 +208,9 @@ export const onDeletePicture = /* GraphQL */ `
     }
   }
 `;
-export const onCreateIsPrivatePolicyAccepted = /* GraphQL */ `
-  subscription OnCreateIsPrivatePolicyAccepted {
-    onCreateIsPrivatePolicyAccepted {
+export const onCreateUserAttributeInformation = /* GraphQL */ `
+  subscription OnCreateUserAttributeInformation {
+    onCreateUserAttributeInformation {
       id
       username
       isPrivatePolicyAccepted
@@ -219,9 +219,9 @@ export const onCreateIsPrivatePolicyAccepted = /* GraphQL */ `
     }
   }
 `;
-export const onUpdateIsPrivatePolicyAccepted = /* GraphQL */ `
-  subscription OnUpdateIsPrivatePolicyAccepted {
-    onUpdateIsPrivatePolicyAccepted {
+export const onUpdateUserAttributeInformation = /* GraphQL */ `
+  subscription OnUpdateUserAttributeInformation {
+    onUpdateUserAttributeInformation {
       id
       username
       isPrivatePolicyAccepted
@@ -230,9 +230,9 @@ export const onUpdateIsPrivatePolicyAccepted = /* GraphQL */ `
     }
   }
 `;
-export const onDeleteIsPrivatePolicyAccepted = /* GraphQL */ `
-  subscription OnDeleteIsPrivatePolicyAccepted {
-    onDeleteIsPrivatePolicyAccepted {
+export const onDeleteUserAttributeInformation = /* GraphQL */ `
+  subscription OnDeleteUserAttributeInformation {
+    onDeleteUserAttributeInformation {
       id
       username
       isPrivatePolicyAccepted

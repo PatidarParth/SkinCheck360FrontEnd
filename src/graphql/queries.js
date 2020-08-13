@@ -138,9 +138,9 @@ export const listPictures = /* GraphQL */ `
     }
   }
 `;
-export const getIsPrivatePolicyAccepted = /* GraphQL */ `
-  query GetIsPrivatePolicyAccepted($id: ID!) {
-    getIsPrivatePolicyAccepted(id: $id) {
+export const getUserAttributeInformation = /* GraphQL */ `
+  query GetUserAttributeInformation($id: ID!) {
+    getUserAttributeInformation(id: $id) {
       id
       username
       isPrivatePolicyAccepted
@@ -149,13 +149,13 @@ export const getIsPrivatePolicyAccepted = /* GraphQL */ `
     }
   }
 `;
-export const listIsPrivatePolicyAccepteds = /* GraphQL */ `
-  query ListIsPrivatePolicyAccepteds(
-    $filter: ModelisPrivatePolicyAcceptedFilterInput
+export const listUserAttributeInformations = /* GraphQL */ `
+  query ListUserAttributeInformations(
+    $filter: ModeluserAttributeInformationFilterInput
     $limit: Int
     $nextToken: String
   ) {
-    listIsPrivatePolicyAccepteds(
+    listUserAttributeInformations(
       filter: $filter
       limit: $limit
       nextToken: $nextToken

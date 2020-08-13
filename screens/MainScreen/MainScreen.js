@@ -23,7 +23,7 @@ import { IconButton, Banner } from 'react-native-paper';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
 import {
-  listByUserOrdered, deleteVisitEntry, deletePicture, createIsPrivatePolicyAccepted, checkIfPrivatePolicyAccepted
+  listByUserOrdered, deleteVisitEntry, deletePicture, createUserAttributeInformation, listUserAttributeInformations
 } from '../../graphQL/queries';
 
 const swipePixelSize = 75;
@@ -65,8 +65,8 @@ class MainScreen extends Component {
     this.setState({ spinnerEnabled: false });
 
     // check to see if privatePolicy is accepted
-    const isPrivatePolicyAccepted = await API.graphql(graphqlOperation(checkIfPrivatePolicyAccepted, { username: this.state.username }));
-    if (isPrivatePolicyAccepted.data.listIsPrivatePolicyAccepteds.items.length > 0) {
+    const isPrivatePolicyAccepted = await API.graphql(graphqlOperation(listUserAttributeInformations, { username: this.state.username }));
+    if (isPrivatePolicyAccepted.data.listUserAttributeInformations.items.length > 0) {
       this.accessCameraPermissions();
     } else {
       this.setState({ visible: true });
@@ -81,10 +81,10 @@ class MainScreen extends Component {
 
   acceptPrivacyPolicy = async () => {
     // eslint-disable-next-line max-len
-    const checkIfPrivatePolicyAlreadySet = await API.graphql(graphqlOperation(checkIfPrivatePolicyAccepted, { username: this.state.username }));
-    if (checkIfPrivatePolicyAlreadySet.data.listIsPrivatePolicyAccepteds.items.length === 0) {
+    const checkIfPrivatePolicyAlreadySet = await API.graphql(graphqlOperation(listUserAttributeInformations, { username: this.state.username }));
+    if (checkIfPrivatePolicyAlreadySet.data.listUserAttributeInformations.items.length === 0) {
       // eslint-disable-next-line max-len
-      await API.graphql(graphqlOperation(createIsPrivatePolicyAccepted, { username: this.state.username, isPrivatePolicyAccepted: true }));
+      await API.graphql(graphqlOperation(createUserAttributeInformation, { username: this.state.username, isPrivatePolicyAccepted: true }));
     }
     await this.setState({ visible: false });
     this.accessCameraPermissions();

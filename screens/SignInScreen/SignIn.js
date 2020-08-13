@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, TouchableOpacity, Text, Image, TextInput, Alert
+  View, TouchableOpacity, Text, Image, TextInput
 } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Auth } from 'aws-amplify';
@@ -61,8 +61,6 @@ scanBiometrics = async () => {
   if (result.success) {
     await Auth.signIn(username, password);
     onStateChange('signedIn');
-  } else {
-    Alert.alert('Please enter your username and password');
   }
 };
 

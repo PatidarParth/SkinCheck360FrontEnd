@@ -139,7 +139,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "getIsPrivatePolicyAccepted",
+          "name" : "getUserAttributeInformation",
           "description" : null,
           "args" : [ {
             "name" : "id",
@@ -157,20 +157,20 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "listIsPrivatePolicyAccepteds",
+          "name" : "listUserAttributeInformations",
           "description" : null,
           "args" : [ {
             "name" : "filter",
             "description" : null,
             "type" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedFilterInput",
+              "name" : "ModeluserAttributeInformationFilterInput",
               "ofType" : null
             },
             "defaultValue" : null
@@ -195,7 +195,7 @@
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "ModelisPrivatePolicyAcceptedConnection",
+            "name" : "ModeluserAttributeInformationConnection",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -1623,7 +1623,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "isPrivatePolicyAccepted",
+        "name" : "userAttributeInformation",
         "description" : null,
         "fields" : [ {
           "name" : "id",
@@ -1707,7 +1707,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "OBJECT",
-        "name" : "ModelisPrivatePolicyAcceptedConnection",
+        "name" : "ModeluserAttributeInformationConnection",
         "description" : null,
         "fields" : [ {
           "name" : "items",
@@ -1718,7 +1718,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "OBJECT",
-              "name" : "isPrivatePolicyAccepted",
+              "name" : "userAttributeInformation",
               "ofType" : null
             }
           },
@@ -1742,7 +1742,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "ModelisPrivatePolicyAcceptedFilterInput",
+        "name" : "ModeluserAttributeInformationFilterInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -1780,7 +1780,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedFilterInput",
+              "name" : "ModeluserAttributeInformationFilterInput",
               "ofType" : null
             }
           },
@@ -1793,7 +1793,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedFilterInput",
+              "name" : "ModeluserAttributeInformationFilterInput",
               "ofType" : null
             }
           },
@@ -1803,7 +1803,7 @@
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
-            "name" : "ModelisPrivatePolicyAcceptedFilterInput",
+            "name" : "ModeluserAttributeInformationFilterInput",
             "ofType" : null
           },
           "defaultValue" : null
@@ -2135,7 +2135,7 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "createIsPrivatePolicyAccepted",
+          "name" : "createUserAttributeInformation",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -2145,7 +2145,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "CreateIsPrivatePolicyAcceptedInput",
+                "name" : "CreateUserAttributeInformationInput",
                 "ofType" : null
               }
             },
@@ -2155,20 +2155,20 @@
             "description" : null,
             "type" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+              "name" : "ModeluserAttributeInformationConditionInput",
               "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "updateIsPrivatePolicyAccepted",
+          "name" : "updateUserAttributeInformation",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -2178,7 +2178,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "UpdateIsPrivatePolicyAcceptedInput",
+                "name" : "UpdateUserAttributeInformationInput",
                 "ofType" : null
               }
             },
@@ -2188,20 +2188,20 @@
             "description" : null,
             "type" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+              "name" : "ModeluserAttributeInformationConditionInput",
               "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "deleteIsPrivatePolicyAccepted",
+          "name" : "deleteUserAttributeInformation",
           "description" : null,
           "args" : [ {
             "name" : "input",
@@ -2211,7 +2211,7 @@
               "name" : null,
               "ofType" : {
                 "kind" : "INPUT_OBJECT",
-                "name" : "DeleteIsPrivatePolicyAcceptedInput",
+                "name" : "DeleteUserAttributeInformationInput",
                 "ofType" : null
               }
             },
@@ -2221,14 +2221,14 @@
             "description" : null,
             "type" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+              "name" : "ModeluserAttributeInformationConditionInput",
               "ofType" : null
             },
             "defaultValue" : null
           } ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -2982,7 +2982,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "CreateIsPrivatePolicyAcceptedInput",
+        "name" : "CreateUserAttributeInformationInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -3026,7 +3026,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+        "name" : "ModeluserAttributeInformationConditionInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -3055,7 +3055,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+              "name" : "ModeluserAttributeInformationConditionInput",
               "ofType" : null
             }
           },
@@ -3068,7 +3068,7 @@
             "name" : null,
             "ofType" : {
               "kind" : "INPUT_OBJECT",
-              "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+              "name" : "ModeluserAttributeInformationConditionInput",
               "ofType" : null
             }
           },
@@ -3078,7 +3078,7 @@
           "description" : null,
           "type" : {
             "kind" : "INPUT_OBJECT",
-            "name" : "ModelisPrivatePolicyAcceptedConditionInput",
+            "name" : "ModeluserAttributeInformationConditionInput",
             "ofType" : null
           },
           "defaultValue" : null
@@ -3088,7 +3088,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "UpdateIsPrivatePolicyAcceptedInput",
+        "name" : "UpdateUserAttributeInformationInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -3128,7 +3128,7 @@
         "possibleTypes" : null
       }, {
         "kind" : "INPUT_OBJECT",
-        "name" : "DeleteIsPrivatePolicyAcceptedInput",
+        "name" : "DeleteUserAttributeInformationInput",
         "description" : null,
         "fields" : null,
         "inputFields" : [ {
@@ -3215,34 +3215,34 @@
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onCreateIsPrivatePolicyAccepted",
+          "name" : "onCreateUserAttributeInformation",
           "description" : null,
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onUpdateIsPrivatePolicyAccepted",
+          "name" : "onUpdateUserAttributeInformation",
           "description" : null,
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
           "deprecationReason" : null
         }, {
-          "name" : "onDeleteIsPrivatePolicyAccepted",
+          "name" : "onDeleteUserAttributeInformation",
           "description" : null,
           "args" : [ ],
           "type" : {
             "kind" : "OBJECT",
-            "name" : "isPrivatePolicyAccepted",
+            "name" : "userAttributeInformation",
             "ofType" : null
           },
           "isDeprecated" : false,
@@ -4201,6 +4201,23 @@
         "onFragment" : false,
         "onField" : false
       }, {
+        "name" : "deprecated",
+        "description" : null,
+        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
+        "args" : [ {
+          "name" : "reason",
+          "description" : null,
+          "type" : {
+            "kind" : "SCALAR",
+            "name" : "String",
+            "ofType" : null
+          },
+          "defaultValue" : "\"No longer supported\""
+        } ],
+        "onOperation" : false,
+        "onFragment" : false,
+        "onField" : false
+      }, {
         "name" : "aws_iam",
         "description" : "Tells the service this field/object has access authorized by sigv4 signing.",
         "locations" : [ "OBJECT", "FIELD_DEFINITION" ],
@@ -4225,23 +4242,6 @@
             }
           },
           "defaultValue" : null
-        } ],
-        "onOperation" : false,
-        "onFragment" : false,
-        "onField" : false
-      }, {
-        "name" : "deprecated",
-        "description" : null,
-        "locations" : [ "FIELD_DEFINITION", "ENUM_VALUE" ],
-        "args" : [ {
-          "name" : "reason",
-          "description" : null,
-          "type" : {
-            "kind" : "SCALAR",
-            "name" : "String",
-            "ofType" : null
-          },
-          "defaultValue" : "\"No longer supported\""
         } ],
         "onOperation" : false,
         "onFragment" : false,

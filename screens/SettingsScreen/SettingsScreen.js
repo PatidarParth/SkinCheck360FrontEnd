@@ -11,8 +11,8 @@ import { ListItem, Header } from 'react-native-elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import qs from 'qs';
 import { IconButton } from 'react-native-paper';
-import { Auth } from 'aws-amplify';
 import * as SecureStore from 'expo-secure-store';
+import { Auth } from 'aws-amplify';
 import styles from './styles';
 import privacyPolicy from '../../assets/privacypolicy.json';
 import terms from '../../assets/terms.json';
@@ -42,10 +42,17 @@ class SettingsScreen extends Component {
     this.setState({ accountUsername: user.username, accountName: user.attributes.name });
     const { navigation } = this.props;
     const savedValueOfTouchId = (await SecureStore.getItemAsync('isTouchIdEnabled', { keychainService: 'iOS' }) === 'true');
-    this.setState({ isTouchIDEnabled: savedValueOfTouchId });
+    const whoHasTouchIdEnabled = (await SecureStore.getItemAsync('whoHasTouchIdEnabled', { keychainService: 'iOS' }));
+    if (whoHasTouchIdEnabled === user.username) {
+      this.setState({ isTouchIDEnabled: savedValueOfTouchId });
+    }
+
     this.focusListener = navigation.addListener('focus', async () => {
       const touchId = (await SecureStore.getItemAsync('isTouchIdEnabled', { keychainService: 'iOS' }) === 'true');
-      this.setState({ isTouchIDEnabled: touchId });
+      const whoHasTouchIdEnabled2 = (await SecureStore.getItemAsync('whoHasTouchIdEnabled', { keychainService: 'iOS' }));
+      if (whoHasTouchIdEnabled2 === user.username) {
+        this.setState({ isTouchIDEnabled: touchId });
+      }
     });
   }
 
@@ -59,6 +66,7 @@ class SettingsScreen extends Component {
   }
 
   enableTouchId = async (isTouchIDEnabled) => {
+    await SecureStore.setItemAsync('whoHasTouchIdEnabled', this.state.accountUsername, { keychainService: 'iOS' });
     await SecureStore.setItemAsync('isTouchIdEnabled', isTouchIDEnabled.toString(), { keychainService: 'iOS' });
   }
 

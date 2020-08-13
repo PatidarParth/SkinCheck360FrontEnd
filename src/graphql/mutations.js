@@ -226,12 +226,12 @@ export const deletePicture = /* GraphQL */ `
     }
   }
 `;
-export const createIsPrivatePolicyAccepted = /* GraphQL */ `
-  mutation CreateIsPrivatePolicyAccepted(
-    $input: CreateIsPrivatePolicyAcceptedInput!
-    $condition: ModelisPrivatePolicyAcceptedConditionInput
+export const createUserAttributeInformation = /* GraphQL */ `
+  mutation CreateUserAttributeInformation(
+    $input: CreateUserAttributeInformationInput!
+    $condition: ModeluserAttributeInformationConditionInput
   ) {
-    createIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+    createUserAttributeInformation(input: $input, condition: $condition) {
       id
       username
       isPrivatePolicyAccepted
@@ -240,12 +240,12 @@ export const createIsPrivatePolicyAccepted = /* GraphQL */ `
     }
   }
 `;
-export const updateIsPrivatePolicyAccepted = /* GraphQL */ `
-  mutation UpdateIsPrivatePolicyAccepted(
-    $input: UpdateIsPrivatePolicyAcceptedInput!
-    $condition: ModelisPrivatePolicyAcceptedConditionInput
+export const updateUserAttributeInformation = /* GraphQL */ `
+  mutation UpdateUserAttributeInformation(
+    $input: UpdateUserAttributeInformationInput!
+    $condition: ModeluserAttributeInformationConditionInput
   ) {
-    updateIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+    updateUserAttributeInformation(input: $input, condition: $condition) {
       id
       username
       isPrivatePolicyAccepted
@@ -254,12 +254,12 @@ export const updateIsPrivatePolicyAccepted = /* GraphQL */ `
     }
   }
 `;
-export const deleteIsPrivatePolicyAccepted = /* GraphQL */ `
-  mutation DeleteIsPrivatePolicyAccepted(
-    $input: DeleteIsPrivatePolicyAcceptedInput!
-    $condition: ModelisPrivatePolicyAcceptedConditionInput
+export const deleteUserAttributeInformation = /* GraphQL */ `
+  mutation DeleteUserAttributeInformation(
+    $input: DeleteUserAttributeInformationInput!
+    $condition: ModeluserAttributeInformationConditionInput
   ) {
-    deleteIsPrivatePolicyAccepted(input: $input, condition: $condition) {
+    deleteUserAttributeInformation(input: $input, condition: $condition) {
       id
       username
       isPrivatePolicyAccepted

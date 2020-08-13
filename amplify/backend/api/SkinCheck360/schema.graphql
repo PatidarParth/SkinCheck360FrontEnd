@@ -41,7 +41,8 @@ type faceDetectedValues {
 }
 
 
-type isPrivatePolicyAccepted @model {
+type userAttributeInformation @model {
+  id: ID!
   username: String!
   isPrivatePolicyAccepted: Boolean!
 }
