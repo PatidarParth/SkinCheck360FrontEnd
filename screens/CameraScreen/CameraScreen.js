@@ -239,7 +239,6 @@ class CameraScreen extends React.Component {
       await this.setState({ photo: undefined });
     }
     const { height, width } = Dimensions.get('window');
-    console.log(height, width)
     const maskRowHeight = Math.round((height - 200) / 40);
     const maskColWidth = (width - 200) / 2;
     this.camera
@@ -249,19 +248,18 @@ class CameraScreen extends React.Component {
       .then(async (data) => {
         const width = data.width;
         const height = data.height;
-        console.log(height, width, maskColWidth, maskRowHeight)
         if (this.state.type === Camera.Constants.Type.back) {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             { rotate: 0 },
-            // {  resize: { width: maskColWidth } }
-            {
-              crop: {
-                originX: 0,
-                originY: (height - width) / 2,
-                width: width,
-                height: width
-              }
-            }
+            { resize: { width: 600 } }
+            // {
+            //   crop: {
+            //     originX: 0,
+            //     originY: (height - width) / 2,
+            //     width: width,
+            //     height: width
+            //   }
+            // }
 
           ]);
           const picId = this.props.route.params?.pictureId || uuidv4();
@@ -277,14 +275,15 @@ class CameraScreen extends React.Component {
           const photo = await ImageManipulator.manipulateAsync(data.uri, [
             { rotate: 0 },
             { flip: ImageManipulator.FlipType.Horizontal },
-            {
-              crop: {
-                originX: 0,
-                originY: (height - width) / 2,
-                width: width,
-                height: width
-              }
-            }
+            { resize: { width: 600 } }
+            // {
+            //   crop: {
+            //     originX: 0,
+            //     originY: (height - width) / 2,
+            //     width: width,
+            //     height: width
+            //   }
+            // }
           ]);
           FileSystem.moveAsync({
             from: photo.uri,
@@ -608,69 +607,6 @@ class CameraScreen extends React.Component {
                 onFacesDetected={this.onFacesDetected}
                 onFacesDetectionError={this.onFacesDetectionError}
               >
-                {!visitPhoto && (
-                <View style={styles.maskOutter}>
-                  <View style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]} />
-                  <View style={[{ flex: 40 }, styles.maskCenter]}>
-                    <View style={[{ width: maskColWidth }, styles.maskFrame]} />
-                    <View style={styles.maskInner}>
-
-                      {/* top */}
-                      <View
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: 10,
-                          borderColor: '#FFFFFF',
-                          borderTopWidth: 0.5
-                        }}
-                      />
-                      {/* #bottom */}
-                      <View
-                        style={{
-                          position: 'absolute',
-                          bottom: 0,
-                          left: 0,
-                          width: '100%',
-                          height: 10,
-                          borderColor: '#FFFFFF',
-                          borderBottomWidth: 0.5
-                        }}
-                      />
-                      {/* left */}
-                      <View
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: 20,
-                          height: '100%',
-                          borderColor: '#FFFFFF',
-                          borderLeftWidth: 0.5
-                        }}
-                      />
-                      {/* right */}
-                      <View
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          right: 0,
-                          width: 20,
-                          height: '100%',
-                          borderColor: '#FFFFFF',
-                          borderRightWidth: 1
-                        }}
-                      />
-                    </View>
-                    <View style={[{ width: maskColWidth }, styles.maskFrame]} />
-                  </View>
-                  <View
-                    style={[{ flex: maskRowHeight }, styles.maskRow, styles.maskFrame]}
-                  />
-                </View>
-                )}
                 {visitPhoto && (
                 <View
                   style={style.overlayPhoto}

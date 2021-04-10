@@ -1,0 +1,33 @@
+{
+	"function": {},
+	"auth": {
+		"skincheck360frontend852baea9": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"api": {
+		"SkinCheck360": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
+						"userPoolConfig": {
+							"userPoolId": "authskincheck360frontend852baea9"
+						}
+					}
+				}
+			}
+		}
+	},
+	"storage": {
+		"skincheck360": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}

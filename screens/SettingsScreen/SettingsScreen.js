@@ -86,7 +86,7 @@ class SettingsScreen extends Component {
           containerStyle={styles.header}
           centerComponent={{ text: 'Settings', style: styles.headerCenter }}
         />
-        <View style={styles.notificationView}>
+        {/* <View style={styles.notificationView}>
           <Text style={styles.labelFont}>LEGAL</Text>
           {
           legalList.map((l, i) => (
@@ -107,8 +107,8 @@ class SettingsScreen extends Component {
             />
           ))
         }
-        </View>
-        <View style={styles.notificationView}>
+        </View> */}
+        {/* <View style={styles.notificationView}>
           <Text style={styles.labelFont}>SUPPORT</Text>
           <ListItem
             key="contact-us"
@@ -125,7 +125,7 @@ class SettingsScreen extends Component {
             bottomDivider
             onPress={() => this.getSupport('Contact Us')}
           />
-        </View>
+        </View> */}
 
         {/* <View style={styles.notificationView}>
           <ListItem

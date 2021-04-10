@@ -1,0 +1,48 @@
+type VisitEntry @model
+  @key(name: "ByUser",
+  fields: ["owner", "date"],
+  queryField: "listByUserOrdered")
+ {
+  id: ID!
+  owner: String!
+  name: String!
+  date: AWSDateTime!
+  notes: String!
+  pictures: [Picture] @connection(name: "VisitPictures")
+}
+
+type Picture @model {
+  id: ID!
+  note: String!
+  location: String!
+  bodyPart: String!
+  locationX: Float!
+  locationY: Float!
+  diameter: Float!
+  visitEntry: VisitEntry @connection(name: "VisitPictures")
+  bucket: String!
+  fullsize: PhotoS3Info!
+  faceDetectedValues: faceDetectedValues!
+}
+
+type PhotoS3Info {
+    key: String!
+    width: Int!
+    height: Int!
+}
+
+type faceDetectedValues {
+    leftEarXPosition: Float!
+    leftEarYPosition: Float!
+    rightEarXPosition: Float!
+    rightEarYPosition: Float!
+    noseBaseXPosition: Float!
+    noseBaseYPosition: Float!
+}
+
+
+type userAttributeInformation @model {
+  id: ID!
+  username: String!
+  isPrivatePolicyAccepted: Boolean!
+}

@@ -1,0 +1,79 @@
+{
+	"providers": {
+		"awscloudformation": {
+			"AuthRoleName": "amplify-skincheck360frontend-dev-205534-authRole",
+			"UnauthRoleArn": "arn:aws:iam::496022163873:role/amplify-skincheck360frontend-dev-205534-unauthRole",
+			"AuthRoleArn": "arn:aws:iam::496022163873:role/amplify-skincheck360frontend-dev-205534-authRole",
+			"Region": "us-east-1",
+			"DeploymentBucketName": "amplify-skincheck360frontend-dev-205534-deployment",
+			"UnauthRoleName": "amplify-skincheck360frontend-dev-205534-unauthRole",
+			"StackName": "amplify-skincheck360frontend-dev-205534",
+			"StackId": "arn:aws:cloudformation:us-east-1:496022163873:stack/amplify-skincheck360frontend-dev-205534/b88dfa80-ca23-11ea-abec-0a54954134e7",
+			"AmplifyAppId": "d28gxcbgfw74s7"
+		}
+	},
+	"function": {},
+	"auth": {
+		"skincheck360frontend852baea9": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-skincheck360frontend-dev-205534-deployment/amplify-cfn-templates/auth/skincheck360frontend852baea9-cloudformation-template.yml",
+				"logicalId": "authskincheck360frontend852baea9"
+			},
+			"lastPushTimeStamp": "2020-08-13T20:25:49.441Z",
+			"output": {
+				"AppClientSecret": "2322vas0q42m5s82fv1uoe024inhfm2dum68gaglk6nv0r440lp",
+				"UserPoolId": "us-east-1_Ftek1sfgT",
+				"AppClientIDWeb": "1gai9udfugv2u9u8t8gbgijt9",
+				"AppClientID": "7p1s3cav0g56kb8svekafv9pel",
+				"IdentityPoolId": "us-east-1:5fe55f2d-b85d-4080-9558-3daa893382de",
+				"IdentityPoolName": "skincheck360frontend852baea9_identitypool_852baea9__dev",
+				"UserPoolName": "skincheck360frontend852baea9_userpool_852baea9"
+			},
+			"lastPushDirHash": "LaRpH4bAjq+IX2/gA6V4kHScXKg="
+		}
+	},
+	"api": {
+		"SkinCheck360": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "AMAZON_COGNITO_USER_POOLS",
+						"userPoolConfig": {
+							"userPoolId": "authskincheck360frontend852baea9"
+						}
+					}
+				},
+				"GraphQLAPIIdOutput": "2gord7jytnd5lacnm7pqrl2dpa",
+				"GraphQLAPIEndpointOutput": "https://pgjvojnuandnjkfb3prhf4qzvq.appsync-api.us-east-1.amazonaws.com/graphql"
+			},
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-skincheck360frontend-dev-205534-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+				"logicalId": "apiSkinCheck360"
+			},
+			"lastPushTimeStamp": "2020-08-13T20:25:50.683Z",
+			"lastPushDirHash": "dp59kuiGwj7qnnAXVwWOzIjO7I4="
+		}
+	},
+	"storage": {
+		"skincheck360": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation",
+			"providerMetadata": {
+				"s3TemplateURL": "https://s3.amazonaws.com/amplify-skincheck360frontend-dev-205534-deployment/amplify-cfn-templates/storage/s3-cloudformation-template.json",
+				"logicalId": "storageskincheck360"
+			},
+			"lastPushTimeStamp": "2020-08-13T20:25:49.445Z",
+			"output": {
+				"BucketName": "skincheck360images205534-dev",
+				"Region": "us-east-1"
+			},
+			"lastPushDirHash": "aoLJ5uI4+D5Yj8Grw6S5SJgkHDU="
+		}
+	}
+}

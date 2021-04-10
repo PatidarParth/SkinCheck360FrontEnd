@@ -1,0 +1,347 @@
+type VisitEntry {
+  id: ID!
+  owner: String!
+  name: String!
+  date: AWSDateTime!
+  notes: String!
+  pictures(filter: ModelPictureFilterInput, sortDirection: ModelSortDirection, limit: Int, nextToken: String): ModelPictureConnection
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type Picture {
+  id: ID!
+  note: String!
+  location: String!
+  bodyPart: String!
+  locationX: Float!
+  locationY: Float!
+  diameter: Float!
+  visitEntry: VisitEntry
+  bucket: String!
+  fullsize: PhotoS3Info!
+  faceDetectedValues: faceDetectedValues!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type PhotoS3Info {
+  key: String!
+  width: Int!
+  height: Int!
+}
+
+type faceDetectedValues {
+  leftEarXPosition: Float!
+  leftEarYPosition: Float!
+  rightEarXPosition: Float!
+  rightEarYPosition: Float!
+  noseBaseXPosition: Float!
+  noseBaseYPosition: Float!
+}
+
+type userAttributeInformation {
+  id: ID!
+  username: String!
+  isPrivatePolicyAccepted: Boolean!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum ModelSortDirection {
+  ASC
+  DESC
+}
+
+type ModelVisitEntryConnection {
+  items: [VisitEntry]
+  nextToken: String
+}
+
+input ModelStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIDInput {
+  ne: ID
+  eq: ID
+  le: ID
+  lt: ID
+  ge: ID
+  gt: ID
+  contains: ID
+  notContains: ID
+  between: [ID]
+  beginsWith: ID
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+  size: ModelSizeInput
+}
+
+input ModelIntInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelFloatInput {
+  ne: Float
+  eq: Float
+  le: Float
+  lt: Float
+  ge: Float
+  gt: Float
+  between: [Float]
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelBooleanInput {
+  ne: Boolean
+  eq: Boolean
+  attributeExists: Boolean
+  attributeType: ModelAttributeTypes
+}
+
+input ModelSizeInput {
+  ne: Int
+  eq: Int
+  le: Int
+  lt: Int
+  ge: Int
+  gt: Int
+  between: [Int]
+}
+
+input ModelVisitEntryFilterInput {
+  id: ModelIDInput
+  owner: ModelStringInput
+  name: ModelStringInput
+  date: ModelStringInput
+  notes: ModelStringInput
+  and: [ModelVisitEntryFilterInput]
+  or: [ModelVisitEntryFilterInput]
+  not: ModelVisitEntryFilterInput
+}
+
+enum ModelAttributeTypes {
+  binary
+  binarySet
+  bool
+  list
+  map
+  number
+  numberSet
+  string
+  stringSet
+  _null
+}
+
+type Query {
+  getVisitEntry(id: ID!): VisitEntry
+  listVisitEntrys(filter: ModelVisitEntryFilterInput, limit: Int, nextToken: String): ModelVisitEntryConnection
+  getPicture(id: ID!): Picture
+  listPictures(filter: ModelPictureFilterInput, limit: Int, nextToken: String): ModelPictureConnection
+  getUserAttributeInformation(id: ID!): userAttributeInformation
+  listUserAttributeInformations(filter: ModeluserAttributeInformationFilterInput, limit: Int, nextToken: String): ModeluserAttributeInformationConnection
+  listByUserOrdered(owner: String, date: ModelStringKeyConditionInput, sortDirection: ModelSortDirection, filter: ModelVisitEntryFilterInput, limit: Int, nextToken: String): ModelVisitEntryConnection
+}
+
+input CreateVisitEntryInput {
+  id: ID
+  owner: String!
+  name: String!
+  date: AWSDateTime!
+  notes: String!
+}
+
+input UpdateVisitEntryInput {
+  id: ID!
+  owner: String
+  name: String
+  date: AWSDateTime
+  notes: String
+}
+
+input DeleteVisitEntryInput {
+  id: ID
+}
+
+type Mutation {
+  createVisitEntry(input: CreateVisitEntryInput!, condition: ModelVisitEntryConditionInput): VisitEntry
+  updateVisitEntry(input: UpdateVisitEntryInput!, condition: ModelVisitEntryConditionInput): VisitEntry
+  deleteVisitEntry(input: DeleteVisitEntryInput!, condition: ModelVisitEntryConditionInput): VisitEntry
+  createPicture(input: CreatePictureInput!, condition: ModelPictureConditionInput): Picture
+  updatePicture(input: UpdatePictureInput!, condition: ModelPictureConditionInput): Picture
+  deletePicture(input: DeletePictureInput!, condition: ModelPictureConditionInput): Picture
+  createUserAttributeInformation(input: CreateUserAttributeInformationInput!, condition: ModeluserAttributeInformationConditionInput): userAttributeInformation
+  updateUserAttributeInformation(input: UpdateUserAttributeInformationInput!, condition: ModeluserAttributeInformationConditionInput): userAttributeInformation
+  deleteUserAttributeInformation(input: DeleteUserAttributeInformationInput!, condition: ModeluserAttributeInformationConditionInput): userAttributeInformation
+}
+
+input ModelVisitEntryConditionInput {
+  owner: ModelStringInput
+  name: ModelStringInput
+  date: ModelStringInput
+  notes: ModelStringInput
+  and: [ModelVisitEntryConditionInput]
+  or: [ModelVisitEntryConditionInput]
+  not: ModelVisitEntryConditionInput
+}
+
+type Subscription {
+  onCreateVisitEntry: VisitEntry @aws_subscribe(mutations: ["createVisitEntry"])
+  onUpdateVisitEntry: VisitEntry @aws_subscribe(mutations: ["updateVisitEntry"])
+  onDeleteVisitEntry: VisitEntry @aws_subscribe(mutations: ["deleteVisitEntry"])
+  onCreatePicture: Picture @aws_subscribe(mutations: ["createPicture"])
+  onUpdatePicture: Picture @aws_subscribe(mutations: ["updatePicture"])
+  onDeletePicture: Picture @aws_subscribe(mutations: ["deletePicture"])
+  onCreateUserAttributeInformation: userAttributeInformation @aws_subscribe(mutations: ["createUserAttributeInformation"])
+  onUpdateUserAttributeInformation: userAttributeInformation @aws_subscribe(mutations: ["updateUserAttributeInformation"])
+  onDeleteUserAttributeInformation: userAttributeInformation @aws_subscribe(mutations: ["deleteUserAttributeInformation"])
+}
+
+input PhotoS3InfoInput {
+  key: String!
+  width: Int!
+  height: Int!
+}
+
+input FaceDetectedValuesInput {
+  leftEarXPosition: Float!
+  leftEarYPosition: Float!
+  rightEarXPosition: Float!
+  rightEarYPosition: Float!
+  noseBaseXPosition: Float!
+  noseBaseYPosition: Float!
+}
+
+type ModelPictureConnection {
+  items: [Picture]
+  nextToken: String
+}
+
+input ModelPictureFilterInput {
+  id: ModelIDInput
+  note: ModelStringInput
+  location: ModelStringInput
+  bodyPart: ModelStringInput
+  locationX: ModelFloatInput
+  locationY: ModelFloatInput
+  diameter: ModelFloatInput
+  bucket: ModelStringInput
+  and: [ModelPictureFilterInput]
+  or: [ModelPictureFilterInput]
+  not: ModelPictureFilterInput
+}
+
+input CreatePictureInput {
+  id: ID
+  note: String!
+  location: String!
+  bodyPart: String!
+  locationX: Float!
+  locationY: Float!
+  diameter: Float!
+  bucket: String!
+  fullsize: PhotoS3InfoInput!
+  faceDetectedValues: FaceDetectedValuesInput!
+  pictureVisitEntryId: ID
+}
+
+input UpdatePictureInput {
+  id: ID!
+  note: String
+  location: String
+  bodyPart: String
+  locationX: Float
+  locationY: Float
+  diameter: Float
+  bucket: String
+  fullsize: PhotoS3InfoInput
+  faceDetectedValues: FaceDetectedValuesInput
+  pictureVisitEntryId: ID
+}
+
+input DeletePictureInput {
+  id: ID
+}
+
+input ModelPictureConditionInput {
+  note: ModelStringInput
+  location: ModelStringInput
+  bodyPart: ModelStringInput
+  locationX: ModelFloatInput
+  locationY: ModelFloatInput
+  diameter: ModelFloatInput
+  bucket: ModelStringInput
+  and: [ModelPictureConditionInput]
+  or: [ModelPictureConditionInput]
+  not: ModelPictureConditionInput
+}
+
+type ModeluserAttributeInformationConnection {
+  items: [userAttributeInformation]
+  nextToken: String
+}
+
+input ModeluserAttributeInformationFilterInput {
+  id: ModelIDInput
+  username: ModelStringInput
+  isPrivatePolicyAccepted: ModelBooleanInput
+  and: [ModeluserAttributeInformationFilterInput]
+  or: [ModeluserAttributeInformationFilterInput]
+  not: ModeluserAttributeInformationFilterInput
+}
+
+input CreateUserAttributeInformationInput {
+  id: ID
+  username: String!
+  isPrivatePolicyAccepted: Boolean!
+}
+
+input UpdateUserAttributeInformationInput {
+  id: ID!
+  username: String
+  isPrivatePolicyAccepted: Boolean
+}
+
+input DeleteUserAttributeInformationInput {
+  id: ID
+}
+
+input ModeluserAttributeInformationConditionInput {
+  username: ModelStringInput
+  isPrivatePolicyAccepted: ModelBooleanInput
+  and: [ModeluserAttributeInformationConditionInput]
+  or: [ModeluserAttributeInformationConditionInput]
+  not: ModeluserAttributeInformationConditionInput
+}
+
+input ModelStringKeyConditionInput {
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  gt: String
+  between: [String]
+  beginsWith: String
+}
