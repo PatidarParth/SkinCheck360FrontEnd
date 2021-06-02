@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { PinScreen } from 'react-native-awesome-pin';
 
 import { Provider } from 'react-redux';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
@@ -25,7 +26,6 @@ import SettingsScreen from './screens/SettingsScreen';
 import PhotoScreen from './screens/PhotoScreen';
 import VisitScreen from './screens/VisitScreen';
 import EditEventScreen from './screens/EditEventScreen';
-
 
 import rootReducer from './redux/rootReducer';
 
@@ -96,6 +96,15 @@ getTabBarVisibility = (route) => {
   return true;
 };
 
+// recievePin(pin){
+//   /// Clear error on interaction
+//   this.pinScreen.clearError();
+  
+//   if(pin != '56771'){
+//       this.pinScreen.throwError('Your PIN is incorrect');
+//   }
+// }
+
 function MyTabs() {
   return (
     <Tab.Navigator
@@ -129,10 +138,16 @@ function MyTabs() {
           ),
         }}
       />
+      {/* <PinScreen
+        onRef={ ref => (this.pinScreen = ref) }
+        tagline='Please enter your PIN'
+        logo={ require('./assets/icon.png') }
+        containerStyle={{ backgroundColor: '#AAA' }}
+        keyDown={ this.recievePin.bind(this) }
+      /> */}
     </Tab.Navigator>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {

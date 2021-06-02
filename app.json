@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "1.2.1",
+    "version": "1.2.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -25,7 +25,11 @@
     "ios": {
       "bundleIdentifier": "com.domainname.skincheck360",
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Ths app needs access to your photo library in case a user wants to import an image from their phone's library into their visits. The pictures are stored locally on the application so there are no privacy concerns. Images imported will not be used by us in anyway.",
+        "NSCameraUsageDescription": "This app needs camera permission in order for the user to take pictures and then store them locally on the phone for later use by the dermatologist. The pictures are stored locally on the application so there are no privacy concerns. Images taken will not be used by us in anyway."
+      }
     },
     "description": ""
   }

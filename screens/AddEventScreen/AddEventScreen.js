@@ -264,7 +264,6 @@ class AddEventScreen extends Component {
               isVisible={this.state.isDateTimePickerVisible}
               onConfirm={this.handleDatePicked}
               onCancel={() => this.displayDateTimePicker(false)}
-              isDarkModeEnabled={this.state.isDarkModeEnabled}
             />
           </View>
           <View style={styles.innerSpacer}>

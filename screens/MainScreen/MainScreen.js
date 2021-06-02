@@ -44,14 +44,14 @@ class MainScreen extends Component {
   }
 
   async componentDidMount() {
-    // const privacyPolicyAccepted = await AsyncStorage.getItem(
-    //   'privacyPolicy'
-    // ).catch((err) => logger.log('could not receive privacy policy', err));
-    // this.setState({ visible: !privacyPolicyAccepted });
+    const privacyPolicyAccepted = await AsyncStorage.getItem(
+      'privacyPolicy'
+    ).catch((err) => logger.log('could not receive privacy policy', err));
+    this.setState({ visible: !privacyPolicyAccepted });
 
-    // if (privacyPolicyAccepted) {
-    //   this.accessCameraPermissions();
-    // }
+    if (privacyPolicyAccepted) {
+      this.accessCameraPermissions();
+    }
     this.accessCameraPermissions();
     this.props.getVisits();
   }
@@ -120,7 +120,7 @@ class MainScreen extends Component {
 
         <Modal visible={this.state.visible}>
           <View style={styles.privacyNoticeView}>
-            {/* <ScrollView style={styles.scrollView}>
+            <ScrollView style={styles.scrollView}>
               <Text style={styles.textHeader}>Privacy Notice</Text>
               {privacyPolicy.policyLines.map((policyRow, i) => (
                 <View key={`row-${i}`}>
@@ -136,7 +136,7 @@ class MainScreen extends Component {
               >
                 <Text style={styles.primaryText}>ACCEPT</Text>
               </TouchableOpacity>
-            </ScrollView> */}
+            </ScrollView>
           </View>
         </Modal>
 
