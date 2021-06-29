@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { PinchGestureHandler } from 'react-native-gesture-handler';
 import * as FileSystem from 'expo-file-system';
-import { Dropdown } from 'react-native-material-dropdown';
+import { Dropdown } from 'react-native-material-dropdown-v2';
 import { Header } from 'react-native-elements';
 import { TextField } from 'react-native-material-textfield';
 import Svg, { Circle, Image } from 'react-native-svg';

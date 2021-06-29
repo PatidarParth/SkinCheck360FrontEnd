@@ -4,7 +4,7 @@ import React, { useEffect } from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from '@react-navigation/stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { PinScreen } from 'react-native-awesome-pin';
+import CodePin from 'react-native-pin-code';
 
 import { Provider } from 'react-redux';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
@@ -12,7 +12,14 @@ import { applyMiddleware, createStore } from 'redux';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { StyleSheet } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  StyleSheet,
+  Dimensions,
+  Text,
+  View,
+  Image
+} from 'react-native';
 import { SplashScreen } from 'expo';
 
 import { createLogger } from 'redux-logger';
@@ -48,18 +55,64 @@ const theme = {
 };
 
 export default class App extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      displayCodePin: true,
+      success: ''
+    };
+  }
+
   useEffect = () => {
     SplashScreen.true();
   };
+
+  onSuccess = () => {
+    this.setState({ displayCodePin: false });
+  }
 
   render() {
     return (
       <Provider store={store}>
         <PaperProvider theme={theme}>
           <AppearanceProvider>
-            <NavigationContainer>
-              <MyTabs />
-            </NavigationContainer>
+            {this.state.displayCodePin
+                && (
+                  <View style={styles.container}>
+                    <Text style={styles.sectionText}>Skin Check 360</Text>
+                    <Image
+          // eslint-disable-next-line global-require
+                      source={require('./assets/TransparentLogo.png')}
+                      style={styles.logo}
+                    />
+                    <KeyboardAvoidingView
+                      behavior="position"
+                      keyboardVerticalOffset={-20}
+                      contentContainerStyle={styles.avoidingView}
+                    >
+                      <CodePin
+                        ref={(ref) => (this.ref = ref)}
+                        obfuscation
+                        text="Enter Pin Code"
+                        error="Incorrect! Please try again."
+                        autoFocusFirst
+                        textStyle={styles.sectionFooterLabel}
+                        errorStyle={styles.errorLabel}
+                        code="fake_code"
+                        number={7}
+                        checkPinCode={(code, callback) => callback(code === 'SKIN360')}
+                        success={this.onSuccess}
+                      />
+                    </KeyboardAvoidingView>
+                  </View>
+                )}
+            {!this.state.displayCodePin
+                && (
+                <NavigationContainer>
+                  <MyTabs />
+                </NavigationContainer>
+                )}
           </AppearanceProvider>
         </PaperProvider>
       </Provider>
@@ -96,15 +149,6 @@ getTabBarVisibility = (route) => {
   return true;
 };
 
-// recievePin(pin){
-//   /// Clear error on interaction
-//   this.pinScreen.clearError();
-  
-//   if(pin != '56771'){
-//       this.pinScreen.throwError('Your PIN is incorrect');
-//   }
-// }
-
 function MyTabs() {
   return (
     <Tab.Navigator
@@ -138,13 +182,6 @@ function MyTabs() {
           ),
         }}
       />
-      {/* <PinScreen
-        onRef={ ref => (this.pinScreen = ref) }
-        tagline='Please enter your PIN'
-        logo={ require('./assets/icon.png') }
-        containerStyle={{ backgroundColor: '#AAA' }}
-        keyDown={ this.recievePin.bind(this) }
-      /> */}
     </Tab.Navigator>
   );
 }
@@ -152,8 +189,99 @@ function MyTabs() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+  },
+  labelFont: {
+    color: '#000000',
+    fontSize: 12,
+    padding: 2,
+    fontWeight: 'normal',
+    marginBottom: 5,
+    fontFamily: 'Avenir-Light',
+  },
+  logo: {
+    width: 80,
+    height: 90,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  input: {
+    marginBottom: 30,
+    marginRight: 1,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#0A2B66',
+    fontFamily: 'Avenir-Light',
+  },
+  sectionText: {
+    color: '#0A2B66',
+    fontSize: 20,
+    fontWeight: '100',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light',
+    marginBottom: 20,
+  },
+  inputLabel: {
+    marginBottom: 5,
+    fontFamily: 'Avenir-Light',
+  },
+  button: {
+    backgroundColor: '#0A2B66',
+    alignItems: 'center',
+    padding: 10,
+    marginBottom: 20,
+    marginRight: 1,
+    width: '85%'
+  },
+  disableButton: {
+    backgroundColor: '#C0C0C0',
+    alignItems: 'center',
+    padding: 10,
+    marginBottom: 20,
+    marginRight: 10,
+    width: '85%'
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: 'Avenir-Light'
+  },
+  footerRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingBottom: 10
+  },
+  signInButtonView: {
+    flex: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  sectionFooter: {
+    alignItems: 'center',
+    backgroundColor: '#0A2B66',
+    width: '50%',
+  },
+  sectionFooterLabel: {
+    fontSize: 14,
+    color: '#0A2B66',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light',
+    paddingBottom: 5
+  },
+  errorLabel: {
+    fontSize: 14,
+    color: '#FF0000',
+    alignItems: 'baseline',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light'
+  },
+  termsLabel: {
+    fontSize: 14,
+    color: '#696969',
+    textAlign: 'center',
+    fontFamily: 'Avenir-Light',
+  },
 });
