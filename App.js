@@ -100,8 +100,8 @@ export default class App extends React.Component {
                         textStyle={styles.sectionFooterLabel}
                         errorStyle={styles.errorLabel}
                         code="fake_code"
-                        number={7}
-                        checkPinCode={(code, callback) => callback(code === 'SKIN360')}
+                        number={4}
+                        checkPinCode={(code, callback) => callback(code === '1183')}
                         success={this.onSuccess}
                       />
                     </KeyboardAvoidingView>
