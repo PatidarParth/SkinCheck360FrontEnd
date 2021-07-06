@@ -88,12 +88,13 @@ export default class App extends React.Component {
                     />
                     <KeyboardAvoidingView
                       behavior="position"
-                      keyboardVerticalOffset={-20}
+                      keyboardVerticalOffset={-40}
                       contentContainerStyle={styles.avoidingView}
                     >
                       <CodePin
                         ref={(ref) => (this.ref = ref)}
                         obfuscation
+                        keyboardType="numeric"
                         text="Enter Pin Code"
                         error="Incorrect! Please try again."
                         autoFocusFirst
